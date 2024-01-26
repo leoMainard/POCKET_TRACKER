@@ -1,0 +1,266 @@
+/* ------------------------------------------------- Générique */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100%;
+    background-color: #f4f4f4; /* Couleur de fond légère */
+}
+
+h5{
+    margin-top: 30px !important;
+}
+
+#introduction {
+    overflow: hidden; /* Empêche le SVG de déborder lors de l'animation */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #ffffff; /* Fond blanc pour l'introduction */
+    color: #333333; /* Couleur de texte foncée pour le contraste */
+    height: 100vh;
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
+#introduction h1 {
+    margin: 10px 0; /* Espacement réduit */
+    font-size: 2.5em; /* Taille de police légèrement plus grande */
+    font-weight: normal; /* Style de police normal, pas gras */
+}
+
+#introduction p {
+    font-size: 1.2em;
+    margin: 10px 0; /* Espacement uniforme */
+    color: #555555; /* Couleur de texte légèrement plus douce */
+}
+
+body button {
+    padding: 10px 20px;
+    background-color: #2a9d8f; /* Bouton de couleur foncée */
+    color: #ffffff; /* Texte du bouton en blanc */
+    border:none; /* Bordure du bouton */
+    border-radius: 8px; /* Coins légèrement arrondis */
+    cursor: pointer;
+    font-size: 1em;
+    /* margin-top: 20px; Espacement au-dessus du bouton */
+}
+
+body button:hover {
+    background-color: #52796f; /* Changement de couleur au survol */
+}
+
+body button:after {
+    background-color: #52796f; /* Changement de couleur au survol */
+}
+
+#introduction::after {
+    display: none; /* Retirer l'effet ondulé pour un look plus épuré */
+}
+
+#appContent {
+    background-color: #f4f4f4; /* Même couleur de fond que le body */
+    color: #333333;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+/* Stylez les éléments de #appContent ici pour maintenir le thème minimaliste */
+
+.blob {
+    position: absolute;
+    max-width: 300px; /* ou la taille souhaitée */
+}
+
+#blob1 {
+    top: 10%;
+    left: 10%;
+}
+
+#blob2 {
+    bottom: 10%;
+    right: 10%;
+}
+
+
+
+/* App Content */
+
+.action {
+    background-color: #2a9d8f;
+    margin: 0;
+    width: 100%;
+    align-items: center;
+}
+
+
+
+
+/* Style pour le fond de la modale */
+.modal {
+
+    display: none; /* Caché par défaut */
+    position: fixed; /* Reste en place lors du scroll */
+    z-index: 1; /* Se situe au-dessus du reste */
+    left: 0;
+    top: 0;
+    width: 100% !important; /* Largeur complète */
+    height: 100%; /* Hauteur complète */
+    overflow: auto; /* Ajoute un scroll si nécessaire */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Couleur de fond noir avec opacité */
+  }
+  
+  /* Style pour le contenu de la modale */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 8% auto; /*15% du haut et centré horizontalement */
+    padding: 20px;
+    border: none !important;
+    width: 50% !important; /* Largeur de la modale */
+  }
+  
+  /* Style pour le bouton de fermeture */
+  .close {
+    color: #aaa;
+    float: right !important;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+
+
+  /* Bouton plus */
+#btn_plus{
+    background-color: #2a9d8f;
+    color: #ffffff; /* Texte du bouton en blanc */
+    border:none; /* Bordure du bouton */
+    border-radius: 8px; /* Coins légèrement arrondis */
+    cursor: pointer;
+    font-size: 1em;
+    /* margin-top: 20px; Espacement au-dessus du bouton */
+}
+
+#btn_plus:hover {
+    background-color: #52796f; /* Changement de couleur au survol */
+}
+  
+#titre_comptes{
+    padding-top : 20px;
+}
+
+/* ------------------------------------------------- Style pour les listes déroulantes */
+
+.flex-grow-1 {
+    position: relative;
+    display: inline-block;
+}
+
+.flex-grow-1 i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.flex-grow-1 select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Ajouter un padding à droite pour le texte */
+    padding-right: 30px; /* Ajustez selon la taille de l'icône */
+}
+
+
+#categorie_list {
+    margin-left : 10px;
+    width : 400px;
+}
+
+/* ------------------------------------------------- operation */
+#operation_valeur{
+    width : 100px;
+}
+
+#operation_detail{
+    margin-top : 20px;
+}
+
+
+
+/* Couleur de fond et couleur de texte par défaut du label */
+#btn-check-plus + .btn-success {
+    background-color: white; /* ou toute autre couleur par défaut */
+    color: green;
+    border : solid 1px green;
+    margin-left:10px;
+    margin-right:10px;
+}
+
+/* Changez la couleur de fond et la couleur de texte du label lorsque le checkbox est coché */
+#btn-check-plus:checked + .btn-success {
+    background-color: green; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
+#btn-check-plus:hover + .btn-success {
+    background-color: green; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
+
+
+/* Couleur de fond et couleur de texte par défaut du label */
+#btn-check-minus + .btn-danger {
+    background-color: white; /* ou toute autre couleur par défaut */
+    color: red;
+    border : solid 1px red;
+}
+
+/* Changez la couleur de fond et la couleur de texte du label lorsque le checkbox est coché */
+#btn-check-minus:checked + .btn-danger {
+    background-color: red; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
+#btn-check-minus:hover + .btn-danger {
+    background-color: red; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
+
+.historique_date{
+    width: 20%;
+}
+
+.historique_banque{
+    width: 15%;
+}
+
+.historique_detail_operation{
+    width: 40%;
+}
+
+.historique_category_operation{
+    width: 10%;
+    margin-right: 10px;
+}
+
+.historique_montant_operation{
+    width: 15%;
+    padding-left: 10px;
+}
+

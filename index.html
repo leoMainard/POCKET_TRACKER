@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Pocket Tracker</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+    <section id="introduction">
+        <svg class="blob" id="blob1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#2a9d8f" d="M26,-40.5C31.7,-26.2,32.8,-16.1,36.8,-4.8C40.7,6.5,47.5,18.9,44.4,27C41.4,35.1,28.4,38.8,15.2,44.8C2.1,50.9,-11.3,59.4,-27,59.9C-42.6,60.4,-60.5,52.8,-66.7,39.7C-72.9,26.6,-67.4,7.8,-60.7,-7.4C-54.1,-22.5,-46.3,-34.2,-35.9,-47.6C-25.6,-61.1,-12.8,-76.4,-1.3,-74.8C10.2,-73.2,20.3,-54.8,26,-40.5Z" transform="translate(100 100)" />
+        </svg>
+        
+        <h1>POCKET TRACKER</h1>
+        <p>Suivez vos dépenses et gérez votre budget</p>
+        <button id="startButton">Commencer <i class="fas fa-arrow-down"></i></button>
+
+        <svg class="blob" id="blob2" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#2a9d8f" d="M48,-47.5C62.2,-45.3,73.7,-30.2,73.2,-15.5C72.6,-0.9,60,13.2,46.6,17.8C33.1,22.4,18.8,17.5,8.8,18.9C-1.3,20.3,-7.2,28.1,-18.5,32.1C-29.8,36.1,-46.5,36.3,-56.2,28.2C-66,20.1,-68.8,3.7,-68.3,-14.2C-67.7,-32.2,-63.8,-51.8,-51.9,-54.4C-39.9,-57,-20,-42.8,-1.5,-40.9C16.9,-39.1,33.8,-49.7,48,-47.5Z" transform="translate(100 100)" />
+        </svg>
+    </section>
+
+
+    <section id="appContent" class="container-fluid">
+      <div class="row">
+          <div class="action col-12 d-flex align-items-center justify-content-center">
+              <i class="fas fa-wallet text-white position-absolute" style="left: 15px;"></i>
+              <button class="banque" onclick="openModal('bankModal')">Banque / Comptes</button>
+              <button class="operation" onclick="openModal('operationModal')">Opération</button>
+              <button class="virement" onclick="openModal('virementModal')">Virement</button>
+          </div>
+      </div>
+
+    <!-- Modales Banque -->
+    <div id="bankModal" class="modal">
+        <!-- Contenu de la modale -->
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('bankModal')"><i class="fas fa-times-square"></i></span>
+            <h5>Vos banques</h5>
+            <!-- Conteneur pour la sélection et la suppression de la banque -->
+            <div class="bank_selector d-flex align-items-center">
+                <!-- Liste déroulante pour sélectionner une banque -->
+                <div class="flex-grow-1">
+                    <select id="bankList" class="form-control">
+                        <option value="">Sélectionnez une banque</option>
+                    </select>
+                    <i class="fas fa-arrows-alt-v"></i>
+                </div>
+                
+                <!-- Bouton pour supprimer une banque -->
+                <button onclick="deleteBank()" class="btn btn-danger ms-2"><i class="fas fa-trash"></i></button>
+            </div>
+  
+            <!-- Bouton pour ajouter une banque -->
+            <div class="mt-3 d-flex align-items-center">
+                <input type="text" id="newBankName" placeholder="Ajoutez une banque" class="form-control" />
+                <button onclick="addBank()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-plus"></i></button>
+            </div>
+
+
+            <h5 id="titre_comptes">Vos Comptes</h5>
+            <!-- Conteneur pour la sélection et la suppression de la banque -->
+            <div class="bank_selector d-flex align-items-center">
+                <!-- Liste déroulante pour sélectionner une banque -->
+                <div class="flex-grow-1">
+                    <select id="compteList" class="form-control">
+                        <option value="">Sélectionnez un compte</option>
+                    </select>
+                    <i class="fas fa-arrows-alt-v"></i>
+                </div>
+                
+                <!-- Bouton pour supprimer un compte -->
+                <button onclick="deleteCompte()" class="btn btn-danger ms-2"><i class="fas fa-trash"></i></button>
+            </div>
+  
+            <!-- Bouton pour ajouter un compte -->
+            <div class="mt-3 d-flex align-items-center">
+                <input type="text" id="newCompteName" placeholder="Ajoutez un compte" class="form-control" />
+                <button onclick="addCompte()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales Operation -->
+    <div id="operationModal" class="modal">
+        <!-- Contenu de la modale -->
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('operationModal')"><i class="fas fa-times-square"></i></span>
+            <h5>Opération</h5>
+            <!-- Liste déroulante pour sélectionner une banque -->
+            <div class="flex-grow-1">
+                <select id="bankList" class="form-control">
+                    <option value="">Sélectionnez une banque</option>
+                    <option value="BP">BANQUE POSTALE</option>
+                </select>
+                <i class="fas fa-arrows-alt-v"></i>
+            </div>
+
+            <input type="text" id="operation_detail" placeholder="Détail de l'opération (exemple : 'Courses de Noël')" class="form-control" />
+
+            <!-- Bouton pour ajouter un opération -->
+            <div class="mt-3 d-flex align-items-center" id="operation_boutons">
+                <input type="text" id="operation_valeur" placeholder="Montant" class="form-control" />
+                
+                <input type="checkbox" class="btn-check" id="btn-check-plus" autocomplete="off" onchange="toggleCheckbox(this, 'btn-check-minus')" checked>
+                <label class="btn btn-success" for="btn-check-plus"><i class="fas fa-plus"></i></label>
+
+
+                <input type="checkbox" class="btn-check" id="btn-check-minus" autocomplete="off" onchange="toggleCheckbox(this, 'btn-check-plus')">
+                <label class="btn btn-danger" for="btn-check-minus"><i class="fas fa-minus"></i></label>
+
+                <div class="flex-grow-1" id="categorie_list">
+                    <select id="category" class="form-control">
+                        <option value="">Ajoutez une catégorie</option>
+                        <option value="COURSES">COURSES</option>
+                        <option value="SALAIRE">SALAIRE</option>
+                        <option value="AIDE">AIDE</option>
+                        <option value="LOISIRS">LOISIRS</option>
+                        <option value="CHARGES">CHARGES</option>
+
+                    </select>
+                    <i class="fas fa-arrows-alt-v"></i>
+                </div>
+                <button onclick="operation()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-check"></i></i></button>
+            </div>
+
+            <hr>
+            
+            <h5 class="mb-3">Historique des opérations du jour</h5>
+            <div id="historique_container">
+                <div class="operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
+                    <p class="historique_date mb-0">25/01/2024</p>
+                    <p class="historique_banque mb-0">LA POSTE</p>
+                    <p class="historique_detail_operation mb-0">Courses Auchan</p>
+                    <p class="historique_category_operation badge bg-info text-dark mb-0">COURSES</p>
+                    <p class="historique_montant_operation mb-0">-4,95€</p>
+                    <button onclick="delete_historique()" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                </div>
+
+                <div class="operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
+                    <p class="historique_date mb-0">25/01/2024</p>
+                    <p class="historique_banque mb-0">LA POSTE</p>
+                    <p class="historique_detail_operation mb-0">Essence Essence Essence Essence Essence</p>
+                    <p class="historique_category_operation badge bg-warning text-dark mb-0">CHARGES</p>
+                    <p class="historique_montant_operation mb-0">-1032,67€</p>
+                    <button onclick="delete_historique()" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modales Virement -->
+    <div id="virementModal" class="modal">
+        <!-- Contenu de la modale -->
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('virementModal')"><i class="fas fa-times-square"></i></span>
+            <h3>Virement</h3>
+            <!-- Contenu spécifique à la banque -->
+        </div>
+    </div>
+
+      <div class="kpi">
+          <div class="total_avoirs">
+              <h3>Votre solde est de : </h3>
+              <h4>Mes comptes :</h4>
+          </div>
+      </div>
+      <div class="dashboard">
+          <h1>Dashboard</h1>
+      </div>
+    </section>
+  
+    
+    <!-- Lien CDN pour JavaScript de Bootstrap -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
