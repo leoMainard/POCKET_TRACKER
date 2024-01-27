@@ -89,7 +89,7 @@ body button:after {
 
 
 
-/* App Content */
+/* ------------------------------------------------- App Content */
 
 .action {
     background-color: #2a9d8f;
@@ -98,6 +98,11 @@ body button:after {
     align-items: center;
 }
 
+
+/* ------------------------------------------------- nav */
+.row{
+    margin-right: 0 !important;
+}
 
 
 
@@ -242,11 +247,11 @@ body button:after {
 }
 
 
-.historique_date{
+.historique_date_operation{
     width: 20%;
 }
 
-.historique_banque{
+.historique_banque_operation{
     width: 15%;
 }
 
@@ -264,3 +269,25 @@ body button:after {
     padding-left: 10px;
 }
 
+
+/* Pour masquer les flèches dans les navigateurs WebKit comme Chrome, Safari, etc. */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Pour masquer les flèches dans Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
+
+
+/* ------------------------------------------------- virement */
+
+#virement_fleche{
+    margin-left: 5px;
+    margin-right: 5px;
+}

@@ -93,7 +93,7 @@ function toggleCheckbox(current, otherId) {
 
 function operation() {
   // Captation des éléments de l'operation
-  var banque = document.getElementById('bankList').value;
+  var banque = document.getElementById('bankList_operation').value;
   var category = document.getElementById('category').value;
   var detail = document.getElementById('operation_detail').value;
   var montant = document.getElementById('operation_valeur').value;
@@ -101,37 +101,126 @@ function operation() {
   var moins = document.getElementById('btn-check-minus').checked;
   var plus = document.getElementById('btn-check-plus').checked;
 
+  let liste_category = ["COURSES","SALAIRE","AIDE","LOISIRS","CHARGES"]
+  let liste_category_color = ["secondary","success","info","warning","danger"]
+
   var date = new Date();
   var day = ('0' + date.getDate()).slice(-2);
   var month = ('0' + (date.getMonth() + 1)).slice(-2);
   var year = date.getFullYear();
   var dateString = `${day}/${month}/${year}`;
 
-  if (!banque || !category || montant){
-    alert('Veuillez sélectionner une banque.');
+  if (!banque){
+    alert('Veuillez choisir une banque.');
+  }
+  else if (!category){
+    alert('Veuillez choisir une catégorie.');
+  }
+  else if (!montant){
+    alert('Veuillez inscrire un montant.');
+  }
+  else if (!moins && !plus){
+    alert("Veuillez indiquer s'il s'agit d'une opération + ou - .");
+  }
+  else{
+    // signe de l'operation
+    let signe = '+';
+    if (moins){
+      signe = '-';
+    }
+
+    // couleur de la categorie
+    let index = liste_category.indexOf(category.toUpperCase());
+    let color = liste_category_color[index];
+
+    // Créer une nouvelle div avec les classes appropriées
+    var newDiv = document.createElement('div');
+    newDiv.className = 'operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+    
+    // Ajouter le contenu HTML à la nouvelle div
+    newDiv.innerHTML = `
+      <p class="historique_date_operation mb-0">${dateString}</p>
+      <p class="historique_banque_operation mb-0">${banque}</p>
+      <p class="historique_detail_operation mb-0">${detail}</p>
+      <p class="historique_category_operation badge bg-${color} text-dark mb-0">${category}</p>
+      <p class="historique_montant_operation mb-0">${signe}${montant}€</p>
+      <button onclick="delete_historique_operation(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+    `;
+    
+    // Ajouter la nouvelle div à un conteneur existant dans votre document
+    var container = document.getElementById('historique_container_operation'); // Assurez-vous que cet ID existe dans votre HTML
+    container.prepend(newDiv);
+
+    // Reinitialisation des inputs
+    document.getElementById('operation_detail').value = '';
+    document.getElementById('operation_valeur').value = '';
   }
 
-  // Créer une nouvelle div avec les classes appropriées
-  var newDiv = document.createElement('div');
-  newDiv.className = 'operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
   
-  // Ajouter le contenu HTML à la nouvelle div
-  newDiv.innerHTML = `
-    <p class="historique_date mb-0">${dateString}</p>
-    <p class="historique_banque mb-0">${banque}</p>
-    <p class="historique_detail_operation mb-0">${detail}</p>
-    <p class="historique_category_operation badge bg-warning text-dark mb-0">${category}</p>
-    <p class="historique_montant_operation mb-0">${montant}</p>
-    <button onclick="delete_historique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-  `;
-  
-  // Ajouter la nouvelle div à un conteneur existant dans votre document
-  var container = document.getElementById('historique_container'); // Assurez-vous que cet ID existe dans votre HTML
-  container.appendChild(newDiv);
 }
 
 
-function delete_historique(element) {
+function delete_historique_operation(element) {
   // Supprime la div operation_historique du DOM
+  element.parentElement.remove();
+}
+
+
+
+
+// ---------------------------------------------------------------------------------- Gestion des virements
+
+function virement() {
+  // Captation des éléments de l'operation
+  var debit = document.getElementById('compteList_virement_debit').value;
+  var credit = document.getElementById('compteList_virement_credit').value;
+  var banque = document.getElementById('banqueList_virement').value;
+  var montant = document.getElementById('virement_valeur').value;
+
+
+  var date = new Date();
+  var day = ('0' + date.getDate()).slice(-2);
+  var month = ('0' + (date.getMonth() + 1)).slice(-2);
+  var year = date.getFullYear();
+  var dateString = `${day}/${month}/${year}`;
+
+  if (!banque){
+    alert('Veuillez choisir une banque.');
+  }
+  else if (!debit){
+    alert('Veuillez choisir un compte débiteur.');
+  }
+  else if (!montant){
+    alert('Veuillez inscrire un montant.');
+  }
+  else if (!credit){
+    alert("Veuillez choisir un compte créditeur");
+  }
+  else{
+    // Créer une nouvelle div avec les classes appropriées
+    var newDiv = document.createElement('div');
+    newDiv.className = 'virement_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+    
+    // Ajouter le contenu HTML à la nouvelle div
+    newDiv.innerHTML = `
+      <p class="historique_date_virement mb-0">${dateString}</p>
+      <p class="historique_banque_virement mb-0">${banque}</p>
+      <p class="historique_debit_virement mb-0">Débit : ${debit}</p>
+      <p class="historique_credit_virement mb-0">Crédit : ${credit}</p>
+      <p class="historique_montant_virement mb-0">${montant}€</p>
+      <button onclick="delete_historique_virement(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+    `;
+    
+    // Ajouter la nouvelle div à un conteneur existant dans votre document
+    var container = document.getElementById('historique_container_virement'); // Assurez-vous que cet ID existe dans votre HTML
+    container.prepend(newDiv);
+
+    // Reinitialisation des inputs
+    document.getElementById('virement_valeur').value = '';
+  }
+}
+
+function delete_historique_virement(element) {
+  // Supprime la div virement_historique du DOM
   element.parentElement.remove();
 }

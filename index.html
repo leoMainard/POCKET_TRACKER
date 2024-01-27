@@ -35,144 +35,168 @@
           </div>
       </div>
 
-    <!-- Modales Banque -->
-    <div id="bankModal" class="modal">
-        <!-- Contenu de la modale -->
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('bankModal')"><i class="fas fa-times-square"></i></span>
-            <h5>Vos banques</h5>
-            <!-- Conteneur pour la sélection et la suppression de la banque -->
-            <div class="bank_selector d-flex align-items-center">
+        <!-- --------------------------------------------------------------------- Modales Banque -->
+        <div id="bankModal" class="modal">
+            <!-- Contenu de la modale -->
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('bankModal')"><i class="fas fa-times-square"></i></span>
+                <h5>Vos banques</h5>
+                <!-- Conteneur pour la sélection et la suppression de la banque -->
+                <div class="bank_selector d-flex align-items-center">
+                    <!-- Liste déroulante pour sélectionner une banque -->
+                    <div class="flex-grow-1">
+                        <select id="bankList" class="form-control">
+                            <option value="">Sélectionnez une banque</option>
+                        </select>
+                        <i class="fas fa-arrows-alt-v"></i>
+                    </div>
+                    
+                    <!-- Bouton pour supprimer une banque -->
+                    <button onclick="deleteBank()" class="btn btn-danger ms-2"><i class="fas fa-trash"></i></button>
+                </div>
+    
+                <!-- Bouton pour ajouter une banque -->
+                <div class="mt-3 d-flex align-items-center">
+                    <input type="text" id="newBankName" placeholder="Ajoutez une banque" class="form-control" />
+                    <button onclick="addBank()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-plus"></i></button>
+                </div>
+
+
+                <h5 id="titre_comptes">Vos Comptes</h5>
+                <!-- Conteneur pour la sélection et la suppression de la banque -->
+                <div class="bank_selector d-flex align-items-center">
+                    <!-- Liste déroulante pour sélectionner une banque -->
+                    <div class="flex-grow-1">
+                        <select id="compteList" class="form-control">
+                            <option value="">Sélectionnez un compte</option>
+                        </select>
+                        <i class="fas fa-arrows-alt-v"></i>
+                    </div>
+                    
+                    <!-- Bouton pour supprimer un compte -->
+                    <button onclick="deleteCompte()" class="btn btn-danger ms-2"><i class="fas fa-trash"></i></button>
+                </div>
+    
+                <!-- Bouton pour ajouter un compte -->
+                <div class="mt-3 d-flex align-items-center">
+                    <input type="text" id="newCompteName" placeholder="Ajoutez un compte" class="form-control" />
+                    <button onclick="addCompte()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- --------------------------------------------------------------------- Modales Operation -->
+        <div id="operationModal" class="modal">
+            <!-- Contenu de la modale -->
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('operationModal')"><i class="fas fa-times-square"></i></span>
+                <h5>Opération</h5>
                 <!-- Liste déroulante pour sélectionner une banque -->
                 <div class="flex-grow-1">
-                    <select id="bankList" class="form-control">
+                    <select id="bankList_operation" class="form-control">
                         <option value="">Sélectionnez une banque</option>
+                        <option value="BP">BANQUE POSTALE</option>
                     </select>
                     <i class="fas fa-arrows-alt-v"></i>
                 </div>
+
+                <input type="text" id="operation_detail" placeholder="Détail de l'opération (exemple : 'Courses de Noël')" class="form-control" />
+
+                <!-- Bouton pour ajouter un opération -->
+                <div class="mt-3 d-flex align-items-center" id="operation_boutons">
+                    <input type="number" id="operation_valeur" placeholder="Montant" class="form-control" />
+                    
+                    <input type="checkbox" class="btn-check" id="btn-check-plus" autocomplete="off" onchange="toggleCheckbox(this, 'btn-check-minus')" checked>
+                    <label class="btn btn-success" for="btn-check-plus"><i class="fas fa-plus"></i></label>
+
+
+                    <input type="checkbox" class="btn-check" id="btn-check-minus" autocomplete="off" onchange="toggleCheckbox(this, 'btn-check-plus')">
+                    <label class="btn btn-danger" for="btn-check-minus"><i class="fas fa-minus"></i></label>
+
+                    <div class="flex-grow-1" id="categorie_list">
+                        <select id="category" class="form-control">
+                            <option value="">Ajoutez une catégorie</option>
+                            <option value="COURSES">COURSES</option>
+                            <option value="SALAIRE">SALAIRE</option>
+                            <option value="AIDE">AIDE</option>
+                            <option value="LOISIRS">LOISIRS</option>
+                            <option value="CHARGES">CHARGES</option>
+
+                        </select>
+                        <i class="fas fa-arrows-alt-v"></i>
+                    </div>
+                    <button onclick="operation()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-check"></i></i></button>
+                </div>
+
+                <hr>
                 
-                <!-- Bouton pour supprimer une banque -->
-                <button onclick="deleteBank()" class="btn btn-danger ms-2"><i class="fas fa-trash"></i></button>
-            </div>
-  
-            <!-- Bouton pour ajouter une banque -->
-            <div class="mt-3 d-flex align-items-center">
-                <input type="text" id="newBankName" placeholder="Ajoutez une banque" class="form-control" />
-                <button onclick="addBank()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-plus"></i></button>
-            </div>
+                <h5 class="mb-3">Historique des opérations du jour</h5>
+                <div id="historique_container_operation">
+                        <!-- contient l'historique des operations du jour -->
+                </div>
 
+            </div>
+        </div>
 
-            <h5 id="titre_comptes">Vos Comptes</h5>
-            <!-- Conteneur pour la sélection et la suppression de la banque -->
-            <div class="bank_selector d-flex align-items-center">
+        <!-- --------------------------------------------------------------------- Modales Virement -->
+        <div id="virementModal" class="modal">
+            <!-- Contenu de la modale -->
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('virementModal')"><i class="fas fa-times-square"></i></span>
+                <h5>Virement</h5>
+
                 <!-- Liste déroulante pour sélectionner une banque -->
                 <div class="flex-grow-1">
-                    <select id="compteList" class="form-control">
-                        <option value="">Sélectionnez un compte</option>
+                    <select id="banqueList_virement" class="form-control">
+                        <option value="">Sélectionnez une banque</option>
+                        <option value="BP">BANQUE POSTALE</option>
                     </select>
                     <i class="fas fa-arrows-alt-v"></i>
                 </div>
-                
-                <!-- Bouton pour supprimer un compte -->
-                <button onclick="deleteCompte()" class="btn btn-danger ms-2"><i class="fas fa-trash"></i></button>
-            </div>
-  
-            <!-- Bouton pour ajouter un compte -->
-            <div class="mt-3 d-flex align-items-center">
-                <input type="text" id="newCompteName" placeholder="Ajoutez un compte" class="form-control" />
-                <button onclick="addCompte()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-plus"></i></button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Modales Operation -->
-    <div id="operationModal" class="modal">
-        <!-- Contenu de la modale -->
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('operationModal')"><i class="fas fa-times-square"></i></span>
-            <h5>Opération</h5>
-            <!-- Liste déroulante pour sélectionner une banque -->
-            <div class="flex-grow-1">
-                <select id="bankList" class="form-control">
-                    <option value="">Sélectionnez une banque</option>
-                    <option value="BP">BANQUE POSTALE</option>
-                </select>
-                <i class="fas fa-arrows-alt-v"></i>
-            </div>
+                <!-- Liste déroulante pour sélectionner un compte -->
+                <div class="mt-3 d-flex align-items-center" id="virement_boutons">
+                    <div class="flex-grow-1" >
+                        <select id="compteList_virement_debit" class="form-control">
+                            <option value="">Compte débiteur</option>
+                            <option value="CC">CC</option>
+                            <option value="A">Livret A</option>
+                        </select>
+                        <i class="fas fa-arrows-alt-v"></i>
+                    </div>
+                    
+                    <i class="fas fa-arrow-circle-right" id="virement_fleche"></i>
 
-            <input type="text" id="operation_detail" placeholder="Détail de l'opération (exemple : 'Courses de Noël')" class="form-control" />
-
-            <!-- Bouton pour ajouter un opération -->
-            <div class="mt-3 d-flex align-items-center" id="operation_boutons">
-                <input type="text" id="operation_valeur" placeholder="Montant" class="form-control" />
-                
-                <input type="checkbox" class="btn-check" id="btn-check-plus" autocomplete="off" onchange="toggleCheckbox(this, 'btn-check-minus')" checked>
-                <label class="btn btn-success" for="btn-check-plus"><i class="fas fa-plus"></i></label>
-
-
-                <input type="checkbox" class="btn-check" id="btn-check-minus" autocomplete="off" onchange="toggleCheckbox(this, 'btn-check-plus')">
-                <label class="btn btn-danger" for="btn-check-minus"><i class="fas fa-minus"></i></label>
-
-                <div class="flex-grow-1" id="categorie_list">
-                    <select id="category" class="form-control">
-                        <option value="">Ajoutez une catégorie</option>
-                        <option value="COURSES">COURSES</option>
-                        <option value="SALAIRE">SALAIRE</option>
-                        <option value="AIDE">AIDE</option>
-                        <option value="LOISIRS">LOISIRS</option>
-                        <option value="CHARGES">CHARGES</option>
-
-                    </select>
-                    <i class="fas fa-arrows-alt-v"></i>
+                    <div class="flex-grow-1">
+                        <select id="compteList_virement_credit" class="form-control">
+                            <option value="">Compte créditeur</option>
+                            <option value="A">Livret A</option>
+                            <option value="CC">CC</option>
+                        </select>
+                        <i class="fas fa-arrows-alt-v"></i>
+                    </div>
                 </div>
-                <button onclick="operation()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-check"></i></i></button>
-            </div>
-
-            <hr>
-            
-            <h5 class="mb-3">Historique des opérations du jour</h5>
-            <div id="historique_container">
-                <div class="operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
-                    <p class="historique_date mb-0">25/01/2024</p>
-                    <p class="historique_banque mb-0">LA POSTE</p>
-                    <p class="historique_detail_operation mb-0">Courses Auchan</p>
-                    <p class="historique_category_operation badge bg-info text-dark mb-0">COURSES</p>
-                    <p class="historique_montant_operation mb-0">-4,95€</p>
-                    <button onclick="delete_historique()" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                <div class="mt-3 d-flex align-items-center" id="virement_boutons">
+                    <input type="number" id="virement_valeur" placeholder="Montant" class="form-control" />
+                    <button onclick="virement()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-check"></i></i></button>
                 </div>
 
-                <div class="operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
-                    <p class="historique_date mb-0">25/01/2024</p>
-                    <p class="historique_banque mb-0">LA POSTE</p>
-                    <p class="historique_detail_operation mb-0">Essence Essence Essence Essence Essence</p>
-                    <p class="historique_category_operation badge bg-warning text-dark mb-0">CHARGES</p>
-                    <p class="historique_montant_operation mb-0">-1032,67€</p>
-                    <button onclick="delete_historique()" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                <h5 class="mb-3">Historique des virements du jour</h5>
+                <div id="historique_container_virement">
+                    <!-- contient l'historique des virements du jour -->
                 </div>
             </div>
-
         </div>
-    </div>
 
-    <!-- Modales Virement -->
-    <div id="virementModal" class="modal">
-        <!-- Contenu de la modale -->
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('virementModal')"><i class="fas fa-times-square"></i></span>
-            <h3>Virement</h3>
-            <!-- Contenu spécifique à la banque -->
+        <div class="kpi">
+            <div class="total_avoirs">
+                <h3>Votre solde est de : </h3>
+                <h4>Mes comptes :</h4>
+            </div>
         </div>
-    </div>
-
-      <div class="kpi">
-          <div class="total_avoirs">
-              <h3>Votre solde est de : </h3>
-              <h4>Mes comptes :</h4>
-          </div>
-      </div>
-      <div class="dashboard">
-          <h1>Dashboard</h1>
-      </div>
+        <div class="dashboard">
+            <h1>Dashboard</h1>
+        </div>
     </section>
   
     
