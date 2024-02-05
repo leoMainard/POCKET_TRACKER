@@ -210,8 +210,8 @@ function updateComptesList_virement(comptes) {
   var compteList_virement_debit = document.getElementById('compteList_virement_debit');
   var compteList_virement_credit = document.getElementById('compteList_virement_credit');
 
-  compteList_virement_debit.innerHTML = '<option value="">Sélectionnez un compte</option>'; // Nettoyer la liste existante
-  compteList_virement_credit.innerHTML = '<option value="">Sélectionnez un compte</option>'; // Nettoyer la liste existante
+  compteList_virement_debit.innerHTML = '<option value="">Compte débiteur</option>'; // Nettoyer la liste existante
+  compteList_virement_credit.innerHTML = '<option value="">Compte créditeur</option>'; // Nettoyer la liste existante
 
   // Ajouter les options de compte filtrées
   comptes.forEach(function(compte) {
@@ -226,6 +226,14 @@ function updateComptesList_virement(comptes) {
 
 
 function updateComptesListBasedOnBank(bankId, modaleId) {
+
+  if(bankId === '' || isNaN(bankId)){
+    clearComptesList(modaleId);
+    return;
+  }
+
+  console.log(bankId)
+
   const transaction = db.transaction(['comptes'], 'readonly');
   const store = transaction.objectStore('comptes');
   const index = store.index('banques_id');
@@ -243,6 +251,19 @@ function updateComptesListBasedOnBank(bankId, modaleId) {
 
   request.onerror = function() {
     console.error('Erreur lors de la récupération des comptes filtrés');
+  };
+}
+
+function clearComptesList(modaleId) {
+  
+  if (modaleId === 'modale1'){
+    const compteList = document.getElementById('compteList');
+    compteList.innerHTML = '<option value="">Sélectionnez une banque</option>';
+  }else if(modaleId === 'modale2'){
+    const compteList_virement_debit = document.getElementById('compteList_virement_debit');
+    const compteList_virement_credit = document.getElementById('compteList_virement_credit');
+    compteList_virement_debit.innerHTML = '<option value="">Sélectionnez une banque</option>';
+    compteList_virement_credit.innerHTML = '<option value="">Sélectionnez une banque</option>';
   };
 }
 
@@ -273,6 +294,13 @@ function openModal(modalId) {
     selectElements.forEach(function(select) {
       select.value = defaultOptionValue; // Réinitialiser la valeur à celle de l'option par défaut
     });
+
+    if (modalId === 'bankModal'){
+      updateComptesListBasedOnBank(NaN, 'modale1');
+    }else if(modalId === 'virementModal'){
+      updateComptesListBasedOnBank(NaN, 'modale2');
+    };
+
   }
   
   // Fonction pour fermer la modale spécifique
