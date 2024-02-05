@@ -61,7 +61,7 @@ function addBankToDB(bankName) {
   request.onsuccess = function(event) {
     const newBankId = event.target.result; // L'ID de la nouvelle banque
     console.log('Banque ajoutée avec succès, ID:', newBankId);
-    addCompteToDB('CC', 0, newBankId); // Utiliser l'ID ici pour lier le compte à la banque
+    addCompteToDB('CC', newBankId); // Utiliser l'ID ici pour lier le compte à la banque
     loadBanks(); // Mettre à jour l'interface utilisateur ici...
   };
 
@@ -98,7 +98,7 @@ function updateBankList(banks) {
   banks.forEach(function(bank) {
     ['bankList', 'bankList_operation', 'banqueList_virement'].forEach(function(listId) {
       var option = document.createElement('option');
-      option.value = bank.id; // ou bank.bankName si vous voulez afficher le nom
+      option.value = bank.banques_id; // ou bank.bankName si vous voulez afficher le nom
       option.textContent = bank.bankName; // ou tout autre propriété de l'objet banque
       document.getElementById(listId).appendChild(option.cloneNode(true)); // Clone l'option pour chaque liste
     });
@@ -111,9 +111,78 @@ function deleteBankFromDb(bankId) {
   const objectStore = transaction.objectStore('banques');
   const request = objectStore.delete(bankId);
 
+  deleteAssociatedAccounts(bankId)
+
   request.onsuccess = function(event) {
     alert('Banque supprimée avec succès.');
     loadBanks() // Mettre à jour l'interface utilisateur après la suppression
+
+    updateComptesListBasedOnBank(bankId, 'modale1');
+  };
+
+  request.onerror = function(event) {
+    console.error('Erreur lors de la suppression de la banque', event);
+  };
+}
+
+function deleteAssociatedAccounts(bankId) {
+  const transaction = db.transaction(['comptes'], 'readwrite');
+  const store = transaction.objectStore('comptes');
+
+  // Créer une requête pour trouver tous les comptes avec le bankId spécifié
+  const index = store.index('banques_id'); // Assurez-vous que cet index existe
+  const request = index.openCursor(IDBKeyRange.only(bankId));
+
+  request.onsuccess = function(event) {
+    const cursor = event.target.result;
+    if (cursor) {
+      // Supprimer chaque compte trouvé
+      store.delete(cursor.primaryKey);
+      cursor.continue(); // Continuer à parcourir les comptes suivants
+    } else {
+      // Tous les comptes associés ont été traités
+      console.log('Tous les comptes associés à la banque ont été supprimés');
+    }
+  };
+
+  request.onerror = function(event) {
+    console.error('Erreur lors de la suppression des comptes associés', event);
+  };
+}
+
+
+
+// --------------- 
+// --------------- Comptes
+// --------------- 
+
+function addCompteToDB(nom_compte, banques_id) {
+  const transaction_compte = db.transaction(['comptes'], 'readwrite');
+  const objectStore_compte = transaction_compte.objectStore('comptes');
+  const compteData = { nom_compte, montant_compte : 0 , banques_id };
+  const request_compte = objectStore_compte.add(compteData);
+
+  request_compte.onsuccess = function() {
+    console.log('Compte ajoutée avec succès');
+    updateComptesListBasedOnBank(parseInt(banques_id), 'modale1');
+  };
+
+  request_compte.onerror = function() {
+    console.error('Erreur lors de l\'ajout de la banque');
+  };
+}
+
+
+function deleteCompteFromDb(compteId) {
+  const transaction = db.transaction(['comptes'], 'readwrite');
+  const objectStore = transaction.objectStore('comptes');
+  const request = objectStore.delete(compteId);
+
+  request.onsuccess = function(event) {
+    alert('Compte supprimée avec succès.');
+    var bank_id = document.getElementById('bankList').value;
+
+    updateComptesListBasedOnBank(parseInt(bank_id), 'modale1');
   };
 
   request.onerror = function(event) {
@@ -122,25 +191,61 @@ function deleteBankFromDb(bankId) {
 }
 
 
-// --------------- 
-// --------------- Comptes
-// --------------- 
+function updateComptesList_banque(comptes) {
+  var compteList = document.getElementById('compteList');
 
-function addCompteToDB(nom_compte, banque_id) {
-  const transaction_compte = db.transaction(['comptes'], 'readwrite');
-  const objectStore_compte = transaction_compte.objectStore('comptes');
-  const compteData = { nom_compte, montant_compte : 0 , banque_id };
-  const request_compte = objectStore_compte.add(compteData);
+  compteList.innerHTML = '<option value="">Sélectionnez un compte</option>'; // Nettoyer la liste existante
 
-  request_compte.onsuccess = function() {
-    console.log('Compte ajoutée avec succès');
-    // loadComptes(); // Mettre à jour l'interface utilisateur ici...
+  // Ajouter les options de compte filtrées
+  comptes.forEach(function(compte) {
+    var option = document.createElement('option');
+    option.value = compte.comptes_id; // Assurez-vous que cela correspond à votre structure de données
+    option.textContent = compte.nom_compte;
+
+    compteList.appendChild(option);
+  });
+}
+
+function updateComptesList_virement(comptes) {
+  var compteList_virement_debit = document.getElementById('compteList_virement_debit');
+  var compteList_virement_credit = document.getElementById('compteList_virement_credit');
+
+  compteList_virement_debit.innerHTML = '<option value="">Sélectionnez un compte</option>'; // Nettoyer la liste existante
+  compteList_virement_credit.innerHTML = '<option value="">Sélectionnez un compte</option>'; // Nettoyer la liste existante
+
+  // Ajouter les options de compte filtrées
+  comptes.forEach(function(compte) {
+    var option = document.createElement('option');
+    option.value = compte.comptes_id; // Assurez-vous que cela correspond à votre structure de données
+    option.textContent = compte.nom_compte;
+    [compteList_virement_debit, compteList_virement_credit].forEach(function(list) {
+      list.appendChild(option.cloneNode(true));
+    });
+  });
+}
+
+
+function updateComptesListBasedOnBank(bankId, modaleId) {
+  const transaction = db.transaction(['comptes'], 'readonly');
+  const store = transaction.objectStore('comptes');
+  const index = store.index('banques_id');
+  const request = index.getAll(IDBKeyRange.only(bankId));
+
+  request.onsuccess = function() {
+    const comptes = request.result; // Les comptes filtrés par bankId
+    if (modaleId === 'modale1') {
+      updateComptesList_banque(comptes); // Mettre à jour la liste dans le modale 1
+    } else if (modaleId === 'modale2') {
+      updateComptesList_virement(comptes); // Mettre à jour la liste dans le modale 2
+      // Assurez-vous d'avoir les ID corrects pour vos éléments de liste de comptes
+    }
   };
 
-  request_compte.onerror = function() {
-    console.error('Erreur lors de l\'ajout de la banque');
+  request.onerror = function() {
+    console.error('Erreur lors de la récupération des comptes filtrés');
   };
 }
+
 
 // --------------- 
 // --------------- Operations
@@ -160,12 +265,30 @@ document.getElementById('startButton').addEventListener('click', function() {
 // ---------------------------------------------------------------------------------- Fonction pour ouvrir une modale spécifique
 function openModal(modalId) {
     document.getElementById(modalId).style.display = 'block';
+
+    // Identifier et réinitialiser les listes déroulantes dans le modale
+    const defaultOptionValue = ''; // La valeur de l'option par défaut
+    const selectElements = document.querySelectorAll(`#${modalId} select`); // Sélectionner tous les éléments <select> dans le modale
+
+    selectElements.forEach(function(select) {
+      select.value = defaultOptionValue; // Réinitialiser la valeur à celle de l'option par défaut
+    });
   }
   
   // Fonction pour fermer la modale spécifique
   function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
   }
+
+  // Lors des changements de banque, les comptes s'adaptent
+
+  document.getElementById('bankList').addEventListener('change', function() {
+    updateComptesListBasedOnBank(parseInt(this.value), 'modale1');
+  });
+  
+  document.getElementById('banqueList_virement').addEventListener('change', function() {
+    updateComptesListBasedOnBank(parseInt(this.value), 'modale2');
+  });
 
 // ---------------------------------------------------------------------------------- Gestion de la banque
 
@@ -225,7 +348,7 @@ function addCompte() {
     option.text = nom_compte;
     compteList.add(option)
 
-    addCompteToDB(nom_compte, banque_id);
+    addCompteToDB(nom_compte, parseInt(banque_id));
 
     // Réinitialisez le champ de texte
     document.getElementById('newCompteName').value = '';
@@ -239,8 +362,10 @@ function deleteCompte() {
   var compteList = document.getElementById('compteList');
   var compteName = compteList.value;
   if(compteName) {
-      // Ajoutez ici la logique pour supprimer la banque sélectionnée
-      compteList.remove(compteList.selectedIndex);
+      // Supposer que l'ID de la banque est stocké dans la valeur de l'option
+      var compteId = compteList.options[compteList.selectedIndex].value;
+      
+      deleteCompteFromDb(parseInt(compteId));
   } else {
       alert('Veuillez sélectionner un compte à supprimer.');
   }
