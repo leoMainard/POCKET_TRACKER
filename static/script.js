@@ -1,4 +1,11 @@
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------- Gestion de la base de données indexedDb
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 let db;
 
 function initDb() {
@@ -14,9 +21,8 @@ function initDb() {
 
     // Création de la base comptes
     if (!db.objectStoreNames.contains('comptes')) {
-      const comptesStore = db.createObjectStore('comptes', { keyPath: 'comptes_id', autoIncrement: true });
+      const comptesStore = db.createObjectStore('comptes', { keyPath: ['banques_id', 'nom_compte'] });
       comptesStore.createIndex('banques_id', 'banques_id', { unique: false });
-      comptesStore.createIndex('nom_compte', 'nom_compte', { unique: false });
       comptesStore.createIndex('montant_compte', 'montant_compte', { unique: false });
     }
   };
@@ -49,9 +55,15 @@ function deleteDatabase() {
 
 
 
-// --------------- 
+
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // --------------- Banque
-// --------------- 
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 
 function addBankToDB(bankName) {
   const transaction = db.transaction(['banques'], 'readwrite');
@@ -152,14 +164,28 @@ function deleteAssociatedAccounts(bankId) {
 
 
 
-// --------------- 
+
+
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // --------------- Comptes
-// --------------- 
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 
 function addCompteToDB(nom_compte, banques_id) {
+  nom_compte = nom_compte.toUpperCase();
+
   const transaction_compte = db.transaction(['comptes'], 'readwrite');
   const objectStore_compte = transaction_compte.objectStore('comptes');
-  const compteData = { nom_compte, montant_compte : 0 , banques_id };
+  const compteData = {
+    // La clé composée est un tableau de [banques_id, nom_compte]
+    banques_id: banques_id, 
+    nom_compte: nom_compte, 
+    montant_compte: 0
+  };
   const request_compte = objectStore_compte.add(compteData);
 
   request_compte.onsuccess = function() {
@@ -173,15 +199,15 @@ function addCompteToDB(nom_compte, banques_id) {
 }
 
 
-function deleteCompteFromDb(compteId) {
+function deleteCompteFromDb(nom_compte) {
+  var bank_id = document.getElementById('bankList').value;
+
   const transaction = db.transaction(['comptes'], 'readwrite');
   const objectStore = transaction.objectStore('comptes');
-  const request = objectStore.delete(compteId);
+  const request = objectStore.delete([parseInt(bank_id), nom_compte]);
 
   request.onsuccess = function(event) {
     alert('Compte supprimée avec succès.');
-    var bank_id = document.getElementById('bankList').value;
-
     updateComptesListBasedOnBank(parseInt(bank_id), 'modale1');
   };
 
@@ -192,6 +218,7 @@ function deleteCompteFromDb(compteId) {
 
 
 function updateComptesList_banque(comptes) {
+
   var compteList = document.getElementById('compteList');
 
   compteList.innerHTML = '<option value="">Sélectionnez un compte</option>'; // Nettoyer la liste existante
@@ -199,7 +226,7 @@ function updateComptesList_banque(comptes) {
   // Ajouter les options de compte filtrées
   comptes.forEach(function(compte) {
     var option = document.createElement('option');
-    option.value = compte.comptes_id; // Assurez-vous que cela correspond à votre structure de données
+    option.value = compte.nom_compte; // Assurez-vous que cela correspond à votre structure de données
     option.textContent = compte.nom_compte;
 
     compteList.appendChild(option);
@@ -216,7 +243,7 @@ function updateComptesList_virement(comptes) {
   // Ajouter les options de compte filtrées
   comptes.forEach(function(compte) {
     var option = document.createElement('option');
-    option.value = compte.comptes_id; // Assurez-vous que cela correspond à votre structure de données
+    option.value = compte.nom_compte; // Assurez-vous que cela correspond à votre structure de données
     option.textContent = compte.nom_compte;
     [compteList_virement_debit, compteList_virement_credit].forEach(function(list) {
       list.appendChild(option.cloneNode(true));
@@ -226,13 +253,10 @@ function updateComptesList_virement(comptes) {
 
 
 function updateComptesListBasedOnBank(bankId, modaleId) {
-
   if(bankId === '' || isNaN(bankId)){
     clearComptesList(modaleId);
     return;
   }
-
-  console.log(bankId)
 
   const transaction = db.transaction(['comptes'], 'readonly');
   const store = transaction.objectStore('comptes');
@@ -268,14 +292,84 @@ function clearComptesList(modaleId) {
 }
 
 
-// --------------- 
+
+
+
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // --------------- Operations
-// --------------- 
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+
+function addOperationToDB(banque, category, detail, montant, signe, date){
+  // Ajout ou soustraction du montant dans le compte CC de la banque
+  const operation_compte = db.transaction(['comptes'], 'readwrite');
+  const objectStore_compte = operation_compte.objectStore('comptes');
+
+  const compteKey = [banque, 'CC'];
+  const getRequest = objectStore_compte.get(compteKey);
+
+  getRequest.onsuccess = function() {
+    const compte = getRequest.result;
+    if (compte) {
+      // Compte trouvé, mettre à jour le montant
+      if (signe === '+'){
+        compte.montant_compte += montant;
+      }else{
+        compte.montant_compte -= montant;
+      }
+      
+
+      // Sauvegarder l'enregistrement mis à jour
+      const updateRequest = objectStore_compte.put(compte);
+
+      updateRequest.onsuccess = function() {
+        console.log('Le montant du compte a été mis à jour avec succès.');
+      };
+
+      updateRequest.onerror = function(event) {
+        console.error('Erreur lors de la mise à jour du montant du compte', event);
+      };
+    } else {
+      console.log('Compte non trouvé.');
+    }
+  };
+
+  getRequest.onerror = function(event) {
+    console.error('Erreur lors de la récupération du compte', event);
+  };
+
+  // Ajout de l'opération dans l'historique
+
+  // Mise à jour de l'affichage historique du jour
+  // Gestion de la suppression d'une opération
+}
 
 
-// --------------- 
+// const transaction_compte = db.transaction(['comptes'], 'readwrite');
+//   const objectStore_compte = transaction_compte.objectStore('comptes');
+//   const compteData = { nom_compte, montant_compte : 0 , banques_id };
+//   const request_compte = objectStore_compte.add(compteData);
+
+//   request_compte.onsuccess = function() {
+//     console.log('Compte ajoutée avec succès');
+//     updateComptesListBasedOnBank(parseInt(banques_id), 'modale1');
+//   };
+
+//   request_compte.onerror = function() {
+//     console.error('Erreur lors de l\'ajout de la banque');
+//   };
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // --------------- Virements
-// --------------- 
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 
 
 // ---------------------------------------------------------------------------------- Introduction vers contenu
@@ -363,19 +457,22 @@ function deleteBank() {
 }
 
 
+
+
+
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------- Gestion des comptes
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 function addCompte() {
   var nom_compte = document.getElementById('newCompteName').value;
   var banque_id = document.getElementById('bankList').value;
 
   if(nom_compte && banque_id !== '') {
-    // Ajoutez ici la logique pour ajouter un nouveau compte
-    var compteList = document.getElementById('compteList');
-    var option = document.createElement('option');
-    option.value = nom_compte;
-    option.text = nom_compte;
-    compteList.add(option)
-
     addCompteToDB(nom_compte, parseInt(banque_id));
 
     // Réinitialisez le champ de texte
@@ -390,10 +487,16 @@ function deleteCompte() {
   var compteList = document.getElementById('compteList');
   var compteName = compteList.value;
   if(compteName) {
+    var CC_test = compteList.options[compteList.selectedIndex].text;
+    if(CC_test != 'CC'){
       // Supposer que l'ID de la banque est stocké dans la valeur de l'option
-      var compteId = compteList.options[compteList.selectedIndex].value;
+      // var compte_name = compteList.options[compteList.selectedIndex].value;
+      deleteCompteFromDb(compteName);
+
+    }else{
+      alert('Vous ne pouvez pas supprimer le CC de votre banque.');
+    }
       
-      deleteCompteFromDb(parseInt(compteId));
   } else {
       alert('Veuillez sélectionner un compte à supprimer.');
   }
@@ -402,8 +505,15 @@ function deleteCompte() {
 
 
 
-// ---------------------------------------------------------------------------------- Gestion des opérations
 
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------- Gestion des opérations
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // Bouton checked (+ / -)
 function toggleCheckbox(current, otherId) {
   if (current.checked) {
@@ -443,11 +553,15 @@ function operation() {
     alert("Veuillez indiquer s'il s'agit d'une opération + ou - .");
   }
   else{
+
+    
     // signe de l'operation
     let signe = '+';
     if (moins){
       signe = '-';
     }
+
+    addOperationToDB(parseInt(banque), parseInt(category), detail, parseInt(montant), signe, date);
 
     // couleur de la categorie
     let index = liste_category.indexOf(category.toUpperCase());
@@ -488,8 +602,13 @@ function delete_historique_operation(element) {
 
 
 
-// ---------------------------------------------------------------------------------- Gestion des virements
 
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------- Gestion des virements
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 function virement() {
   // Captation des éléments de l'operation
   var debit = document.getElementById('compteList_virement_debit').value;
@@ -555,7 +674,13 @@ function delete_historique_virement(element) {
 
 
 
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------- Chargement de la page
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
 // Appeler cette fonction au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
   initDb();
