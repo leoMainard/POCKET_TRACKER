@@ -25,6 +25,29 @@ function initDb() {
       comptesStore.createIndex('banques_id', 'banques_id', { unique: false });
       comptesStore.createIndex('montant_compte', 'montant_compte', { unique: false });
     }
+
+    if (!db.objectStoreNames.contains('operations')) {
+      const operationsStore = db.createObjectStore('operations', { keyPath: 'operation_id', autoIncrement: true });
+      
+      // Créer des index pour rechercher des opérations par différents attributs
+      operationsStore.createIndex('banques_id', 'banques_id', { unique: false });
+      operationsStore.createIndex('category', 'category', { unique: false });
+      operationsStore.createIndex('date', 'date', { unique: false });
+      
+      // Note : Pas besoin de créer des index pour 'detail' et 'montant' à moins que vous n'ayez besoin de recherches spécifiques sur ces champs
+    }
+
+    if (!db.objectStoreNames.contains('virements')) {
+      const operationsStore = db.createObjectStore('virements', { keyPath: 'virement_id', autoIncrement: true });
+      
+      // Créer des index pour rechercher des opérations par différents attributs
+      operationsStore.createIndex('banques_id', 'banques_id', { unique: false });
+      operationsStore.createIndex('compte_debit', 'compte_debit', { unique: false });
+      operationsStore.createIndex('compte_credit', 'compte_credit', { unique: false });
+      
+      // Note : Pas besoin de créer un index pour 'montant_virement'
+    }
+
   };
 
   request.onsuccess = function(event) {
@@ -304,24 +327,28 @@ function clearComptesList(modaleId) {
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------
 
-function addOperationToDB(banque, category, detail, montant, signe, date){
+function addOperationToDB(banque_id, banque_name, category, detail, montant, date){
+  operationToCompte(banque_id, montant);
+
+  // Ajout de l'opération dans l'historique
+  operationToHistorique(banque_id, banque_name, category, detail, montant, date)
+
+  // Mise à jour de l'affichage historique du jour
+  // updateOperationListHistorique();
+}
+
+function operationToCompte(banque_id, montant){
   // Ajout ou soustraction du montant dans le compte CC de la banque
   const operation_compte = db.transaction(['comptes'], 'readwrite');
   const objectStore_compte = operation_compte.objectStore('comptes');
 
-  const compteKey = [banque, 'CC'];
+  const compteKey = [banque_id, 'CC'];
   const getRequest = objectStore_compte.get(compteKey);
 
   getRequest.onsuccess = function() {
     const compte = getRequest.result;
     if (compte) {
-      // Compte trouvé, mettre à jour le montant
-      if (signe === '+'){
-        compte.montant_compte += montant;
-      }else{
-        compte.montant_compte -= montant;
-      }
-      
+      compte.montant_compte += montant;
 
       // Sauvegarder l'enregistrement mis à jour
       const updateRequest = objectStore_compte.put(compte);
@@ -341,28 +368,44 @@ function addOperationToDB(banque, category, detail, montant, signe, date){
   getRequest.onerror = function(event) {
     console.error('Erreur lors de la récupération du compte', event);
   };
-
-  // Ajout de l'opération dans l'historique
-
-  // Mise à jour de l'affichage historique du jour
-  // Gestion de la suppression d'une opération
 }
 
+function operationToHistorique(banque_id, banque_name, category, detail, montant, date){
+  const transaction = db.transaction(['operations'], 'readwrite');
+  const store = transaction.objectStore('operations');
+  
+  const operationData = {
+    banques_id: banque_id,
+    category: category,
+    detail: detail,
+    montant: montant,
+    banque_name : banque_name,
+    date: date
+  };
 
-// const transaction_compte = db.transaction(['comptes'], 'readwrite');
-//   const objectStore_compte = transaction_compte.objectStore('comptes');
-//   const compteData = { nom_compte, montant_compte : 0 , banques_id };
-//   const request_compte = objectStore_compte.add(compteData);
+  const request = store.add(operationData);
 
-//   request_compte.onsuccess = function() {
-//     console.log('Compte ajoutée avec succès');
-//     updateComptesListBasedOnBank(parseInt(banques_id), 'modale1');
-//   };
+  request.onsuccess = function() {
+    console.log('Opération ajoutée avec succès.');
+  };
 
-//   request_compte.onerror = function() {
-//     console.error('Erreur lors de l\'ajout de la banque');
-//   };
+  request.onerror = function(event) {
+    console.error("Erreur lors de l'ajout de l'opération", event);
+  };
+}
 
+function updateOperationListHistorique(){
+  //
+}
+
+function deleteOperationHistorique(){
+  // operationToCompte mais dans le sens inverse
+  // operationToCompte(banque_id, montant, signe);
+
+  // Suppression de l'historique
+
+  // updateOperationListHistorique();
+}
 
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -523,7 +566,9 @@ function toggleCheckbox(current, otherId) {
 
 function operation() {
   // Captation des éléments de l'operation
-  var banque = document.getElementById('bankList_operation').value;
+  var banque_id = document.getElementById('bankList_operation').value;
+  var banque_name = document.getElementById('bankList_operation').options[document.getElementById('bankList_operation').selectedIndex].text;
+
   var category = document.getElementById('category').value;
   var detail = document.getElementById('operation_detail').value;
   var montant = document.getElementById('operation_valeur').value;
@@ -540,7 +585,7 @@ function operation() {
   var year = date.getFullYear();
   var dateString = `${day}/${month}/${year}`;
 
-  if (!banque){
+  if (!banque_id){
     alert('Veuillez choisir une banque.');
   }
   else if (!category){
@@ -556,12 +601,15 @@ function operation() {
 
     
     // signe de l'operation
-    let signe = '+';
     if (moins){
-      signe = '-';
+      montant = '-' + montant;
     }
 
-    addOperationToDB(parseInt(banque), parseInt(category), detail, parseInt(montant), signe, date);
+    montant = parseInt(montant);
+
+    console.log(banque_name);
+
+    addOperationToDB(parseInt(banque_id), banque_name, category, detail, montant, date);
 
     // couleur de la categorie
     let index = liste_category.indexOf(category.toUpperCase());
@@ -574,10 +622,10 @@ function operation() {
     // Ajouter le contenu HTML à la nouvelle div
     newDiv.innerHTML = `
       <p class="historique_date_operation mb-0">${dateString}</p>
-      <p class="historique_banque_operation mb-0">${banque}</p>
+      <p class="historique_banque_operation mb-0">${banque_name}</p>
       <p class="historique_detail_operation mb-0">${detail}</p>
       <p class="historique_category_operation badge bg-${color} text-dark mb-0">${category}</p>
-      <p class="historique_montant_operation mb-0">${signe}${montant}€</p>
+      <p class="historique_montant_operation mb-0">${montant}€</p>
       <button onclick="delete_historique_operation(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
     `;
     
