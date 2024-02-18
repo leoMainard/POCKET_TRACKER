@@ -334,7 +334,33 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
   operationToHistorique(banque_id, banque_name, category, detail, montant, date)
 
   // Mise à jour de l'affichage historique du jour
-  // updateOperationListHistorique();
+  let liste_category = ["COURSES","SALAIRE","AIDE","LOISIRS","CHARGES"]
+  let liste_category_color = ["secondary","success","info","warning","danger"]
+
+  // Trouver l'index de la catégorie pour déterminer la couleur
+  let index = liste_category.indexOf(category);
+  let color = liste_category_color[index];
+
+  // Création et configuration de la nouvelle div
+  var newDiv = document.createElement('div');
+  newDiv.className = 'operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+  newDiv.innerHTML = `
+    <p class="historique_date_operation mb-0">${date}</p>
+    <p class="historique_banque_operation mb-0">${banque_name}</p>
+    <p class="historique_detail_operation mb-0">${detail}</p>
+    <p class="historique_category_operation badge bg-${color} text-dark mb-0">${category}</p>
+    <p class="historique_montant_operation mb-0">${montant}€</p>
+    <button onclick="deleteOperationHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+  `;
+
+  // Ajouter la nouvelle div au conteneur
+  var container = document.getElementById('historique_container_operation');
+  container.prepend(newDiv);
+
+  // Réinitialisation des champs après l'affichage des opérations
+  document.getElementById('operation_detail').value = '';
+  document.getElementById('operation_valeur').value = '';
+  
 }
 
 function operationToCompte(banque_id, montant){
@@ -394,11 +420,68 @@ function operationToHistorique(banque_id, banque_name, category, detail, montant
   };
 }
 
-function updateOperationListHistorique(){
-  //
+function updateOperationListHistorique(banques_id){
+  const date = new Date();
+  var day = ('0' + date.getDate()).slice(-2);
+  var month = ('0' + (date.getMonth() + 1)).slice(-2);
+  var year = date.getFullYear();
+  var dateString = `${day}/${month}/${year}`;
+
+  const transaction = db.transaction(['operations'], 'readonly');
+  const store = transaction.objectStore('operations');
+  const dateIndex = store.index('date');
+  const request = dateIndex.getAll(IDBKeyRange.only(dateString));
+
+  request.onsuccess = function(event) {
+    const operations = event.target.result.filter(op => op.banques_id === banques_id);
+
+    let liste_category = ["COURSES","SALAIRE","AIDE","LOISIRS","CHARGES"]
+    let liste_category_color = ["secondary","success","info","warning","danger"]
+
+    // Boucler sur chaque opération récupérée
+    operations.forEach(operation => {
+      // Récupération et traitement des informations de l'opération
+      let category = operation.category; 
+      let detail = operation.detail; 
+      let montant = operation.montant; 
+      let date = operation.date; 
+      let banque_name = operation.banque_name;
+
+      // Trouver l'index de la catégorie pour déterminer la couleur
+      let index = liste_category.indexOf(category);
+      let color = liste_category_color[index];
+
+      // Création et configuration de la nouvelle div
+      var newDiv = document.createElement('div');
+      newDiv.className = 'operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+      newDiv.innerHTML = `
+        <p class="historique_date_operation mb-0">${date}</p>
+        <p class="historique_banque_operation mb-0">${banque_name}</p>
+        <p class="historique_detail_operation mb-0">${detail}</p>
+        <p class="historique_category_operation badge bg-${color} text-dark mb-0">${category}</p>
+        <p class="historique_montant_operation mb-0">${montant}€</p>
+        <button onclick="deleteOperationHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+      `;
+
+      // Ajouter la nouvelle div au conteneur
+      var container = document.getElementById('historique_container_operation');
+      container.prepend(newDiv);
+    });
+
+    // Réinitialisation des champs après l'affichage des opérations
+    document.getElementById('operation_detail').value = '';
+    document.getElementById('operation_valeur').value = '';
+  };
+
+  request.onerror = function(event) {
+    console.error('Erreur lors de la récupération des opérations pour banques_id ' + banques_id, event);
+  };
 }
 
 function deleteOperationHistorique(){
+  // pour la suppression de l'operation de l'historique, je dois ajouter l'index de l'historique et le cacher pour pouvoir le récupérer
+
+
   // operationToCompte mais dans le sens inverse
   // operationToCompte(banque_id, montant, signe);
 
@@ -415,45 +498,9 @@ function deleteOperationHistorique(){
 // ------------------------------------------------------------------------------------------------------------------------
 
 
-// ---------------------------------------------------------------------------------- Introduction vers contenu
-document.getElementById('startButton').addEventListener('click', function() {
-    document.getElementById('appContent').scrollIntoView({behavior: 'smooth'});
-});
 
-// ---------------------------------------------------------------------------------- Fonction pour ouvrir une modale spécifique
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
 
-    // Identifier et réinitialiser les listes déroulantes dans le modale
-    const defaultOptionValue = ''; // La valeur de l'option par défaut
-    const selectElements = document.querySelectorAll(`#${modalId} select`); // Sélectionner tous les éléments <select> dans le modale
-
-    selectElements.forEach(function(select) {
-      select.value = defaultOptionValue; // Réinitialiser la valeur à celle de l'option par défaut
-    });
-
-    if (modalId === 'bankModal'){
-      updateComptesListBasedOnBank(NaN, 'modale1');
-    }else if(modalId === 'virementModal'){
-      updateComptesListBasedOnBank(NaN, 'modale2');
-    };
-
-  }
   
-  // Fonction pour fermer la modale spécifique
-  function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-  }
-
-  // Lors des changements de banque, les comptes s'adaptent
-
-  document.getElementById('bankList').addEventListener('change', function() {
-    updateComptesListBasedOnBank(parseInt(this.value), 'modale1');
-  });
-  
-  document.getElementById('banqueList_virement').addEventListener('change', function() {
-    updateComptesListBasedOnBank(parseInt(this.value), 'modale2');
-  });
 
 // ---------------------------------------------------------------------------------- Gestion de la banque
 
@@ -576,10 +623,7 @@ function operation() {
   var moins = document.getElementById('btn-check-minus').checked;
   var plus = document.getElementById('btn-check-plus').checked;
 
-  let liste_category = ["COURSES","SALAIRE","AIDE","LOISIRS","CHARGES"]
-  let liste_category_color = ["secondary","success","info","warning","danger"]
-
-  var date = new Date();
+  const date = new Date();
   var day = ('0' + date.getDate()).slice(-2);
   var month = ('0' + (date.getMonth() + 1)).slice(-2);
   var year = date.getFullYear();
@@ -609,33 +653,7 @@ function operation() {
 
     console.log(banque_name);
 
-    addOperationToDB(parseInt(banque_id), banque_name, category, detail, montant, date);
-
-    // couleur de la categorie
-    let index = liste_category.indexOf(category.toUpperCase());
-    let color = liste_category_color[index];
-
-    // Créer une nouvelle div avec les classes appropriées
-    var newDiv = document.createElement('div');
-    newDiv.className = 'operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
-    
-    // Ajouter le contenu HTML à la nouvelle div
-    newDiv.innerHTML = `
-      <p class="historique_date_operation mb-0">${dateString}</p>
-      <p class="historique_banque_operation mb-0">${banque_name}</p>
-      <p class="historique_detail_operation mb-0">${detail}</p>
-      <p class="historique_category_operation badge bg-${color} text-dark mb-0">${category}</p>
-      <p class="historique_montant_operation mb-0">${montant}€</p>
-      <button onclick="delete_historique_operation(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-    `;
-    
-    // Ajouter la nouvelle div à un conteneur existant dans votre document
-    var container = document.getElementById('historique_container_operation'); // Assurez-vous que cet ID existe dans votre HTML
-    container.prepend(newDiv);
-
-    // Reinitialisation des inputs
-    document.getElementById('operation_detail').value = '';
-    document.getElementById('operation_valeur').value = '';
+    addOperationToDB(parseInt(banque_id), banque_name, category, detail, montant, dateString);
   }
 
   
@@ -732,4 +750,62 @@ function delete_historique_virement(element) {
 // Appeler cette fonction au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
   initDb();
+});
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------- Autre
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------------- Introduction vers contenu
+document.getElementById('startButton').addEventListener('click', function() {
+  document.getElementById('appContent').scrollIntoView({behavior: 'smooth'});
+});
+
+// ---------------------------------------------------------------------------------- Fonction pour ouvrir une modale spécifique
+function openModal(modalId) {
+  document.getElementById(modalId).style.display = 'block';
+
+  // Identifier et réinitialiser les listes déroulantes dans le modale
+  const defaultOptionValue = ''; // La valeur de l'option par défaut
+  const selectElements = document.querySelectorAll(`#${modalId} select`); // Sélectionner tous les éléments <select> dans le modale
+
+  selectElements.forEach(function(select) {
+    select.value = defaultOptionValue; // Réinitialiser la valeur à celle de l'option par défaut
+  });
+
+  if (modalId === 'bankModal'){
+    updateComptesListBasedOnBank(NaN, 'modale1');
+  }else if(modalId === 'virementModal'){
+    updateComptesListBasedOnBank(NaN, 'modale2');
+  }else if(modalId === 'operationModal'){
+    document.getElementById('historique_container_operation').innerHTML = '';
+  };
+
+}
+
+// Fonction pour fermer la modale spécifique
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+// Lors des changements de banque, les comptes s'adaptent
+
+document.getElementById('bankList').addEventListener('change', function() {
+  updateComptesListBasedOnBank(parseInt(this.value), 'modale1');
+});
+
+document.getElementById('banqueList_virement').addEventListener('change', function() {
+  updateComptesListBasedOnBank(parseInt(this.value), 'modale2');
+});
+
+document.getElementById('bankList_operation').addEventListener('change', function() {
+  document.getElementById('historique_container_operation').innerHTML = '';
+  var banques_id = document.getElementById('bankList_operation').value;
+  if(parseInt(banques_id) >= 0){
+    updateOperationListHistorique(parseInt(banques_id));
+  }
 });
