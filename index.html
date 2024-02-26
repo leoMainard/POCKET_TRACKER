@@ -31,7 +31,7 @@
               <i class="fas fa-wallet text-white position-absolute" style="left: 15px;"></i>
               <button class="banque" onclick="openModal('bankModal')">Banque / Comptes</button>
               <button class="operation" onclick="openModal('operationModal')">Opération</button>
-              <button class="virement" onclick="openModal('virementModal')">Virement</button>
+              <button class="virement" onclick="openModal('virementModal')">Virement interne</button>
           </div>
       </div>
 
@@ -115,12 +115,14 @@
                     <div class="flex-grow-1" id="categorie_list">
                         <select id="category" class="form-control">
                             <option value="">Ajoutez une catégorie</option>
-                            <option value="COURSES">COURSES</option>
-                            <option value="SALAIRE">SALAIRE</option>
-                            <option value="AIDE">AIDE</option>
-                            <option value="LOISIRS">LOISIRS</option>
-                            <option value="CHARGES">CHARGES</option>
-
+                            <option value="COURSES">Alimentation & Restau.</option>
+                            <option value="SALAIRE">Salaire</option>
+                            <option value="AIDE">Aide</option>
+                            <option value="LOISIRS">Loisirs & Sorties</option>
+                            <option value="CHARGES">Charges</option>
+                            <option value="ABONNEMENTS">Abonnements</option>
+                            <option value="VIREMENTS">Retraits, Chq. et Vir.</option>
+                            <option value="DIVERS">Divers</option>
                         </select>
                         <i class="fas fa-arrows-alt-v"></i>
                     </div>
@@ -142,7 +144,7 @@
             <!-- Contenu de la modale -->
             <div class="modal-content">
                 <span class="close" onclick="closeModal('virementModal')"><i class="fas fa-times-square"></i></span>
-                <h5>Virement</h5>
+                <h5>Virement interne</h5>
 
                 <!-- Liste déroulante pour sélectionner une banque -->
                 <div class="flex-grow-1">
