@@ -146,7 +146,9 @@ function deleteBankFromDb(bankId) {
   const objectStore = transaction.objectStore('banques');
   const request = objectStore.delete(bankId);
 
-  deleteAssociatedAccounts(bankId)
+  deleteAssociatedAccounts(bankId);
+  deleteOperation(bankId);
+  deleteVirement(bankId);
 
   request.onsuccess = function(event) {
     alert('Banque supprimée avec succès.');
@@ -182,6 +184,56 @@ function deleteAssociatedAccounts(bankId) {
 
   request.onerror = function(event) {
     console.error('Erreur lors de la suppression des comptes associés', event);
+  };
+}
+
+function deleteOperation(bankId) {
+  const transaction = db.transaction(['operations'], 'readwrite');
+  const store = transaction.objectStore('operations');
+
+  // Créer une requête pour trouver tous les comptes avec le bankId spécifié
+  const index = store.index('banques_id'); // Assurez-vous que cet index existe
+  const request = index.openCursor(IDBKeyRange.only(bankId));
+
+  request.onsuccess = function(event) {
+    const cursor = event.target.result;
+    if (cursor) {
+      // Supprimer chaque compte trouvé
+      store.delete(cursor.primaryKey);
+      cursor.continue(); // Continuer à parcourir les comptes suivants
+    } else {
+      // Tous les comptes associés ont été traités
+      console.log('Toutes les opérations associées à la banque ont été supprimées');
+    }
+  };
+
+  request.onerror = function(event) {
+    console.error('Erreur lors de la suppression des opérations associées', event);
+  };
+}
+
+function deleteVirement(bankId) {
+  const transaction = db.transaction(['virements'], 'readwrite');
+  const store = transaction.objectStore('virements');
+
+  // Créer une requête pour trouver tous les comptes avec le bankId spécifié
+  const index = store.index('banques_id'); // Assurez-vous que cet index existe
+  const request = index.openCursor(IDBKeyRange.only(bankId));
+
+  request.onsuccess = function(event) {
+    const cursor = event.target.result;
+    if (cursor) {
+      // Supprimer chaque compte trouvé
+      store.delete(cursor.primaryKey);
+      cursor.continue(); // Continuer à parcourir les comptes suivants
+    } else {
+      // Tous les comptes associés ont été traités
+      console.log('Tous les virements associées à la banque ont été supprimés');
+    }
+  };
+
+  request.onerror = function(event) {
+    console.error('Erreur lors de la suppression des virements associés', event);
   };
 }
 
@@ -226,16 +278,41 @@ function deleteCompteFromDb(nom_compte) {
 
   const transaction = db.transaction(['comptes'], 'readwrite');
   const objectStore = transaction.objectStore('comptes');
-  const request = objectStore.delete([parseInt(bank_id), nom_compte]);
+  const requete_montant = objectStore.get([parseInt(bank_id), nom_compte]);
 
-  request.onsuccess = function(event) {
-    alert('Compte supprimée avec succès.');
-    updateComptesListBasedOnBank(parseInt(bank_id), 'modale1');
-  };
+  requete_montant.onsuccess = function(event){
+    const montant = requete_montant.result.montant_compte;
 
-  request.onerror = function(event) {
+    var banque_name = document.getElementById('bankList').options[document.getElementById('bankList').selectedIndex].text;
+    const date = new Date();
+    var day = ('0' + date.getDate()).slice(-2);
+    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+    var year = date.getFullYear();
+    var dateString = `${day}/${month}/${year}`;
+
+    // Création d'une opération de récupération de montant
+    operationToCompte(parseInt(bank_id), parseInt(montant));
+    operationToHistorique(parseInt(bank_id), banque_name, 'VIREMENTS', 'Suppression du compte ' + nom_compte, parseInt(montant), dateString);
+
+    const request = objectStore.delete([parseInt(bank_id), nom_compte]);
+
+    request.onsuccess = function(event) {
+      alert('Compte supprimée avec succès.');
+      updateComptesListBasedOnBank(parseInt(bank_id), 'modale1');
+    };
+  
+    request.onerror = function(event) {
+      console.error('Erreur lors de la suppression de la banque', event);
+    };
+  }
+
+  requete_montant.onerror = function(event) {
     console.error('Erreur lors de la suppression de la banque', event);
   };
+
+  
+
+  
 }
 
 function updateComptesList_banque(comptes) {
@@ -265,7 +342,14 @@ function updateComptesList_virement(comptes) {
   comptes.forEach(function(compte) {
     var option = document.createElement('option');
     option.value = compte.nom_compte; // Assurez-vous que cela correspond à votre structure de données
-    option.textContent = compte.nom_compte;
+    var montant = compte.montant_compte
+
+    var signe = ' '
+    if(parseInt(montant) >= 0){
+      signe = ' +'
+    }
+      
+    option.textContent = compte.nom_compte + signe + compte.montant_compte;
     [compteList_virement_debit, compteList_virement_credit].forEach(function(list) {
       list.appendChild(option.cloneNode(true));
     });
@@ -467,7 +551,18 @@ function updateOperationListHistorique(banques_id){
       var newDiv = document.createElement('div');
       newDiv.className = 'operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
       newDiv.setAttribute('data-operation-id', operation_id);
-      newDiv.innerHTML = `
+      
+      if(detail.trim().includes("Suppression du compte")){
+        newDiv.innerHTML = `
+        <p class="historique_date_operation mb-0">${date}</p>
+        <p class="historique_banque_operation mb-0">${banque_name}</p>
+        <p class="historique_detail_operation mb-0">${detail}</p>
+        <p class="historique_category_operation badge bg-${color} text-white mb-0">${category}</p>
+        <p class="historique_montant_operation mb-0">${montant}€</p>
+        <button onclick="deleteOperationHistorique(this)" class="btn btn-danger" disabled><i class="fas fa-trash"></i></button>
+      `;
+      }else{
+        newDiv.innerHTML = `
         <p class="historique_date_operation mb-0">${date}</p>
         <p class="historique_banque_operation mb-0">${banque_name}</p>
         <p class="historique_detail_operation mb-0">${detail}</p>
@@ -475,6 +570,8 @@ function updateOperationListHistorique(banques_id){
         <p class="historique_montant_operation mb-0">${montant}€</p>
         <button onclick="deleteOperationHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
       `;
+      }
+      
 
       // Ajouter la nouvelle div au conteneur
       var container = document.getElementById('historique_container_operation');
@@ -562,56 +659,86 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
 function updateVirementListHistorique(banques_id){
   document.getElementById('historique_container_virement').innerHTML = '';
 
-  const date = new Date();
-  var day = ('0' + date.getDate()).slice(-2);
-  var month = ('0' + (date.getMonth() + 1)).slice(-2);
-  var year = date.getFullYear();
-  var dateString = `${day}/${month}/${year}`;
+  const transaction = db.transaction(['comptes'], 'readwrite');
+  const objectStore = transaction.objectStore('comptes');
 
-  const transaction = db.transaction(['virements'], 'readonly');
-  const store = transaction.objectStore('virements');
-  const dateIndex = store.index('date');
-  const request = dateIndex.getAll(IDBKeyRange.only(dateString));
+  // Supposons que vous avez un index nommé 'banque_id' dans votre objectStore 'comptes'
+  const index = objectStore.index('banques_id');
+  const requete_compte = index.getAll(banques_id);
 
-  request.onsuccess = function(event) {
-    const virements = event.target.result.filter(vi => vi.banques_id === banques_id);
+  requete_compte.onsuccess = function(event) {
+    var comptes_existants = event.target.result;
+    var noms_des_comptes = comptes_existants.map(compte => compte.nom_compte);
 
-    // Boucler sur chaque opération récupérée
-    virements.forEach(virement => {
-      // Récupération et traitement des informations de l'opération
-      let virement_id = virement.virement_id;
-      let compte_debiteur = virement.compte_debit; 
-      let compte_crediteur = virement.compte_credit; 
-      let montant = virement.montant; 
-      let dateString = virement.date; 
-      let banque_name = virement.banque_name;
+    const date = new Date();
+    var day = ('0' + date.getDate()).slice(-2);
+    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+    var year = date.getFullYear();
+    var dateString = `${day}/${month}/${year}`;
 
-      // Créer une nouvelle div avec les classes appropriées
-      var newDiv = document.createElement('div');
-      newDiv.className = 'virement_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
-      newDiv.setAttribute('data-virement-id', virement_id);
+    const transaction = db.transaction(['virements'], 'readonly');
+    const store = transaction.objectStore('virements');
+    const dateIndex = store.index('date');
+    const request = dateIndex.getAll(IDBKeyRange.only(dateString));
 
-      // Ajouter le contenu HTML à la nouvelle div
-      newDiv.innerHTML = `
-        <p class="historique_date_virement mb-0">${dateString}</p>
-        <p class="historique_banque_virement mb-0">${banque_name}</p>
-        <p class="historique_debit_virement mb-0">Débit : ${compte_debiteur}</p>
-        <p class="historique_credit_virement mb-0">Crédit : ${compte_crediteur}</p>
-        <p class="historique_montant_virement mb-0">${montant}€</p>
-        <button onclick="deleteVirementHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-      `;
+    request.onsuccess = function(event) {
+      const virements = event.target.result.filter(vi => vi.banques_id === banques_id);
 
-      // Ajouter la nouvelle div à un conteneur existant dans votre document
-      var container = document.getElementById('historique_container_virement'); // Assurez-vous que cet ID existe dans votre HTML
-      container.prepend(newDiv);
+      // Boucler sur chaque opération récupérée
+      virements.forEach(virement => {
+        // Récupération et traitement des informations de l'opération
+        let virement_id = virement.virement_id;
+        let compte_debiteur = virement.compte_debit; 
+        let compte_crediteur = virement.compte_credit; 
+        let montant = virement.montant; 
+        let dateString = virement.date; 
+        let banque_name = virement.banque_name;
 
-      // Reinitialisation des inputs
-      document.getElementById('virement_valeur').value = '';
-    });
+        // Créer une nouvelle div avec les classes appropriées
+        var newDiv = document.createElement('div');
+        newDiv.className = 'virement_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+        newDiv.setAttribute('data-virement-id', virement_id);
+
+        if (!(noms_des_comptes.includes(compte_debiteur) && noms_des_comptes.includes(compte_crediteur))) {
+          // Ajouter le contenu HTML à la nouvelle div
+          newDiv.innerHTML = `
+          <p class="historique_date_virement mb-0">${dateString}</p>
+          <p class="historique_banque_virement mb-0">${banque_name}</p>
+          <p class="historique_debit_virement mb-0">Débit : ${compte_debiteur}</p>
+          <p class="historique_credit_virement mb-0">Crédit : ${compte_crediteur}</p>
+          <p class="historique_montant_virement mb-0">${montant}€</p>
+          <button onclick="deleteVirementHistorique(this)" class="btn btn-danger" disabled><i class="fas fa-trash"></i></button>
+          `;
+        }else{
+          // Ajouter le contenu HTML à la nouvelle div
+          newDiv.innerHTML = `
+          <p class="historique_date_virement mb-0">${dateString}</p>
+          <p class="historique_banque_virement mb-0">${banque_name}</p>
+          <p class="historique_debit_virement mb-0">Débit : ${compte_debiteur}</p>
+          <p class="historique_credit_virement mb-0">Crédit : ${compte_crediteur}</p>
+          <p class="historique_montant_virement mb-0">${montant}€</p>
+          <button onclick="deleteVirementHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+          `;
+        }
+        
+        // Ajouter la nouvelle div à un conteneur existant dans votre document
+        var container = document.getElementById('historique_container_virement'); // Assurez-vous que cet ID existe dans votre HTML
+        container.prepend(newDiv);
+
+        // Reinitialisation des inputs
+        document.getElementById('virement_valeur').value = '';
+
+        updateComptesListBasedOnBank(banques_id, 'modale2');
+      });
+    };
+    request.onerror = function(event) {
+      console.error('Erreur lors de la récupération des virements pour banques_id ' + banques_id, event);
+    };
   };
-  request.onerror = function(event) {
+  requete_compte.onerror = function(event) {
     console.error('Erreur lors de la récupération des virements pour banques_id ' + banques_id, event);
   };
+  
 }
 
 function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date){
@@ -690,6 +817,8 @@ function deleteVirementHistorique(button){
   suppressionVirementHistorique(parseInt(virementId));
 
   updateVirementListHistorique(parseInt(banques_id));
+
+  updateComptesListBasedOnBank(parseInt(banques_id), 'modale2');
 }
 
 
