@@ -1,3 +1,14 @@
+:root{
+
+    --vert-principal:#2a9d8f;
+    --vert-secondaire:#52796f;
+    --gris-fonce:#333333;
+    --gris-claire:#555555;
+}
+
+
+
+
 /* ------------------------------------------------- Générique */
 
 body, html {
@@ -20,7 +31,7 @@ h5{
     align-items: center;
     text-align: center;
     background-color: #ffffff; /* Fond blanc pour l'introduction */
-    color: #333333; /* Couleur de texte foncée pour le contraste */
+    color: var(--gris-fonce); /* Couleur de texte foncée pour le contraste */
     height: 100vh;
     position: relative;
     padding: 0;
@@ -36,12 +47,12 @@ h5{
 #introduction p {
     font-size: 1.2em;
     margin: 10px 0; /* Espacement uniforme */
-    color: #555555; /* Couleur de texte légèrement plus douce */
+    color: var(--gris-claire); /* Couleur de texte légèrement plus douce */
 }
 
 body button {
     padding: 10px 20px;
-    background-color: #2a9d8f; /* Bouton de couleur foncée */
+    background-color: var(--vert-principal); /* Bouton de couleur foncée */
     color: #ffffff; /* Texte du bouton en blanc */
     border:none; /* Bordure du bouton */
     border-radius: 8px; /* Coins légèrement arrondis */
@@ -51,11 +62,11 @@ body button {
 }
 
 body button:hover {
-    background-color: #52796f; /* Changement de couleur au survol */
+    background-color: var(--vert-secondaire); /* Changement de couleur au survol */
 }
 
 body button:after {
-    background-color: #52796f; /* Changement de couleur au survol */
+    background-color: var(--vert-secondaire); /* Changement de couleur au survol */
 }
 
 #introduction::after {
@@ -64,7 +75,7 @@ body button:after {
 
 #appContent {
     background-color: #f4f4f4; /* Même couleur de fond que le body */
-    color: #333333;
+    color: var(--gris-fonce);
     height: 100vh;
     padding: 0;
     margin: 0;
@@ -92,7 +103,7 @@ body button:after {
 /* ------------------------------------------------- App Content */
 
 .action {
-    background-color: #2a9d8f;
+    background-color: var(--vert-principal);
     margin: 0;
     width: 100%;
     align-items: center;
@@ -145,11 +156,13 @@ body button:after {
     cursor: pointer;
   }
   
-
+.fermer_modal{
+    float : right;
+}
 
   /* Bouton plus */
 #btn_plus{
-    background-color: #2a9d8f;
+    background-color: var(--vert-principal);
     color: #ffffff; /* Texte du bouton en blanc */
     border:none; /* Bordure du bouton */
     border-radius: 8px; /* Coins légèrement arrondis */
@@ -159,7 +172,7 @@ body button:after {
 }
 
 #btn_plus:hover {
-    background-color: #52796f; /* Changement de couleur au survol */
+    background-color: var(--vert-secondaire); /* Changement de couleur au survol */
 }
   
 #titre_comptes{

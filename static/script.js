@@ -531,7 +531,7 @@ function updateOperationListHistorique(banques_id){
     const operations = event.target.result.filter(op => op.banques_id === banques_id);
 
     let liste_category = ["COURSES","SALAIRE","AIDE","LOISIRS","CHARGES", "ABONNEMENTS", "VIREMENTS", "DIVERS"]
-    let liste_category_color = ["secondary","success","info","warning","danger", "warning", "primary", "info"]
+    let liste_category_color = ["secondary","success","info","warning","danger", "warning", "primary", 'orange'] // "info"
 
     // Boucler sur chaque opération récupérée
     operations.forEach(operation => {
