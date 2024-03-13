@@ -131,7 +131,7 @@ body button:after {
 
     display: none; /* Caché par défaut */
     position: fixed; /* Reste en place lors du scroll */
-    z-index: -1; /* Se situe au-dessus du reste */
+    z-index: 1; /* Se situe au-dessus du reste */
     left: 0;
     top: 0;
     width: 100% !important; /* Largeur complète */
@@ -341,7 +341,7 @@ input[type="number"] {
 }
 
 
-/* ------------------------------------------------- popup */
+/* ------------------------------------------------- popup alert */
 
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -361,6 +361,16 @@ input[type="number"] {
     animation: fadeOut 0.5s forwards;
   }
   
+
+/* ------------------------------------------------- popup success */
+  
+  #popupSuccess.show {
+    animation: fadeIn 0.5s forwards;
+  }
+  
+  #popupSuccess.hide {
+    animation: fadeOut 0.5s forwards;
+  }
 
 /* ------------------------------------------------- virement */
 

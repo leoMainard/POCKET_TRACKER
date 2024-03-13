@@ -19,7 +19,25 @@ function showAlert(message) {
     alertPopup.className = 'hide';
     // Optionnel: masquer complètement après l'animation
     setTimeout(() => alertPopup.style.display = 'none', 500);
-  }, 3000);
+  }, 2500);
+}
+
+function showSuccess(message) {
+  const alertPopup = document.getElementById('popupSuccess');
+  
+  // Mise à jour du message
+  alertPopup.innerHTML = message;
+  
+  // Afficher le pop-up
+  alertPopup.style.display = 'block';
+  alertPopup.className = 'show';
+  
+  // Masquer le pop-up après 3 secondes
+  setTimeout(() => {
+    alertPopup.className = 'hide';
+    // Optionnel: masquer complètement après l'animation
+    setTimeout(() => alertPopup.style.display = 'none', 500);
+  }, 2500);
 }
 
 
@@ -174,7 +192,7 @@ function deleteBankFromDb(bankId) {
   deleteVirement(bankId);
 
   request.onsuccess = function(event) {
-    showAlert('<i class="fa-solid fa-check"></i> Banque supprimée avec succès.');
+    showSuccess('<i class="fa-solid fa-check"></i> Banque supprimée avec succès.');
     loadBanks() // Mettre à jour l'interface utilisateur après la suppression
 
     updateComptesListBasedOnBank(bankId, 'modale1');
@@ -320,7 +338,7 @@ function deleteCompteFromDb(nom_compte) {
     const request = objectStore.delete([parseInt(bank_id), nom_compte]);
 
     request.onsuccess = function(event) {
-      showAlert(' <i class="fa-solid fa-check"></i> Compte supprimée avec succès. ');
+      showSuccess(' <i class="fa-solid fa-check"></i> Compte supprimée avec succès. ');
       updateComptesListBasedOnBank(parseInt(bank_id), 'modale1');
     };
   
@@ -877,7 +895,7 @@ function addBank() {
           showAlert('<i class="fa-solid fa-xmark"></i> Cette banque existe déjà !');
         } else {
           addBankToDB(bankName); // ajout dans la base de données
-          showAlert('<i class="fa-solid fa-check"></i> Banque ajoutée !');
+          showSuccess('<i class="fa-solid fa-check"></i> Banque ajoutée !');
         }
       };
 
