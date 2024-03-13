@@ -1,9 +1,18 @@
 :root{
 
-    --vert-principal:#2a9d8f;
-    --vert-secondaire:#52796f;
+    --principal:#0077b6;
+    --secondaire:#1b4965;
     --gris-fonce:#333333;
     --gris-claire:#555555;
+    --vert:#555555;
+    --bg-divers:#a5a58d;
+    --bg-salaire:#6a994e;
+    --bg-aide:#f72585;
+    --bg-loisirs:#ffb703;
+    --bg-charges:#ef233c;
+    --bg-abonnements:#00b4d8;
+    --bg-virements:#b5179e;
+    --bg-courses:#f17105;
 }
 
 
@@ -52,7 +61,7 @@ h5{
 
 body button {
     padding: 10px 20px;
-    background-color: var(--vert-principal); /* Bouton de couleur foncée */
+    background-color: var(--principal); /* Bouton de couleur foncée */
     color: #ffffff; /* Texte du bouton en blanc */
     border:none; /* Bordure du bouton */
     border-radius: 8px; /* Coins légèrement arrondis */
@@ -62,11 +71,11 @@ body button {
 }
 
 body button:hover {
-    background-color: var(--vert-secondaire); /* Changement de couleur au survol */
+    background-color: var(--secondaire); /* Changement de couleur au survol */
 }
 
 body button:after {
-    background-color: var(--vert-secondaire); /* Changement de couleur au survol */
+    background-color: var(--secondaire); /* Changement de couleur au survol */
 }
 
 #introduction::after {
@@ -103,7 +112,7 @@ body button:after {
 /* ------------------------------------------------- App Content */
 
 .action {
-    background-color: var(--vert-principal);
+    background-color: var(--principal);
     margin: 0;
     width: 100%;
     align-items: center;
@@ -122,7 +131,7 @@ body button:after {
 
     display: none; /* Caché par défaut */
     position: fixed; /* Reste en place lors du scroll */
-    z-index: 1; /* Se situe au-dessus du reste */
+    z-index: -1; /* Se situe au-dessus du reste */
     left: 0;
     top: 0;
     width: 100% !important; /* Largeur complète */
@@ -134,11 +143,12 @@ body button:after {
   
   /* Style pour le contenu de la modale */
   .modal-content {
+    z-index:2;
     background-color: #fefefe;
     margin: 8% auto; /*15% du haut et centré horizontalement */
     padding: 20px;
     border: none !important;
-    width: 50% !important; /* Largeur de la modale */
+    width: 70% !important; /* Largeur de la modale */
   }
   
   /* Style pour le bouton de fermeture */
@@ -162,7 +172,7 @@ body button:after {
 
   /* Bouton plus */
 #btn_plus{
-    background-color: var(--vert-principal);
+    background-color: var(--principal);
     color: #ffffff; /* Texte du bouton en blanc */
     border:none; /* Bordure du bouton */
     border-radius: 8px; /* Coins légèrement arrondis */
@@ -172,7 +182,7 @@ body button:after {
 }
 
 #btn_plus:hover {
-    background-color: var(--vert-secondaire); /* Changement de couleur au survol */
+    background-color: var(--secondaire); /* Changement de couleur au survol */
 }
   
 #titre_comptes{
@@ -261,7 +271,7 @@ body button:after {
 
 
 .historique_date_operation{
-    width: 20%;
+    width: 15%;
 }
 
 .historique_banque_operation{
@@ -270,10 +280,11 @@ body button:after {
 
 .historique_detail_operation{
     width: 40%;
+    padding-left:5px;
 }
 
 .historique_category_operation{
-    width: 10%;
+    width: 15%;
     margin-right: 10px;
 }
 
@@ -296,11 +307,97 @@ input[type="number"] {
 }
 
 
+/* Couleur des catégories */
+.bg-divers {
+    background-color: var(--bg-divers)
+}
 
+.bg-salaire {
+    background-color: var(--bg-salaire);
+}
+
+.bg-aide {
+    background-color: var(--bg-aide);
+}
+
+.bg-loisirs {
+    background-color: var(--bg-loisirs);
+}
+
+.bg-charges {
+    background-color: var(--bg-charges);
+}
+
+.bg-abonnements {
+    background-color: var(--bg-abonnements);
+}
+
+.bg-virements {
+    background-color: var(--bg-virements);
+}
+
+.bg-courses {
+    background-color: var(--bg-courses);
+}
+
+
+/* ------------------------------------------------- popup */
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 2; }
+  }
+  
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  
+  #popupAlert.show {
+    animation: fadeIn 0.5s forwards;
+  }
+  
+  #popupAlert.hide {
+    animation: fadeOut 0.5s forwards;
+  }
+  
 
 /* ------------------------------------------------- virement */
 
 #virement_fleche{
     margin-left: 5px;
     margin-right: 5px;
+}
+
+
+
+
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* RESPONSIVE */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* Sur les écrans, quand la largeur de la fenêtre fait au maximum 1280px */
+/* @media screen and (max-width: 1280px) */
+
+/* Sur tous types d'écran, quand la largeur de la fenêtre est comprise entre 1024px et 1280px */
+/* @media all and (min-width: 1024px) and (max-width: 1280px) */
+
+/* Sur tous types d'écrans orientés verticalement */
+/* @media all and (orientation: portrait) */
+
+
+@media screen and (max-width: 1280px){
+    .modal-content {
+        margin: 2% auto; /*15% du haut et centré horizontalement */
+        width: 90% !important; /* Largeur de la modale */
+      }
+
+    .blob {
+        max-width: 200px; /* ou la taille souhaitée */
+    }
 }
