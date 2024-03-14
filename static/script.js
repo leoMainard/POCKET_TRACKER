@@ -1200,12 +1200,31 @@ document.getElementById('banqueList_virement').addEventListener('change', functi
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------
 
+// Au changement de banque sélectionnée
 document.getElementById('bankListContent').addEventListener('change', function() {
   var banque_id = document.getElementById('bankListContent').value;
 
   banque_id = parseInt(banque_id);
 
-  updateSolde(banque_id);
+  console.log(banque_id);
+  if (banque_id > 0) {
+  // Affiche les éléments si banque_id n'est pas 0 et met à jour les affichages
+    document.getElementById('contentHistoriques').style.display = 'flex';
+    document.getElementById('topRow').style.display = 'flex';
+
+    //Remise à zéro des éléments
+    document.getElementById('montantDesComptes').innerHTML = '';
+
+
+    // Mise en place des actions
+    updateSolde(banque_id);
+  } else {
+    // Cache les éléments si banque_id est 0
+    document.getElementById('contentHistoriques').style.display = 'none';
+    document.getElementById('topRow').style.display = 'none';
+  }
+
+  
 });
 
 
@@ -1228,10 +1247,19 @@ function updateSolde(banque_id){
       somme += parseFloat(compte.montant_compte); // Assurez-vous que montant_compte est un nombre
       if (compte.nom_compte === 'CC') {
         montantCC = parseFloat(compte.montant_compte); // Mémoriser le montant du compte 'CC'
+      }else{
+        var newDiv = document.createElement('div');
+        newDiv.className = 'contentCompteEtMontant';
+        var signeMontantCompte = compte.montant_compte < 0 ? '-' : '+';
+        newDiv.innerHTML = `
+        <p class="contentNomCompte mb-0">${compte.nom_compte}</p>
+        <p class="contentMontantCompte mb-0">${signeMontantCompte} ${compte.montant_compte}€</p>
+        `;
+
+        var container = document.getElementById('montantDesComptes'); // Assurez-vous que cet ID existe dans votre HTML
+        container.append(newDiv);
       }
     });
-
-    // calculer la somme des montants de tous les comptes
     var signe = somme < 0 ? '-' : '+';
     var signeCC = montantCC < 0 ? '-' : '+';
 

@@ -411,7 +411,7 @@ input[type="number"] {
 }
 
 .topRow {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     gap: 5px; /* Espacement entre infoComptes et dashboard */
 }
@@ -494,6 +494,7 @@ input[type="number"] {
     background-color: var(--blanc-clair);
     border-radius: 8px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    display:none;
 }
 
 
