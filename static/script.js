@@ -166,13 +166,15 @@ function updateBankList(banks) {
   var bankList = document.getElementById('bankList');
   var bank_operation = document.getElementById('bankList_operation');
   var bank_virement = document.getElementById('banqueList_virement');
+  var bankContent = document.getElementById('bankListContent');
 
   bankList.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
   bank_operation.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
   bank_virement.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
+  bankContent.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
 
   banks.forEach(function(bank) {
-    ['bankList', 'bankList_operation', 'banqueList_virement'].forEach(function(listId) {
+    ['bankList', 'bankList_operation', 'banqueList_virement','bankListContent'].forEach(function(listId) {
       var option = document.createElement('option');
       option.value = bank.banques_id; // ou bank.bankName si vous voulez afficher le nom
       option.textContent = bank.bankName; // ou tout autre propriété de l'objet banque
@@ -305,7 +307,7 @@ function addCompteToDB(nom_compte, banques_id) {
   const request_compte = objectStore_compte.add(compteData);
 
   request_compte.onsuccess = function() {
-    console.log('Compte ajoutée avec succès');
+    showSuccess('<i class="fa-solid fa-check"></i> Compte ajoutée avec succès');
     updateComptesListBasedOnBank(parseInt(banques_id), 'modale1');
   };
 
@@ -338,7 +340,7 @@ function deleteCompteFromDb(nom_compte) {
     const request = objectStore.delete([parseInt(bank_id), nom_compte]);
 
     request.onsuccess = function(event) {
-      showSuccess(' <i class="fa-solid fa-check"></i> Compte supprimée avec succès. ');
+      showSuccess('<i class="fa-solid fa-check"></i> Compte supprimée avec succès. ');
       updateComptesListBasedOnBank(parseInt(bank_id), 'modale1');
     };
   
@@ -1173,3 +1175,71 @@ document.getElementById('banqueList_virement').addEventListener('change', functi
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------- CONTENT
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+
+document.getElementById('bankListContent').addEventListener('change', function() {
+  var banque_id = document.getElementById('bankListContent').value;
+
+  banque_id = parseInt(banque_id);
+
+  updateSolde(banque_id);
+});
+
+
+
+
+function updateSolde(banque_id){
+  const transaction = db.transaction(['comptes'], 'readonly');
+  const objectStore_compte = transaction.objectStore('comptes');
+  const index = objectStore_compte.index('banques_id'); // Utiliser l'index 'banques_id'
+  const getRequest = index.getAll(banque_id); // Récupérer tous les comptes pour ce banque_id
+
+  getRequest.onsuccess = function() {
+    const comptes = getRequest.result;
+
+    let somme = 0;
+    let montantCC = 0; // Initialiser le montant du compte 'CC'
+
+    // Parcourir chaque compte et additionner les montants
+    comptes.forEach(function(compte) {
+      somme += parseFloat(compte.montant_compte); // Assurez-vous que montant_compte est un nombre
+      if (compte.nom_compte === 'CC') {
+        montantCC = parseFloat(compte.montant_compte); // Mémoriser le montant du compte 'CC'
+      }
+    });
+
+    // calculer la somme des montants de tous les comptes
+    var signe = somme < 0 ? '-' : '+';
+    var signeCC = montantCC < 0 ? '-' : '+';
+
+    document.getElementById('montantTotalAvoirs').innerHTML = signe + ' ' + somme + '€';
+    document.getElementById('soldeCC').innerHTML = signeCC + ' ' + montantCC + '€';
+  };
+
+  getRequest.onerror = function(event) {
+    console.error('Update solde : erreur', event);
+  };
+}

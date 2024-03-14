@@ -194,15 +194,54 @@
             <!-- Le message d'alerte sera inséré ici -->
         </div>
 
-        <div class="kpi">
-            <div class="total_avoirs">
-                <h3>Votre solde est de : </h3>
-                <h4>Mes comptes :</h4>
+        <div class="resultsContent">
+            <div class="selectionBanqueContent">
+                <div class="flex-grow-1" id="bankListContentConteneur">
+                    <select id="bankListContent" class="form-control">
+                        <option value="">Sélectionnez une banque</option>
+                    </select>
+                    <i class="fas fa-arrows-alt-v"></i>
+                </div>
+            </div>
+
+            <div class="topRow"> <!-- Conteneur pour infoComptes et dashboard -->
+                <div class="infoComptes">
+                    <div class="solde">
+                        <p>Votre solde est de</p>
+                        <div class="soldeCC" id="soldeCC"></div>
+                    </div>
+
+                    <div class="mesComptes">
+
+                        <div class="titreMesComptes">
+                            <p>Mes comptes</p>
+                            <i class="fa-solid fa-sliders"></i>
+                        </div>
+
+                        <div class="totalAvoirs">
+                            <p>Total des avoirs : </p>
+                            <div class="montantTotalAvoirs" id="montantTotalAvoirs"></div>
+                        </div>
+                        <div class="montantDesComptes">
+                            <div>LEP  +10000€</div>
+                            <div>Livret A  +10000€</div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+        
+                <div class="dashboard">
+                    <!-- Contenu du dashboard ici -->
+                </div>
+            </div>
+        
+            <div class="contentHistoriques">
+                <h1>test</h1>
+                <!-- Contenu des historiques ici -->
             </div>
         </div>
-        <div class="dashboard">
-            <h1>Dashboard</h1>
-        </div>
+        
     </section>
   
     

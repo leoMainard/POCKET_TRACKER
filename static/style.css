@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap');
+
+
 :root{
 
     --principal:#0077b6;
@@ -13,6 +16,8 @@
     --bg-abonnements:#00b4d8;
     --bg-virements:#b5179e;
     --bg-courses:#f17105;
+    --blanc-clair:#f9f9f9;
+    --blanc-fonce:#EEEEEE;
 }
 
 
@@ -23,9 +28,9 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto Mono', monospace, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     height: 100%;
-    background-color: #f4f4f4; /* Couleur de fond légère */
+    background-color: #EEEEEE; /* Couleur de fond légère */
 }
 
 h5{
@@ -39,7 +44,7 @@ h5{
     justify-content: center;
     align-items: center;
     text-align: center;
-    background-color: #ffffff; /* Fond blanc pour l'introduction */
+    background-color: #EEEEEE; /* Fond blanc pour l'introduction */
     color: var(--gris-fonce); /* Couleur de texte foncée pour le contraste */
     height: 100vh;
     position: relative;
@@ -83,7 +88,7 @@ body button:after {
 }
 
 #appContent {
-    background-color: #f4f4f4; /* Même couleur de fond que le body */
+    background-color: var(--blanc-fonce); /* Même couleur de fond que le body */
     color: var(--gris-fonce);
     height: 100vh;
     padding: 0;
@@ -144,7 +149,8 @@ body button:after {
   /* Style pour le contenu de la modale */
   .modal-content {
     z-index:2;
-    background-color: #fefefe;
+    transition: opacity 0.5s ease;
+    background-color: #EEEEEE;
     margin: 8% auto; /*15% du haut et centré horizontalement */
     padding: 20px;
     border: none !important;
@@ -378,6 +384,118 @@ input[type="number"] {
     margin-left: 5px;
     margin-right: 5px;
 }
+
+
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* RESULTSCONTENT */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------------------- */
+
+#bankListContentConteneur{
+    width: 100%;
+    padding: 10px;
+}
+
+#bankListContentConteneur i{
+    right: 20px;;
+}
+
+.resultsContent {
+    display: flex;
+    flex-direction: column; /* Organise les enfants en colonne */
+}
+
+.topRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px; /* Espacement entre infoComptes et dashboard */
+}
+
+.infoComptes {
+    flex: 0 0 20%; /* Fixe la largeur à 30%, sans rétrécissement ou agrandissement */
+    margin: 10px;
+}
+
+.solde{
+    background-color: var(--blanc-clair);
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    text-align: center; /* Centre le texte horizontalement */
+    display: flex; /* Utilise Flexbox */
+    flex-direction: column; /* Organise les enfants en colonne */
+    align-items: center; /* Centre les éléments enfants verticalement */
+    justify-content: center; /* Centre les éléments enfants horizontalement */
+    padding:10px;
+}
+
+.solde p{
+    margin-bottom: 0px;
+}
+
+.soldeCC {
+    color: var(--principal); /* Définit la couleur du texte en bleu */
+    font-size: 2em; /* Augmente la taille du texte */
+    font-weight: bold; /* Rend le texte en gras pour plus d'impact */
+  }
+
+.mesComptes{
+    background-color: var(--blanc-clair);
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.titreMesComptes, .totalAvoirs{
+    display: flex;
+    justify-content: space-between; /* Répartit l'espace entre les éléments enfants */
+    align-items: center;
+}
+
+.solde p{
+    font-size: 1.2em;
+}
+
+.titreMesComptes p{
+    font-size: 1.2em;
+}
+
+.titreMesComptes i{
+    padding-right: 10px;
+}
+
+.totalAvoirs{
+    color: var(--principal);
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom:5px;
+}
+
+.totalAvoirs p{
+    margin-bottom:0;
+}
+
+.dashboard {
+    flex: 1; /* Occupe l'espace restant */
+    margin: 10px;
+    background-color: var(--blanc-clair);
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contentHistoriques {
+    margin: 10px; /* Ajoute une marge autour de contentHistoriques pour un espacement uniforme */
+    background-color: var(--blanc-clair);
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 
 
 
