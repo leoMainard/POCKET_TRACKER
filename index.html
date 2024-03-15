@@ -222,7 +222,9 @@
                             <p>Total des avoirs : </p>
                             <div class="montantTotalAvoirs" id="montantTotalAvoirs"></div>
                         </div>
+
                         <div class="montantDesComptes" id="montantDesComptes">
+                            <!-- ici les divs avec les comptes et leur montant -->
                         </div>
                     </div>
 
@@ -234,9 +236,21 @@
                 </div>
             </div>
         
-            <div class="contentHistoriques" id="contentHistoriques">
-                <h1>test</h1>
-                <!-- Contenu des historiques ici -->
+            <div class="containerContentHistoriques" id="containerContentHistoriques">
+                <div class="contentHistoriqueBoutons">
+                    <label>
+                        <input type="checkbox" class="checkbox-custom" id="operations-checkbox" onchange="changeHistorique(this, 'transferts-checkbox')" checked>
+                        <span class="checkbox-custom-label">OPERATIONS</span>
+                    </label>
+                    
+                    <label>
+                        <input type="checkbox" class="checkbox-custom" id="transferts-checkbox" onchange="changeHistorique(this, 'operations-checkbox')">
+                        <span class="checkbox-custom-label">VIREMENTS</span>
+                    </label>
+                </div>
+                <div class="contentHistoriques" id="contentHistoriques">
+                    <!-- Historique ici -->
+                </div>
             </div>
         </div>
         

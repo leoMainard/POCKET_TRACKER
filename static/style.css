@@ -2,12 +2,13 @@
 
 
 :root{
-
     --principal:#0077b6;
     --secondaire:#1b4965;
     --gris-fonce:#333333;
     --gris-claire:#555555;
     --vert:#555555;
+    --bg-debit:#0077b6;
+    --bg-credit:#ffb703;
     --bg-divers:#a5a58d;
     --bg-salaire:#6a994e;
     --bg-aide:#f72585;
@@ -16,7 +17,7 @@
     --bg-abonnements:#00b4d8;
     --bg-virements:#b5179e;
     --bg-courses:#f17105;
-    --blanc-clair:#f9f9f9;
+    --blanc-clair:#f7f7f7;
     --blanc-fonce:#EEEEEE;
 }
 
@@ -25,10 +26,11 @@
 
 /* ------------------------------------------------- Générique */
 
+/* Roboto Mono, monospace, 'Helvetica Neue', Helvetica, Arial, sans-serif */
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Roboto Mono', monospace, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto' !important;
     height: 100%;
     background-color: #EEEEEE; /* Couleur de fond légère */
 }
@@ -121,6 +123,10 @@ body button:after {
     margin: 0;
     width: 100%;
     align-items: center;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Assurez-vous qu'elle reste au-dessus des autres contenus */
 }
 
 
@@ -346,6 +352,13 @@ input[type="number"] {
     background-color: var(--bg-courses);
 }
 
+.bg-credit {
+    background-color: var(--bg-credit);
+}
+
+.bg-debit {
+    background-color: var(--bg-debit);
+}
 
 /* ------------------------------------------------- popup alert */
 
@@ -417,7 +430,7 @@ input[type="number"] {
 }
 
 .infoComptes {
-    flex: 0 0 20%; /* Fixe la largeur à 30%, sans rétrécissement ou agrandissement */
+    flex: 0 0 20%; /* Fixe la largeur à 20%, sans rétrécissement ou agrandissement */
     margin: 10px;
 }
 
@@ -449,13 +462,14 @@ input[type="number"] {
     border-radius: 8px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     margin-top: 10px;
-    padding: 10px;
 }
 
 .titreMesComptes, .totalAvoirs{
     display: flex;
     justify-content: space-between; /* Répartit l'espace entre les éléments enfants */
     align-items: center;
+    padding: 10px 10px 0;
+
 }
 
 .solde p{
@@ -464,6 +478,7 @@ input[type="number"] {
 
 .titreMesComptes p{
     font-size: 1.2em;
+    margin-bottom:0;
 }
 
 .titreMesComptes i{
@@ -489,17 +504,102 @@ input[type="number"] {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.contentHistoriques {
-    margin: 10px; /* Ajoute une marge autour de contentHistoriques pour un espacement uniforme */
+.containerContentHistoriques {
+    display:none;
+    margin: 10px; /* Ajoute une marge autour de containerContentHistoriques pour un espacement uniforme */
     background-color: var(--blanc-clair);
     border-radius: 8px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    display:none;
 }
 
 
+.contentCompteEtMontant{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin:0;
+    padding: 10px;
+    box-shadow: 0px -2px 0px rgba(0, 0, 0, 0.1);   
+}
 
+.conteneurNomCompte{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 5px; /* Espacement entre infoComptes et dashboard */
+}
 
+.contentNomCompte{
+    padding-left : 10px;
+}
+
+.conteneurNomCompte i{
+    margin:0;
+    padding-top: 4px;
+}
+
+.contentMontantCompte{
+    color: var(--principal);
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.contentHistoriqueBoutons{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Cache la checkbox d'origine */
+.checkbox-custom {
+    display: none;
+  }
+  
+  /* Style pour le label qui ressemble à un bouton */
+  .checkbox-custom-label {
+    cursor: pointer;
+    position: relative;
+    padding: 5px;
+    margin: 5px;
+    color: grey; /* Couleur du texte quand la checkbox n'est pas cochée */
+  }
+  
+  /* Ajoute un pseudo-élément pour la ligne sous le label */
+  .checkbox-custom-label::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px; /* Épaisseur de la ligne */
+    background: #f00; /* Couleur de la ligne */
+    transition: width 0.2s;
+    position: absolute;
+    bottom: -5px; /* Distance de la ligne par rapport au bas du texte */
+    left: 0;
+  }
+  
+  /* Style pour le label lorsque la checkbox est cochée */
+    .checkbox-custom:checked + .checkbox-custom-label {
+        color: #333; /* Couleur de retour (normalement la couleur par défaut) */
+    }
+
+  /* Quand la checkbox est cochée, étend la ligne sous le texte du label */
+  .checkbox-custom:checked + .checkbox-custom-label::after {
+    width: 100%;
+  }
+  
+  /* Optionnel: Ajoute une transition pour l'effet de survol */
+  .checkbox-custom-label:hover::after {
+    width: 100%;
+  }
+
+  .contentHistoriques{
+    padding: 20px;
+  }
+
+  .historique_montant_operation_content{
+    width: 10%;
+    text-align: right;
+  }
 
 /* -------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------- */
