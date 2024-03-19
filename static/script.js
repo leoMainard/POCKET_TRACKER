@@ -1119,11 +1119,18 @@ function openModal(modalId) {
   });
 
   if (modalId === 'bankModal'){
+    document.getElementById('virement').disabled = true;
+    document.getElementById('operation').disabled = true;
+
     updateComptesListBasedOnBank(NaN, 'modale1');
   }else if(modalId === 'virementModal'){
+    document.getElementById('banque').disabled = true;
+    document.getElementById('operation').disabled = true;
     document.getElementById('historique_container_virement').innerHTML = '';
     updateComptesListBasedOnBank(NaN, 'modale2');
   }else if(modalId === 'operationModal'){
+    document.getElementById('virement').disabled = true;
+    document.getElementById('banque').disabled = true;
     document.getElementById('historique_container_operation').innerHTML = '';
   };
 
@@ -1132,6 +1139,9 @@ function openModal(modalId) {
 // Fonction pour fermer la modale spécifique
 function closeModal(modalId) {
   document.getElementById(modalId).style.display = 'none';
+  document.getElementById('operation').disabled = false;
+  document.getElementById('banque').disabled = false;
+  document.getElementById('virement').disabled = false;
 }
 
 // Lors des changements de banque, les comptes s'adaptent
@@ -1194,7 +1204,6 @@ document.getElementById('bankListContent').addEventListener('change', function()
 
   banque_id = parseInt(banque_id);
 
-  console.log(banque_id);
   if (banque_id > 0) {
   // Affiche les éléments si banque_id n'est pas 0 et met à jour les affichages
     document.getElementById('containerContentHistoriques').style.display = 'block';
@@ -1204,9 +1213,15 @@ document.getElementById('bankListContent').addEventListener('change', function()
     document.getElementById('montantDesComptes').innerHTML = '';
 
 
-    // Mise en place des actions
+    // mise à jour des montants des comptes
     updateSolde(banque_id);
-    loadHistoriqueOperations(parseInt(banque_id));
+
+    // Mise à jour de l'historique des opérations
+    var checkbox = document.getElementById('operations-checkbox');
+    checkbox.checked = true; // Cocher le checkbox
+    checkbox.dispatchEvent(new Event('change')); // Déclencher l'événement change manuellement
+
+    // loadHistoriqueOperations(parseInt(banque_id));
   } else {
     // Cache les éléments si banque_id est 0
     document.getElementById('containerContentHistoriques').style.display = 'none';
@@ -1259,6 +1274,42 @@ function updateSolde(banque_id){
   };
 }
 
+function addLoadMoreButton(banque_id) {
+  let container = document.getElementById('contentHistoriques');
+  let loadMoreButtonWrapper = document.createElement('div'); // Créer un nouveau conteneur pour le bouton
+  loadMoreButtonWrapper.style.textAlign = 'center'; // Centrer le contenu du conteneur
+
+  let loadMoreButton = document.getElementById('loadMoreOperations');
+  if (!loadMoreButton) {
+    loadMoreButton = document.createElement('button');
+    loadMoreButton.id = 'loadMoreOperations';
+    loadMoreButton.className = 'btn-load-more'; // Ajoutez des classes pour le style si nécessaire
+
+    // Créer l'élément <i> pour l'icône
+    let icon = document.createElement('i');
+    icon.className = 'fa-solid fa-plus';
+    loadMoreButton.appendChild(icon); // Ajouter l'icône au bouton
+
+    // Ajouter du texte au bouton
+    // loadMoreButton.appendChild(document.createTextNode(' Charger plus'));
+
+    loadMoreButtonWrapper.appendChild(loadMoreButton);
+    container.appendChild(loadMoreButtonWrapper); // Ajouter le wrapper au container principal
+  } else {
+    loadMoreButton.style.display = 'block'; // Rendre le bouton à nouveau visible si nécessaire
+  }
+
+  // Lorsque le bouton est cliqué, chargez plus d'opérations et cachez ce bouton
+  loadMoreButton.onclick = function() {
+    loadMoreButtonWrapper.remove();  // Supprimer le bouton après le clic
+    loadHistoriqueOperations(banque_id, true);
+  };
+}
+
+
+let currentIndex = 0; // Commence à 0, puis mise à jour avec le nombre d'opérations déjà chargées
+
+
 function loadHistoriqueVirements(banque_id){
   document.getElementById('contentHistoriques').innerHTML = '';
 
@@ -1308,24 +1359,35 @@ function loadHistoriqueVirements(banque_id){
   };
 }
 
-function loadHistoriqueOperations(banque_id){
-  document.getElementById('contentHistoriques').innerHTML = '';
+function loadHistoriqueOperations(banque_id, loadMore = false){
+
+  if (!loadMore) {
+    document.getElementById('contentHistoriques').innerHTML = ''; // Réinitialiser uniquement si chargement initial
+    currentIndex = 0; // Réinitialiser l'indice si chargement initial
+  }
 
   const transaction = db.transaction(['operations'], 'readonly');
   const store = transaction.objectStore('operations');
-  
-  // Supposons que vous avez un index sur la date dans votre objectStore 'virements' nommé 'date'
-  const index = store.index('date'); // Assurez-vous que cet index existe
-  const request = index.getAll(); // Récupère tous les virements
+  const index = store.index('date');
+  const request = index.getAll();
 
   request.onsuccess = function(event) {
-    const operations = event.target.result
-      .filter(operation => operation.banques_id === parseInt(banque_id)) // Assurez-vous que les types correspondent
-      .sort((a, b) => b.date.localeCompare(a.date)) // Trie par date en ordre décroissant
-      .slice(0, 20); // Prend les 20 premiers éléments après le tri
+    let allOperations = event.target.result.filter(op => op.banques_id === parseInt(banque_id));
+    // Tri des opérations par date de manière décroissante
+    allOperations.sort((a, b) => {
+      // Convertir les dates du format DD/MM/YYYY au format YYYYMMDD
+      let reformattedDateA = a.date.split('/').reverse().join('');
+      let reformattedDateB = b.date.split('/').reverse().join('');
+    
+      // Comparer les chaînes de caractères reformattées pour le tri
+      return reformattedDateB.localeCompare(reformattedDateA);
+    });
 
-    // Boucler sur chaque opération récupérée
-    operations.forEach(operation => {
+    const operationsToLoad = allOperations.slice(currentIndex, currentIndex + 20); // Charger 20 opérations à la fois
+
+    currentIndex += operationsToLoad.length; // Mettre à jour l'indice pour le prochain chargement
+
+    operationsToLoad.forEach(operation => {
       // Récupération et traitement des informations de l'opération
       let category = operation.category; 
       let montant = operation.montant; 
@@ -1337,9 +1399,12 @@ function loadHistoriqueOperations(banque_id){
 
       var signe = '';
       var couleurMontant = 'black';
+      let textBoldClass = '';
+
       if(parseFloat(montant) >= 0){
         signe = '+';
-        couleurMontant = 'success style="font-weight: bold !important;"';
+        couleurMontant = 'text-success'; // Classe Bootstrap pour le texte en vert
+        textBoldClass = 'fw-bold'; // Ajouter la classe pour le texte en gras
       }
 
       var newDiv = document.createElement('div');
@@ -1350,15 +1415,15 @@ function loadHistoriqueOperations(banque_id){
       <p class="historique_banque_operation mb-0">${banque_name}</p>
       <p class="historique_detail_operation mb-0">${detail}</p>
       <p class="historique_category_operation badge ${colorClass} text-white mb-0">${category}</p>
-      <p class="historique_montant_operation_content mb-0 text-${couleurMontant}">${signe}${montant}€</p>
+      <p class="historique_montant_operation_content mb-0 ${couleurMontant} ${textBoldClass}">${signe}${montant}€</p>
       `;
 
       var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
       container.append(newDiv);
     });
-
-    // Ici, vous devez effectivement mettre à jour l'interface utilisateur avec les informations des virements
-    // Par exemple, en ajoutant chaque virement à un élément HTML.
+    if (currentIndex < allOperations.length) {
+      addLoadMoreButton(banque_id);
+    }
   };
 
   request.onerror = function(event) {
@@ -1367,6 +1432,7 @@ function loadHistoriqueOperations(banque_id){
 }
 
 function changeHistorique(current, otherId) {
+  // Changement de bouton check
   if (current.checked) {
     document.getElementById(otherId).checked = false;
   }

@@ -133,6 +133,9 @@ body button:after {
 /* ------------------------------------------------- nav */
 .row{
     margin-right: 0 !important;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 
@@ -141,8 +144,8 @@ body button:after {
 .modal {
 
     display: none; /* Caché par défaut */
-    position: fixed; /* Reste en place lors du scroll */
-    z-index: 1; /* Se situe au-dessus du reste */
+    position: relative; /* Reste en place lors du scroll */
+    z-index: 4000; /* Se situe au-dessus du reste */
     left: 0;
     top: 0;
     width: 100% !important; /* Largeur complète */
@@ -154,7 +157,7 @@ body button:after {
   
   /* Style pour le contenu de la modale */
   .modal-content {
-    z-index:2;
+    z-index: 6001;
     transition: opacity 0.5s ease;
     background-color: #EEEEEE;
     margin: 8% auto; /*15% du haut et centré horizontalement */
