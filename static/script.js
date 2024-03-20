@@ -1,12 +1,12 @@
 let categoryColorMap = {
-  "COURSES": ["bg-courses", '<i class="fa-solid fa-utensils"></i>'],
-  "SALAIRE": ["bg-salaire",'<i class="fa-solid fa-euro-sign"></i>'],
-  "AIDE": ["bg-aide",'<i class="fa-solid fa-handshake-angle"></i>'],
-  "LOISIRS": ["bg-loisirs",'<i class="fa-solid fa-cart-shopping"></i>'],
-  "CHARGES": ["bg-charges",'<i class="fa-solid fa-file-invoice-dollar"></i>'],
-  "ABONNEMENTS": ["bg-abonnements",'<i class="fa-regular fa-credit-card"></i>'],
-  "VIREMENTS": ["bg-virements",'<i class="fa-solid fa-cash-register"></i>'],
-  "DIVERS": ["bg-divers",'<i class="fa-solid fa-otter"></i>']
+  "COURSES": ["bg-courses", '<i class="fa-solid fa-utensils"></i>', "var(--bg-courses)"],
+  "SALAIRE": ["bg-salaire",'<i class="fa-solid fa-euro-sign"></i>', "var(--bg-salaire)"],
+  "AIDE": ["bg-aide",'<i class="fa-solid fa-handshake-angle"></i>', "var(--bg-aide)"],
+  "LOISIRS": ["bg-loisirs",'<i class="fa-solid fa-cart-shopping"></i>', "var(--bg-loisirs)"],
+  "CHARGES": ["bg-charges",'<i class="fa-solid fa-file-invoice-dollar"></i>', "var(--bg-charges)"],
+  "ABONNEMENTS": ["bg-abonnements",'<i class="fa-regular fa-credit-card"></i>', "var(--bg-abonnements)"],
+  "VIREMENTS": ["bg-virements",'<i class="fa-solid fa-cash-register"></i>', "var(--bg-virements)"],
+  "DIVERS": ["bg-divers",'<i class="fa-solid fa-otter"></i>', "var(--bg-divers)"]
 };
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -1327,11 +1327,40 @@ function addLoadMoreButton(banque_id) {
   };
 }
 
+function addCategoryIcon(){
+  // Point de départ : conteneur pour les checkboxes
+  let container = document.getElementById('categoryCheckboxes');
+
+  Object.entries(categoryColorMap).forEach(([category, [_, iconHtml, colorVariable]], index) => {
+    // Créer un input de type checkbox
+    let checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'btn-check';
+    checkbox.id = `btn-check-${category}`;
+    checkbox.autocomplete = 'off';
+
+    checkbox.setAttribute('onchange', `loadHistoriqueOperations(false)`);
+
+    // Créer un label associé
+    let label = document.createElement('label');
+    label.className = `btn btn-category`; // Applique la classe pour la couleur de fond
+    label.setAttribute('style', `background-color: ${colorVariable};`); // Appliquer la couleur de fond
+    label.htmlFor = checkbox.id;
+    label.innerHTML = `${iconHtml}`; // Icône suivi du nom de la catégorie
+
+    // Ajouter les éléments au conteneur
+    container.appendChild(checkbox);
+    container.appendChild(label);
+  });
+}
 
 let currentIndex = 0; // Commence à 0, puis mise à jour avec le nombre d'opérations déjà chargées
 
 
-function loadHistoriqueVirements(banque_id){
+function loadHistoriqueVirements(){
+  var banque_id = document.getElementById('bankListContent').value; 
+  banque_id = parseInt(banque_id);
+
   document.getElementById('contentHistoriques').innerHTML = '';
 
   const transaction = db.transaction(['virements'], 'readonly');
@@ -1380,12 +1409,26 @@ function loadHistoriqueVirements(banque_id){
   };
 }
 
-function loadHistoriqueOperations(banque_id, loadMore = false){
+function loadHistoriqueOperations(loadMore = false){
+  var banque_id = document.getElementById('bankListContent').value; 
+  banque_id = parseInt(banque_id);
 
   if (!loadMore) {
     document.getElementById('contentHistoriques').innerHTML = ''; // Réinitialiser uniquement si chargement initial
     currentIndex = 0; // Réinitialiser l'indice si chargement initial
   }
+
+  // Récupérer les catégories sélectionnées
+  let selectedCategories = [];
+  document.querySelectorAll('.btn-check').forEach(checkbox => {
+    if (checkbox.checked) {
+      let label = checkbox.id;
+      let category = label.replace('btn-check-', '').trim();
+      if(category in categoryColorMap){
+        selectedCategories.push(category);
+      }
+    }
+  });
 
   const transaction = db.transaction(['operations'], 'readonly');
   const store = transaction.objectStore('operations');
@@ -1394,6 +1437,12 @@ function loadHistoriqueOperations(banque_id, loadMore = false){
 
   request.onsuccess = function(event) {
     let allOperations = event.target.result.filter(op => op.banques_id === parseInt(banque_id));
+
+    // Si des catégories sont sélectionnées, filtrer les opérations en conséquence
+    if (selectedCategories.length > 0) {
+      allOperations = allOperations.filter(op => selectedCategories.includes(op.category));
+    }
+
     // Tri des opérations par date de manière décroissante
     allOperations.sort((a, b) => {
       // Convertir les dates du format DD/MM/YYYY au format YYYYMMDD
@@ -1458,13 +1507,16 @@ function changeHistorique(current, otherId) {
     document.getElementById(otherId).checked = false;
   }
 
-  var banque_id = document.getElementById('bankListContent').value; 
-
   if(otherId === 'operations-checkbox'){
+    // Suppression des icons de catégories
+    document.getElementById('categoryCheckboxes').innerHTML = '';
     // Affichage de l'historique des 20 derniers virements
-    loadHistoriqueVirements(parseInt(banque_id));
+    loadHistoriqueVirements();
   }else{
+    document.getElementById('categoryCheckboxes').innerHTML = '';
+    // ajout des icons de catégories
+    addCategoryIcon();
     // Affichage de l'historique des 20 dernières opérations
-    loadHistoriqueOperations(parseInt(banque_id));
+    loadHistoriqueOperations(false);
   }
 }

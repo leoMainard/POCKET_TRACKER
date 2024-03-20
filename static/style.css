@@ -604,6 +604,55 @@ input[type="number"] {
     text-align: right;
   }
 
+
+  /* Boutons catégories historique */
+#categoryCheckboxes{
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+  .btn-category {
+    display: inline-block;
+    margin: 5px;
+    border-radius: 20px; /* Pour les arrondir comme des bulles */
+    padding: 5px 15px; /* Ajustez selon les besoins */
+    cursor: pointer; /* Indique que l'élément est cliquable */
+    border: none; /* Supprime la bordure par défaut des boutons */
+    transition: filter 0.3s ease, opacity 0.3s ease; /* Transition douce pour le filtre et l'opacité */
+  }
+  
+  .btn-category i {
+    margin-right: 5px; /* Espace entre l'icône et le texte */
+    color: white;
+  }
+  
+  /* Style lorsque la checkbox est non cochée */
+.btn-check:not(:checked) + .btn-category {
+    opacity: 1; /* Opacité normale */
+  }
+  
+  /* Style lorsque la checkbox est cochée */
+  .btn-check:checked + .btn-category {
+    opacity: 0.6; /* Rend le label plus sombre */
+    filter: brightness(70%); /* Rend la couleur de fond plus sombre */
+    cursor: pointer; /* Change le curseur pour indiquer que l'élément est interactif */
+  }
+
+  /* Style lors du survol du label */
+.btn-category:hover {
+    filter: brightness(90%); /* Rend la couleur de fond légèrement plus claire lors du survol */
+  }
+  
+  /* Style lors du survol du label de la checkbox cochée */
+  .btn-check:checked + .btn-category:hover {
+    background-color: var(--gris-claire);
+    filter: brightness(70%); /* Vous pouvez ajuster pour un effet plus sombre lors du survol si la checkbox est cochée */
+  }
+  
+
+
 /* -------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------- */
