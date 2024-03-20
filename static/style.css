@@ -298,10 +298,10 @@ body button:after {
     padding-left:5px;
 }
 
-.historique_category_operation{
+.historique_category_operation {
     width: 15%;
     margin-right: 10px;
-}
+  }
 
 .historique_montant_operation{
     width: 15%;

@@ -1,12 +1,12 @@
 let categoryColorMap = {
-  "COURSES": "bg-courses",
-  "SALAIRE": "bg-salaire",
-  "AIDE": "bg-aide",
-  "LOISIRS": "bg-loisirs",
-  "CHARGES": "bg-charges",
-  "ABONNEMENTS": "bg-abonnements",
-  "VIREMENTS": "bg-virements",
-  "DIVERS": "bg-divers"
+  "COURSES": ["bg-courses", '<i class="fa-solid fa-utensils"></i>'],
+  "SALAIRE": ["bg-salaire",'<i class="fa-solid fa-euro-sign"></i>'],
+  "AIDE": ["bg-aide",'<i class="fa-solid fa-handshake-angle"></i>'],
+  "LOISIRS": ["bg-loisirs",'<i class="fa-solid fa-cart-shopping"></i>'],
+  "CHARGES": ["bg-charges",'<i class="fa-solid fa-file-invoice-dollar"></i>'],
+  "ABONNEMENTS": ["bg-abonnements",'<i class="fa-regular fa-credit-card"></i>'],
+  "VIREMENTS": ["bg-virements",'<i class="fa-solid fa-cash-register"></i>'],
+  "DIVERS": ["bg-divers",'<i class="fa-solid fa-otter"></i>']
 };
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -165,6 +165,8 @@ function loadBanks() {
   request.onsuccess = function(event) {
     var banks = event.target.result;
     updateBankList(banks);
+
+    loadContent();
   };
 
   request.onerror = function(event) {
@@ -209,6 +211,8 @@ function deleteBankFromDb(bankId) {
     loadBanks() // Mettre à jour l'interface utilisateur après la suppression
 
     updateComptesListBasedOnBank(bankId, 'modale1');
+
+    loadContent();
   };
 
   request.onerror = function(event) {
@@ -320,6 +324,8 @@ function addCompteToDB(nom_compte, banques_id) {
   request_compte.onsuccess = function() {
     showSuccess('<i class="fa-solid fa-check"></i> Compte ajoutée avec succès');
     updateComptesListBasedOnBank(parseInt(banques_id), 'modale1');
+
+    loadContent();
   };
 
   request_compte.onerror = function() {
@@ -345,14 +351,16 @@ function deleteCompteFromDb(nom_compte) {
     var dateString = `${day}/${month}/${year}`;
 
     // Création d'une opération de récupération de montant
-    operationToCompte(parseInt(bank_id), parseFloat(montant));
-    operationToHistorique(parseInt(bank_id), banque_name, 'VIREMENTS', 'Suppression du compte ' + nom_compte, parseFloat(montant), dateString);
+    operationToCompte(parseInt(bank_id), parseFloat(parseFloat(montant).toFixed(2)));
+    operationToHistorique(parseInt(bank_id), banque_name, 'VIREMENTS', 'Suppression du compte ' + nom_compte, parseFloat(montant.toFixed(2)), dateString);
 
     const request = objectStore.delete([parseInt(bank_id), nom_compte]);
 
     request.onsuccess = function(event) {
       showSuccess('<i class="fa-solid fa-check"></i> Compte supprimée avec succès. ');
       updateComptesListBasedOnBank(parseInt(bank_id), 'modale1');
+
+      loadContent();
     };
   
     request.onerror = function(event) {
@@ -399,7 +407,7 @@ function updateComptesList_virement(comptes) {
     var montant = compte.montant_compte
 
     var signe = ' '
-    if(parseFloat(montant) >= 0){
+    if(parseFloat(parseFloat(montant).toFixed(2)) >= 0){
       signe = ' +'
     }
       
@@ -490,7 +498,7 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
       <p class="historique_date_operation mb-0">${date}</p>
       <p class="historique_banque_operation mb-0">${banque_name}</p>
       <p class="historique_detail_operation mb-0">${detail}</p>
-      <p class="historique_category_operation badge ${colorClass} text-white mb-0">${category}</p>
+      <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
       <p class="historique_montant_operation mb-0">${montant}€</p>
       <button onclick="deleteOperationHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
     `;
@@ -502,6 +510,8 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     // Réinitialisation des champs après l'affichage des opérations
     document.getElementById('operation_detail').value = '';
     document.getElementById('operation_valeur').value = '';
+
+    loadContent();
   }  
 }
 
@@ -600,7 +610,7 @@ function updateOperationListHistorique(banques_id){
         <p class="historique_date_operation mb-0">${date}</p>
         <p class="historique_banque_operation mb-0">${banque_name}</p>
         <p class="historique_detail_operation mb-0">${detail}</p>
-        <p class="historique_category_operation badge ${colorClass} text-white mb-0">${category}</p>
+        <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
         <p class="historique_montant_operation mb-0">${montant}€</p>
         <button onclick="deleteOperationHistorique(this)" class="btn btn-danger" disabled><i class="fas fa-trash"></i></button>
       `;
@@ -609,7 +619,7 @@ function updateOperationListHistorique(banques_id){
         <p class="historique_date_operation mb-0">${date}</p>
         <p class="historique_banque_operation mb-0">${banque_name}</p>
         <p class="historique_detail_operation mb-0">${detail}</p>
-        <p class="historique_category_operation badge ${colorClass} text-white mb-0">${category}</p>
+        <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
         <p class="historique_montant_operation mb-0">${montant}€</p>
         <button onclick="deleteOperationHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
       `;
@@ -653,7 +663,7 @@ function deleteOperationHistorique(button){
   // Récupérer le montant de l'opération
   var montantElement = operationDiv.querySelector('.historique_montant_operation');
   var montantText = montantElement.textContent || montantElement.innerText;
-  var montant = parseFloat(montantText.replace('€', '').trim());
+  var montant = parseFloat(parseFloat(montantText.replace('€', '').trim()).toFixed(2));
 
   var montant_inverse = montant * -1;
 
@@ -668,6 +678,8 @@ function deleteOperationHistorique(button){
   suppressionOperationHistorique(parseInt(operationId));
 
   updateOperationListHistorique(parseInt(banques_id));
+
+  loadContent();
 }
 
 
@@ -793,7 +805,7 @@ function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_co
 
   getRequestDebit.onsuccess = function() {
     const compteDebit = getRequestDebit.result;
-    if (compteDebit && parseFloat(compteDebit.montant_compte) >= montant) {
+    if (compteDebit && parseFloat(parseFloat(compteDebit.montant_compte).toFixed(2)) >= montant) {
       // Si le solde est suffisant, procéder au virement sans attendre la fin de l'opération
       // Note: Les modifications réelles dans la DB ne sont pas attendues ici
       operationToCompte(banque_id, -montant, nom_debit_compte); // Débiter
@@ -802,9 +814,12 @@ function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_co
       // Ici, les appels à operationToCompte sont asynchrones mais non attendus
       virementToHistorique(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date);
       
+      showSuccess('<i class="fa-solid fa-check"></i> Virement effectué.');
+
       // Supposons une mise à jour de l'interface utilisateur ou d'autres actions ne dépendant pas du résultat de la DB
       updateVirementListHistorique(banque_id); // Mettre à jour l'affichage, si nécessaire
 
+      loadContent();
     } else {
       showAlert(`<i class="fa-solid fa-xmark"></i> Le solde du compte ${nom_debit_compte} est insuffisant pour le virement.`);
     }
@@ -840,7 +855,7 @@ function deleteVirementHistorique(button){
   // Récupérer le montant de l'opération
   var montantElement = virementDiv.querySelector('.historique_montant_virement');
   var montantText = montantElement.textContent || montantElement.innerText;
-  var montant = parseFloat(montantText.replace('€', '').trim());
+  var montant = parseFloat(parseFloat(montantText.replace('€', '').trim()).toFixed(2));
 
   var banques_id = document.getElementById('banqueList_virement').value;
 
@@ -862,6 +877,8 @@ function deleteVirementHistorique(button){
   updateVirementListHistorique(parseInt(banques_id));
 
   updateComptesListBasedOnBank(parseInt(banques_id), 'modale2');
+
+  loadContent();
 }
 
 
@@ -1015,7 +1032,7 @@ function operation() {
       montant = '-' + montant;
     }
 
-    montant = parseFloat(montant);
+    montant = parseFloat(parseFloat(montant).toFixed(2));
 
     console.log(banque_name);
 
@@ -1064,7 +1081,7 @@ function virement() {
     showAlert('<i class="fa-solid fa-xmark"></i> Veuillez choisir un compte créditeur');
   }
   else if(credit != debit){
-    addVirementToDB(parseInt(banque_id), banque_name, debit, credit, parseFloat(montant), dateString);
+    addVirementToDB(parseInt(banque_id), banque_name, debit, credit, parseFloat(parseFloat(montant).toFixed(2)), dateString);
   }else{
     showAlert('<i class="fa-solid fa-xmark"></i> Le compte débiteur et le compte créditeur doivent être différents')
   }
@@ -1198,8 +1215,7 @@ document.getElementById('banqueList_virement').addEventListener('change', functi
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------
 
-// Au changement de banque sélectionnée, on affiche ou non les éléments
-document.getElementById('bankListContent').addEventListener('change', function() {
+function loadContent(){
   var banque_id = document.getElementById('bankListContent').value;
 
   banque_id = parseInt(banque_id);
@@ -1227,6 +1243,11 @@ document.getElementById('bankListContent').addEventListener('change', function()
     document.getElementById('containerContentHistoriques').style.display = 'none';
     document.getElementById('topRow').style.display = 'none';
   }
+}
+
+// Au changement de banque sélectionnée, on affiche ou non les éléments
+document.getElementById('bankListContent').addEventListener('change', function() {
+  loadContent();
 });
 
 function updateSolde(banque_id){
@@ -1243,9 +1264,9 @@ function updateSolde(banque_id){
 
     // Parcourir chaque compte et additionner les montants
     comptes.forEach(function(compte) {
-      somme += parseFloat(compte.montant_compte); // Assurez-vous que montant_compte est un nombre
+      somme += parseFloat(parseFloat(compte.montant_compte).toFixed(2)); // Assurez-vous que montant_compte est un nombre
       if (compte.nom_compte === 'CC') {
-        montantCC = parseFloat(compte.montant_compte); // Mémoriser le montant du compte 'CC'
+        montantCC = parseFloat(parseFloat(compte.montant_compte).toFixed(2)); // Mémoriser le montant du compte 'CC'
       }else{
         var newDiv = document.createElement('div');
         newDiv.className = 'contentCompteEtMontant';
@@ -1401,7 +1422,7 @@ function loadHistoriqueOperations(banque_id, loadMore = false){
       var couleurMontant = 'black';
       let textBoldClass = '';
 
-      if(parseFloat(montant) >= 0){
+      if(parseFloat(parseFloat(montant).toFixed(2)) >= 0){
         signe = '+';
         couleurMontant = 'text-success'; // Classe Bootstrap pour le texte en vert
         textBoldClass = 'fw-bold'; // Ajouter la classe pour le texte en gras
@@ -1414,7 +1435,7 @@ function loadHistoriqueOperations(banque_id, loadMore = false){
       <p class="historique_date_operation mb-0">${dateString}</p>
       <p class="historique_banque_operation mb-0">${banque_name}</p>
       <p class="historique_detail_operation mb-0">${detail}</p>
-      <p class="historique_category_operation badge ${colorClass} text-white mb-0">${category}</p>
+      <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
       <p class="historique_montant_operation_content mb-0 ${couleurMontant} ${textBoldClass}">${signe}${montant}€</p>
       `;
 
