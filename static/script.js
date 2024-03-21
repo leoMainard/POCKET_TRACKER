@@ -92,7 +92,7 @@ function initDb() {
     if (!db.objectStoreNames.contains('virements')) {
       const operationsStore = db.createObjectStore('virements', { keyPath: 'virement_id', autoIncrement: true });
       
-      // Créer des index pour rechercher des opérations par différents attributs
+      // Créer des index pour rechercher des virements par différents attributs
       operationsStore.createIndex('banques_id', 'banques_id', { unique: false });
       operationsStore.createIndex('compte_debit', 'compte_debit', { unique: false });
       operationsStore.createIndex('compte_credit', 'compte_credit', { unique: false });
@@ -100,11 +100,18 @@ function initDb() {
       // Note : Pas besoin de créer un index pour 'montant_virement'
     }
 
+    if (!db.objectStoreNames.contains('budget')) {
+      const operationsStore = db.createObjectStore('budget', { keyPath: 'budget_id', autoIncrement: true});
+
+      operationsStore.createIndex('banques_id', 'banques_id', { unique: false });
+      operationsStore.createIndex('date', 'date', { unique: false });
+    }
+
   };
 
   request.onsuccess = function(event) {
     db = event.target.result;
-    loadBanks(); // Appeler loadBanks ici
+    loadBanks(); // Charger les banques
   };
 
   request.onerror = function(event) {
@@ -179,15 +186,17 @@ function updateBankList(banks) {
   var bankList = document.getElementById('bankList');
   var bank_operation = document.getElementById('bankList_operation');
   var bank_virement = document.getElementById('banqueList_virement');
+  var bankBudget = document.getElementById('bankList_budget');
   var bankContent = document.getElementById('bankListContent');
 
   bankList.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
   bank_operation.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
   bank_virement.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
   bankContent.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
+  bankBudget.innerHTML = '<option value="">Sélectionnez une banque</option>'; // Nettoyer la liste existante
 
   banks.forEach(function(bank) {
-    ['bankList', 'bankList_operation', 'banqueList_virement','bankListContent'].forEach(function(listId) {
+    ['bankList', 'bankList_operation', 'banqueList_virement','bankList_budget','bankListContent'].forEach(function(listId) {
       var option = document.createElement('option');
       option.value = bank.banques_id; // ou bank.bankName si vous voulez afficher le nom
       option.textContent = bank.bankName; // ou tout autre propriété de l'objet banque
@@ -408,10 +417,10 @@ function updateComptesList_virement(comptes) {
 
     var signe = ' '
     if(parseFloat(parseFloat(montant).toFixed(2)) >= 0){
-      signe = ' +'
+      signe = ' + '
     }
       
-    option.textContent = compte.nom_compte + signe + compte.montant_compte;
+    option.textContent = compte.nom_compte + signe + compte.montant_compte.toLocaleString('fr-FR') + '€';
     [compteList_virement_debit, compteList_virement_credit].forEach(function(list) {
       list.appendChild(option.cloneNode(true));
     });
@@ -882,6 +891,107 @@ function deleteVirementHistorique(button){
 }
 
 
+
+
+
+
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+// --------------- Budget
+// ------------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------------------------
+
+function budget(){
+  var banque_id = parseInt(document.getElementById('bankList_budget').value); 
+
+  var revenu = parseInt(document.getElementById('budget_revenu').value); 
+  var courses = parseInt(document.getElementById('budget_courses').value); 
+  var loisirs = parseInt(document.getElementById('budget_loisirs').value); 
+  var charges = parseInt(document.getElementById('budget_charges').value); 
+  var abonnements = parseInt(document.getElementById('budget_abonnements').value); 
+  var virements = parseInt(document.getElementById('budget_virements').value); 
+  var divers = parseInt(document.getElementById('budget_divers').value); 
+
+  somme_budget = courses + loisirs + charges + abonnements + virements + divers;
+
+  if (!(banque_id > 0)){
+    showAlert('<i class="fa-solid fa-xmark"></i> Veuillez choisir une banque');
+  }else if(!(revenu >= 0 && courses >= 0 && loisirs >= 0 && charges >= 0 && abonnements >= 0 && virements >= 0 && divers >= 0)){
+    showAlert('<i class="fa-solid fa-xmark"></i> Remplissez tous les budgets');
+  }else if(somme_budget > revenu){
+    showAlert('<i class="fa-solid fa-xmark"></i> Attention, votre budget dépasse vos revenus');
+  }else{
+    addBudget(banque_id, revenu, courses, loisirs, charges, abonnements, virements, divers);
+  }
+}
+
+function loadBudget(){
+  // Chargement du budget créé sur le mois
+}
+
+function addBudget(banque_id, budget_revenu, budget_courses, budget_loisirs, budget_charges, budget_abonnements, budget_virements, budget_divers) {
+  const date = new Date();
+  const monthYear = `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`; // Format MM/YYYY
+  let budgetFound = false;
+
+  // Ouvrir une transaction sur la base de données
+  const transaction = db.transaction(['budget'], 'readwrite');
+  const store = transaction.objectStore('budget');
+
+  // Utiliser un index pour rechercher tous les budgets pour ce mois
+  const index = store.index('date');
+  const request = index.openCursor(IDBKeyRange.only(monthYear));
+
+  request.onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (cursor) {
+      // Vérifier si ce budget correspond à la banque_id recherchée
+      if (cursor.value.banque_id === banque_id) {
+        // Un budget correspondant trouvé, mise à jour
+        const updateData = cursor.value;
+        updateData.budget_revenu = budget_revenu;
+        updateData.budget_courses = budget_courses;
+        updateData.budget_loisirs = budget_loisirs;
+        updateData.budget_charges = budget_charges;
+        updateData.budget_abonnements = budget_abonnements;
+        updateData.budget_virements = budget_virements;
+        updateData.budget_divers = budget_divers;
+
+        store.put(updateData);
+        showSuccess('<i class="fa-solid fa-check"></i> Budget mis à jour avec succès.');
+        budgetFound = true; // Marquer qu'un budget a été trouvé et mis à jour
+      } else {
+        cursor.continue(); // Continuer le parcours si ce n'est pas le bon enregistrement
+      }
+    } else if (!budgetFound) {
+      // Si aucun budget correspondant n'a été trouvé après le parcours, ajouter un nouvel enregistrement
+      const newData = {
+        banque_id: banque_id,
+        date: monthYear,
+        budget_revenu: budget_revenu,
+        budget_courses: budget_courses,
+        budget_loisirs: budget_loisirs,
+        budget_charges: budget_charges,
+        budget_abonnements: budget_abonnements,
+        budget_virements: budget_virements,
+        budget_divers: budget_divers,
+      };
+      store.add(newData);
+      showSuccess('<i class="fa-solid fa-check"></i> Nouveau budget ajouté avec succès.');
+    }
+  };
+
+  request.onerror = (event) => {
+    console.error('Erreur lors de la tentative d\'ajout/mise à jour du budget.', event);
+  };
+}
+
+
+
+
+
+
+
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------- Gestion de la banque
@@ -1276,7 +1386,7 @@ function updateSolde(banque_id){
           <i class="fa-solid fa-piggy-bank" style="color: #fdb572;"></i>
           <p class="contentNomCompte mb-0">${compte.nom_compte}</p>
         </div>
-        <p class="contentMontantCompte mb-0">${signeMontantCompte} ${compte.montant_compte}€</p>
+        <p class="contentMontantCompte mb-0">${signeMontantCompte} ${compte.montant_compte.toLocaleString('fr-FR')}€</p>
         `;
 
         var container = document.getElementById('montantDesComptes'); // Assurez-vous que cet ID existe dans votre HTML
@@ -1286,8 +1396,8 @@ function updateSolde(banque_id){
     var signe = somme < 0 ? '-' : '+';
     var signeCC = montantCC < 0 ? '-' : '+';
 
-    document.getElementById('montantTotalAvoirs').innerHTML = signe + ' ' + somme + '€';
-    document.getElementById('soldeCC').innerHTML = signeCC + ' ' + montantCC + '€';
+    document.getElementById('montantTotalAvoirs').innerHTML = signe + ' ' + somme.toLocaleString('fr-FR') + '€';
+    document.getElementById('soldeCC').innerHTML = signeCC + ' ' + montantCC.toLocaleString('fr-FR') + '€';
   };
 
   getRequest.onerror = function(event) {
@@ -1376,6 +1486,19 @@ function loadHistoriqueVirements(){
       .sort((a, b) => b.date.localeCompare(a.date)) // Trie par date en ordre décroissant
       .slice(0, 20); // Prend les 20 premiers éléments après le tri
 
+    // Si aucune opération à afficher : message
+    if(virements.length === 0){
+      var newDiv = document.createElement('div');
+      newDiv.className = 'contentHistoriquesValues d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+      // Ajouter le contenu HTML à la nouvelle div
+      newDiv.innerHTML = `
+      <p class="pas_historique mb-0">Aucun historique à afficher.</p>
+      `;
+
+      var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
+      container.append(newDiv);
+    }
+
     // Boucler sur chaque opération récupérée
     virements.forEach(virement => {
       // Récupération et traitement des informations de l'opération
@@ -1393,7 +1516,7 @@ function loadHistoriqueVirements(){
       <p class="historique_banque_virement mb-0">${banque_name}</p>
       <p class="historique_debit_virement badge bg-debit text-white mb-0">Débit : ${compte_debiteur}</p>
       <p class="historique_credit_virement badge bg-credit text-white mb-0">Crédit : ${compte_crediteur}</p>
-      <p class="historique_montant_virement mb-0">${montant}€</p>
+      <p class="historique_montant_virement mb-0">${montant.toLocaleString('fr-FR')}€</p>
       `;
 
       var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
@@ -1455,6 +1578,19 @@ function loadHistoriqueOperations(loadMore = false){
 
     const operationsToLoad = allOperations.slice(currentIndex, currentIndex + 20); // Charger 20 opérations à la fois
 
+    // Si aucune opération à afficher : message
+    if(operationsToLoad.length === 0){
+      var newDiv = document.createElement('div');
+      newDiv.className = 'contentHistoriquesValues d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+      // Ajouter le contenu HTML à la nouvelle div
+      newDiv.innerHTML = `
+      <p class="pas_historique mb-0">Aucun historique à afficher.</p>
+      `;
+
+      var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
+      container.append(newDiv);
+    }
+
     currentIndex += operationsToLoad.length; // Mettre à jour l'indice pour le prochain chargement
 
     operationsToLoad.forEach(operation => {
@@ -1485,7 +1621,7 @@ function loadHistoriqueOperations(loadMore = false){
       <p class="historique_banque_operation mb-0">${banque_name}</p>
       <p class="historique_detail_operation mb-0">${detail}</p>
       <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
-      <p class="historique_montant_operation_content mb-0 ${couleurMontant} ${textBoldClass}">${signe}${montant}€</p>
+      <p class="historique_montant_operation_content mb-0 ${couleurMontant} ${textBoldClass}">${signe}${montant.toLocaleString('fr-FR')}€</p>
       `;
 
       var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML

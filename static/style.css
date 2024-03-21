@@ -402,6 +402,30 @@ input[type="number"] {
 }
 
 
+
+
+/* ------------------------------------------------------- budget */
+.label_budget{
+    padding-top: 10px;
+}
+
+.btn_budget{
+    margin-top: 10px;
+}
+
+.container_budget{
+    display: flex;
+    justify-content: center;
+}
+
+.container_budget i{
+    margin-left: 5px;
+    width: 40px;
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
+}
+
 /* -------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------- */
@@ -649,6 +673,10 @@ input[type="number"] {
   .btn-check:checked + .btn-category:hover {
     background-color: var(--gris-claire);
     filter: brightness(70%); /* Vous pouvez ajuster pour un effet plus sombre lors du survol si la checkbox est cochée */
+  }
+
+  .pas_historique{
+    color: var(--principal);
   }
   
 

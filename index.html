@@ -32,6 +32,7 @@
                 <button class="banque" id="banque" onclick="openModal('bankModal')">Banque / Comptes</button>
                 <button class="operation" id="operation" onclick="openModal('operationModal')">Opération</button>
                 <button class="virement" id="virement" onclick="openModal('virementModal')">Virement interne</button>
+                <button class="virement" id="virement" onclick="openModal('budgetModal')">Budget</button>
             </div>
         </div>
 
@@ -174,7 +175,7 @@
                 </div>
                 <div class="mt-3 d-flex align-items-center" id="virement_boutons">
                     <input type="number" id="virement_valeur" placeholder="Montant" class="form-control" />
-                    <button onclick="virement()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-check"></i></i></button>
+                    <button onclick="virement()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-check"></i></button>
                 </div>
 
                 <h5 class="mb-3">Historique des virements du jour</h5>
@@ -184,6 +185,66 @@
             </div>
         </div>
 
+        <!-- --------------------------------------------------------------------- Modales Budget -->
+        <div id="budgetModal" class="modal">
+            <!-- Contenu de la modale -->
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('budgetModal')"><i class="fas fa-times-square fermer_modal"></i></span>
+                <h5>Mon budget du mois</h5>
+
+                <div class="flex-grow-1">
+                    <select id="bankList_budget" class="form-control">
+                        <option value="">Sélectionnez une banque</option>
+                    </select>
+                    <i class="fas fa-arrows-alt-v"></i>
+                </div>
+
+                <label class="label_budget" for="budget_revenu">Vos revenus</label>
+                <div class="container_budget">
+                    <input type="number" id="budget_revenu" placeholder="Déterminez vos revenus" class="form-control" />
+                    <i class="fa-solid fa-euro-sign" id="budget_i" style="background-color: #6a994e;"></i>
+                </div>
+
+                <label class="label_budget" for="budget_courses">Courses</label>
+                <div class="container_budget">
+                    <input type="number" id="budget_courses" placeholder="Déterminez votre budget courses" class="form-control" />
+                    <i class="fa-solid fa-utensils" style="background-color: #f17105;"></i>
+                </div>
+
+                <label class="label_budget" for="budget_loisirs">Loisirs</label>
+                <div class="container_budget">
+                    <input type="number" id="budget_loisirs" placeholder="Déterminez votre budget loisirs" class="form-control" />
+                    <i class="fa-solid fa-cart-shopping" style="background-color: #ffb703;"></i>
+                </div>
+
+                <label class="label_budget" for="budget_charges">Charges</label>
+                <div class="container_budget">
+                    <input type="number" id="budget_charges" placeholder="Déterminez votre budget charges" class="form-control" />
+                    <i class="fa-solid fa-file-invoice-dollar" style="background-color: #ef233c;"></i>
+                </div>
+
+                <label class="label_budget" for="budget_abonnements">Abonnements</label>
+                <div class="container_budget">
+                    <input type="number" id="budget_abonnements" placeholder="Déterminez votre budget abonnements" class="form-control" />
+                    <i class="fa-regular fa-credit-card" style="background-color: #00b4d8;"></i>
+                </div>
+
+                <label class="label_budget" for="budget_virements">Virements</label>
+                <div class="container_budget">
+                    <input type="number" id="budget_virements" placeholder="Déterminez votre budget virements" class="form-control" />
+                    <i class="fa-solid fa-cash-register" style="background-color: #b5179e;"></i>
+                </div>
+
+                <label class="label_budget" for="budget_divers">Divers</label>
+                <div class="container_budget">
+                    <input type="number" id="budget_divers" placeholder="Déterminez votre budget divers" class="form-control" />
+                    <i class="fa-solid fa-otter" style="background-color: #a5a58d;"></i>
+                </div>
+
+
+                <button onclick="budget()" id="btn_plus" class="btn btn-primary btn_budget">Valider mon budget  <i class="fas fa-check"></i></button>
+            </div>
+        </div>
 
         <!-- popup -->
         <div id="popupAlert" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #ffa69e; padding: 15px; width: 50%; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,.2); z-index: 2000;">
@@ -235,6 +296,8 @@
                     <!-- Contenu du dashboard ici -->
                 </div>
             </div>
+
+            
         
             <div class="containerContentHistoriques" id="containerContentHistoriques">
                 <div class="contentHistoriqueBoutons">
