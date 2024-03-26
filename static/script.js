@@ -925,11 +925,54 @@ function budget(){
   }
 }
 
-function loadBudget(){
+function loadBudget(banque_id){
+  //
   // Chargement du budget créé sur le mois
+  //
+
+  const date = new Date();
+  const monthYear = `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`; // Format MM/YYYY
+
+  // Ouvrir une transaction sur la base de données
+  const transaction = db.transaction(['budget'], 'readwrite');
+  const store = transaction.objectStore('budget');
+
+  // Utiliser un index pour rechercher tous les budgets pour ce mois
+  const index = store.index('date');
+  const request = index.openCursor(IDBKeyRange.only(monthYear));
+
+  request.onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (cursor) {
+      console.log('ta gueule', banque_id);
+      // Vérifier si ce budget correspond à la banque_id recherchée
+      if (cursor.value.banque_id === banque_id) {
+        // Un budget correspondant trouvé, mise à jour
+        const updateData = cursor.value;
+        document.getElementById('budget_revenu').value = updateData.budget_revenu;
+        document.getElementById('budget_courses').value = updateData.budget_courses;
+        document.getElementById('budget_loisirs').value = updateData.budget_loisirs;
+        document.getElementById('budget_charges').value = updateData.budget_charges;
+        document.getElementById('budget_abonnements').value = updateData.budget_abonnements;
+        document.getElementById('budget_virements').value = updateData.budget_virements;
+        document.getElementById('budget_divers').value = updateData.budget_divers;
+
+      } else {
+        cursor.continue(); // Continuer le parcours si ce n'est pas le bon enregistrement
+      }
+    }
+  };
+
+  request.onerror = (event) => {
+    console.error('Erreur lors de la tentative de chargement du budget.', event);
+  };
 }
 
 function addBudget(banque_id, budget_revenu, budget_courses, budget_loisirs, budget_charges, budget_abonnements, budget_virements, budget_divers) {
+  //
+  // Ajout ou modification du budget sur le mois en cours
+  //
+
   const date = new Date();
   const monthYear = `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`; // Format MM/YYYY
   let budgetFound = false;
@@ -1273,6 +1316,26 @@ function closeModal(modalId) {
 
 // Lors des changements de banque, les comptes s'adaptent
 
+
+document.getElementById('bankList_budget').addEventListener('change', function() {
+  document.getElementById('budget_revenu').value = '';
+  document.getElementById('budget_courses').value = '';
+  document.getElementById('budget_loisirs').value = '';
+  document.getElementById('budget_charges').value = '';
+  document.getElementById('budget_abonnements').value = '';
+  document.getElementById('budget_virements').value = '';
+  document.getElementById('budget_divers').value = '';
+
+  document.getElementById('budget_revenu').placeholder = 'Déterminez vos revenus';
+  document.getElementById('budget_courses').placeholder = 'Déterminez votre budget courses';
+  document.getElementById('budget_loisirs').placeholder = 'Déterminez votre budget loisirs';
+  document.getElementById('budget_charges').placeholder = 'Déterminez votre budget charges';
+  document.getElementById('budget_abonnements').placeholder = 'Déterminez votre budget abonnements';
+  document.getElementById('budget_virements').placeholder = 'Déterminez votre budget virements';
+  document.getElementById('budget_divers').placeholder = 'Déterminez votre budget divers';
+  loadBudget(parseInt(this.value));
+});
+
 document.getElementById('bankList').addEventListener('change', function() {
   updateComptesListBasedOnBank(parseInt(this.value), 'modale1');
 });
@@ -1380,7 +1443,7 @@ function updateSolde(banque_id){
       }else{
         var newDiv = document.createElement('div');
         newDiv.className = 'contentCompteEtMontant';
-        var signeMontantCompte = compte.montant_compte < 0 ? '-' : '+';
+        var signeMontantCompte = compte.montant_compte >= 0 ? '+' : '';
         newDiv.innerHTML = `
         <div class="conteneurNomCompte">
           <i class="fa-solid fa-piggy-bank" style="color: #fdb572;"></i>
@@ -1393,8 +1456,8 @@ function updateSolde(banque_id){
         container.append(newDiv);
       }
     });
-    var signe = somme < 0 ? '-' : '+';
-    var signeCC = montantCC < 0 ? '-' : '+';
+    var signe = somme >= 0 ? '+' : '';
+    var signeCC = montantCC >= 0 ? '+' : '';
 
     document.getElementById('montantTotalAvoirs').innerHTML = signe + ' ' + somme.toLocaleString('fr-FR') + '€';
     document.getElementById('soldeCC').innerHTML = signeCC + ' ' + montantCC.toLocaleString('fr-FR') + '€';
