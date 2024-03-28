@@ -1,0 +1,94 @@
+{
+    "banques": [
+        {
+            "bankName": "EXEMPLE",
+            "banques_id": 999
+        }
+    ],
+    "budget": [
+        {
+            "banque_id": 999,
+            "date": "01/2024",
+            "budget_revenu": 2000,
+            "budget_courses": 300,
+            "budget_loisirs": 200,
+            "budget_charges": 600,
+            "budget_abonnements": 50,
+            "budget_virements": 0,
+            "budget_divers": 1100,
+            "budget_id": 900
+        },
+        {
+            "banque_id": 999,
+            "date": "02/2024",
+            "budget_revenu": 1500,
+            "budget_courses": 300,
+            "budget_loisirs": 200,
+            "budget_charges": 600,
+            "budget_abonnements": 50,
+            "budget_virements": 0,
+            "budget_divers": 1100,
+            "budget_id": 901
+        },
+        {
+            "banque_id": 999,
+            "date": "03/2024",
+            "budget_revenu": 1500,
+            "budget_courses": 300,
+            "budget_loisirs": 200,
+            "budget_charges": 600,
+            "budget_abonnements": 50,
+            "budget_virements": 0,
+            "budget_divers": 1100,
+            "budget_id": 902
+        }
+    ],
+    "comptes": [
+        {
+            "banques_id": 999,
+            "nom_compte": "CC",
+            "montant_compte": 3694
+        },
+        {
+            "banques_id": 999,
+            "nom_compte": "LEP",
+            "montant_compte": 1000
+        },
+        {
+            "banques_id": 999,
+            "nom_compte": "LIVRET A",
+            "montant_compte": 0
+        }
+    ],
+    "operations": [
+        {
+            "banques_id": 999,
+            "category": "SALAIRE",
+            "detail": "Salaire de janvier",
+            "montant": 1566,
+            "banque_name": "EXEMPLE",
+            "date": "26/01/2024",
+            "operation_id": 900
+        },
+        {
+            "banques_id": 999,
+            "category": "COURSES",
+            "detail": "Macdo",
+            "montant": -15.64,
+            "banque_name": "EXEMPLE",
+            "date": "26/03/2024",
+            "operation_id": 901
+        }
+    ],
+    "virements": [
+        {
+            "banques_id": 999,
+            "compte_debit": "CC",
+            "compte_credit": "LEP",
+            "montant": 200,
+            "banque_name": "EXEMPLE",
+            "date": "02/02/2024",
+            "virement_id": 900
+        }
+    ]
+}

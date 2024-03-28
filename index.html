@@ -28,11 +28,17 @@
     <section id="appContent" class="container-fluid">
         <div class="row">
             <div class="action col-12 d-flex align-items-center justify-content-center">
-                <i class="fas fa-wallet text-white position-absolute" style="left: 25px;"></i>
+                <i class="fa-solid fa-circle-info text-white position-absolute" style="left: 25px;"></i>
                 <button class="banque" id="banque" onclick="openModal('bankModal')">Banque / Comptes</button>
                 <button class="operation" id="operation" onclick="openModal('operationModal')">Opération</button>
                 <button class="virement" id="virement" onclick="openModal('virementModal')">Virement interne</button>
                 <button class="virement" id="virement" onclick="openModal('budgetModal')">Budget</button>
+                
+                <label for="file-import" class="fa-solid fa-file-import text-white position-absolute" style="right: 50px; cursor: pointer;"></label>
+                <input id="file-import" type="file" style="display: none;" onchange="handleFileImport(event)" accept=".json">
+
+                <button onclick="handleExport()" class="fa-solid fa-download text-white position-absolute" style="right: 15px; padding : 0px; background : none; border : none; cursor: pointer;"></button>
+
             </div>
         </div>
 
@@ -328,5 +334,6 @@
     <!-- Lien CDN pour JavaScript de Bootstrap -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
     <script src="static/script.js"></script>
+    <script src="static/export_import_data.js"></script>
 </body>
 </html>

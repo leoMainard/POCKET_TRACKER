@@ -726,7 +726,6 @@ function updateVirementListHistorique(banques_id){
   const transaction = db.transaction(['comptes'], 'readwrite');
   const objectStore = transaction.objectStore('comptes');
 
-  // Supposons que vous avez un index nommé 'banque_id' dans votre objectStore 'comptes'
   const index = objectStore.index('banques_id');
   const requete_compte = index.getAll(banques_id);
 
@@ -768,18 +767,19 @@ function updateVirementListHistorique(banques_id){
           newDiv.innerHTML = `
           <p class="historique_date_virement mb-0">${dateString}</p>
           <p class="historique_banque_virement mb-0">${banque_name}</p>
-          <p class="historique_debit_virement mb-0">Débit : ${compte_debiteur}</p>
-          <p class="historique_credit_virement mb-0">Crédit : ${compte_crediteur}</p>
+          <p class="historique_debit_virement badge bg-debit  mb-0">Débit : ${compte_debiteur}</p>
+          <p class="historique_credit_virement badge bg-credit  mb-0">Crédit : ${compte_crediteur}</p>
           <p class="historique_montant_virement mb-0">${montant}€</p>
           <button onclick="deleteVirementHistorique(this)" class="btn btn-danger" disabled><i class="fas fa-trash"></i></button>
           `;
         }else{
+          // gère le cas où l'un des comptes n'existe plus. Le virement s'affichera toujours, mais ne pourra plus etre supprimé avec le bouton poubelle
           // Ajouter le contenu HTML à la nouvelle div
           newDiv.innerHTML = `
           <p class="historique_date_virement mb-0">${dateString}</p>
           <p class="historique_banque_virement mb-0">${banque_name}</p>
-          <p class="historique_debit_virement mb-0">Débit : ${compte_debiteur}</p>
-          <p class="historique_credit_virement mb-0">Crédit : ${compte_crediteur}</p>
+          <p class="historique_debit_virement badge bg-debit  mb-0">Débit : ${compte_debiteur}</p>
+          <p class="historique_credit_virement badge bg-credit  mb-0">Crédit : ${compte_crediteur}</p>
           <p class="historique_montant_virement mb-0">${montant}€</p>
           <button onclick="deleteVirementHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
           `;
@@ -815,17 +815,13 @@ function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_co
   getRequestDebit.onsuccess = function() {
     const compteDebit = getRequestDebit.result;
     if (compteDebit && parseFloat(parseFloat(compteDebit.montant_compte).toFixed(2)) >= montant) {
-      // Si le solde est suffisant, procéder au virement sans attendre la fin de l'opération
-      // Note: Les modifications réelles dans la DB ne sont pas attendues ici
       operationToCompte(banque_id, -montant, nom_debit_compte); // Débiter
       operationToCompte(banque_id, montant, nom_credit_compte); // Créditer
       
-      // Ici, les appels à operationToCompte sont asynchrones mais non attendus
       virementToHistorique(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date);
       
       showSuccess('<i class="fa-solid fa-check"></i> Virement effectué.');
 
-      // Supposons une mise à jour de l'interface utilisateur ou d'autres actions ne dépendant pas du résultat de la DB
       updateVirementListHistorique(banque_id); // Mettre à jour l'affichage, si nécessaire
 
       loadContent();
@@ -1409,8 +1405,6 @@ function loadContent(){
     var checkbox = document.getElementById('operations-checkbox');
     checkbox.checked = true; // Cocher le checkbox
     checkbox.dispatchEvent(new Event('change')); // Déclencher l'événement change manuellement
-
-    // loadHistoriqueOperations(parseInt(banque_id));
   } else {
     // Cache les éléments si banque_id est 0
     document.getElementById('containerContentHistoriques').style.display = 'none';
