@@ -52,6 +52,7 @@ function handleExport() {
     exportAllIndexedDBToJson('MaBaseDeDonnees', function(error, jsonString) {
         if (!error) {
             download(jsonString, "MaBaseDeDonneesExport.json");
+            showSuccess('<i class="fa-solid fa-check"></i> Base de données téléchargée avec succès.');
         }
     });
 }
@@ -63,34 +64,38 @@ function importJsonToIndexedDB(databaseName, jsonString, callback) {
 
     request.onsuccess = function(event) {
         const db = event.target.result;
-        
-        Object.keys(parsedData).forEach(storeName => {
+        const storeNames = Object.keys(parsedData);
+        const promises = [];
+
+        storeNames.forEach(storeName => {
             const transaction = db.transaction(storeName, "readwrite");
             const store = transaction.objectStore(storeName);
             const data = parsedData[storeName];
 
-            // Effacer les données existantes dans l'object store pour éviter les doublons
-            const clearRequest = store.clear();
-            clearRequest.onsuccess = () => {
-                // Ajouter les nouvelles données
-                data.forEach(item => {
-                    store.add(item);
-                });
-            };
+            const clearPromise = new Promise((resolve, reject) => {
+                // Effacer les données existantes
+                const clearRequest = store.clear();
+                clearRequest.onsuccess = () => {
+                    // Ajouter les nouvelles données
+                    const addPromises = data.map(item => new Promise((resolve, reject) => {
+                        const addRequest = store.add(item);
+                        addRequest.onsuccess = resolve;
+                        addRequest.onerror = () => reject(addRequest.error);
+                    }));
 
-            clearRequest.onerror = function(event) {
-                callback(`Erreur lors de la suppression des données existantes dans ${storeName}: ${event.target.error}`, null);
-            };
+                    // Attendre que toutes les données soient ajoutées
+                    Promise.all(addPromises).then(resolve).catch(reject);
+                };
+                clearRequest.onerror = () => reject(clearRequest.error);
+            });
+
+            promises.push(clearPromise);
         });
 
-        // Gérer la fin de toutes les transactions
-        transaction.oncomplete = function() {
-            callback(null, 'Importation réussie');
-        };
-
-        transaction.onerror = function(event) {
-            callback(`Erreur lors de l'importation: ${event.target.error}`, null);
-        };
+        // Attendre la fin de toutes les transactions
+        Promise.all(promises)
+            .then(() => callback(null, 'Importation réussie'))
+            .catch(error => callback(`Erreur lors de l'importation: ${error}`, null));
     };
 
     request.onerror = function(event) {
@@ -98,18 +103,38 @@ function importJsonToIndexedDB(databaseName, jsonString, callback) {
     };
 }
 
+
+
 function handleFileImport(event) {
-    const fileReader = new FileReader();
-    fileReader.onload = function(fileEvent) {
-        const jsonString = fileEvent.target.result;
-        importJsonToIndexedDB('MaBaseDeDonnees', jsonString, function(error, message) {
-            if (error) {
-                console.error(error);
-            } else {
-                console.log(message);
-                alert("Importation réussie.");
-            }
-        });
-    };
-    fileReader.readAsText(event.target.files[0]);
+    console.log("quelque chose");
+    // Demande de confirmation avant de poursuivre
+    const isConfirmed = confirm("Êtes-vous sûr de vouloir importer ce fichier ? Cela remplacera les données existantes.");
+    
+    if (isConfirmed) {
+        const fileReader = new FileReader();
+        fileReader.onload = function(fileEvent) {
+            const jsonString = fileEvent.target.result;
+            importJsonToIndexedDB('MaBaseDeDonnees', jsonString, function(error, message) {
+                if (error) {
+                    console.error(error);
+                    showAlert('<i class="fa-solid fa-xmark"></i> Une erreur est survenue lors de l\'importation');
+                } else {
+                    console.log(message);
+                    showSuccess('<i class="fa-solid fa-check"></i> Importation des données réussie.');
+                    loadBanks();
+                }
+            });
+        };
+        fileReader.readAsText(event.target.files[0]);
+    } else {
+        // Si l'utilisateur annule, on ne fait rien de plus
+        console.log("Importation annulée.");
+    }
+
+    // Réinitialiser l'input file après chaque utilisation pour permettre la réimportation du même fichier
+    event.target.value = '';
 }
+
+
+
+

@@ -32,7 +32,7 @@
                 <button class="banque" id="banque" onclick="openModal('bankModal')">Banque / Comptes</button>
                 <button class="operation" id="operation" onclick="openModal('operationModal')">Opération</button>
                 <button class="virement" id="virement" onclick="openModal('virementModal')">Virement interne</button>
-                <button class="virement" id="virement" onclick="openModal('budgetModal')">Budget</button>
+                <button class="budget" id="budget" onclick="openModal('budgetModal')">Budget</button>
                 
                 <label for="file-import" class="fa-solid fa-file-import text-white position-absolute" style="right: 50px; cursor: pointer;"></label>
                 <input id="file-import" type="file" style="display: none;" onchange="handleFileImport(event)" accept=".json">
@@ -260,6 +260,8 @@
         <div id="popupSuccess" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #99d98c; padding: 15px; width: 50%; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,.2); z-index: 2000;">
             <!-- Le message d'alerte sera inséré ici -->
         </div>
+
+        
 
         <div class="resultsContent">
             <div class="selectionBanqueContent">
