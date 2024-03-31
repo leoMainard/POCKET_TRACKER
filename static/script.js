@@ -1462,7 +1462,7 @@ function updateSolde(banque_id){
   };
 }
 
-function addLoadMoreButton(banque_id) {
+function addLoadMoreButtonOperation() {
   let container = document.getElementById('contentHistoriques');
   let loadMoreButtonWrapper = document.createElement('div'); // Créer un nouveau conteneur pour le bouton
   loadMoreButtonWrapper.style.textAlign = 'center'; // Centrer le contenu du conteneur
@@ -1490,7 +1490,39 @@ function addLoadMoreButton(banque_id) {
   // Lorsque le bouton est cliqué, chargez plus d'opérations et cachez ce bouton
   loadMoreButton.onclick = function() {
     loadMoreButtonWrapper.remove();  // Supprimer le bouton après le clic
-    loadHistoriqueOperations(banque_id, true);
+    loadHistoriqueOperations(true);
+  };
+}
+
+function addLoadMoreButtonVirement() {
+  let container = document.getElementById('contentHistoriques');
+  let loadMoreButtonWrapper = document.createElement('div'); // Créer un nouveau conteneur pour le bouton
+  loadMoreButtonWrapper.style.textAlign = 'center'; // Centrer le contenu du conteneur
+
+  let loadMoreButton = document.getElementById('loadMoreOperations');
+  if (!loadMoreButton) {
+    loadMoreButton = document.createElement('button');
+    loadMoreButton.id = 'loadMoreOperations';
+    loadMoreButton.className = 'btn-load-more'; // Ajoutez des classes pour le style si nécessaire
+
+    // Créer l'élément <i> pour l'icône
+    let icon = document.createElement('i');
+    icon.className = 'fa-solid fa-plus';
+    loadMoreButton.appendChild(icon); // Ajouter l'icône au bouton
+
+    // Ajouter du texte au bouton
+    // loadMoreButton.appendChild(document.createTextNode(' Charger plus'));
+
+    loadMoreButtonWrapper.appendChild(loadMoreButton);
+    container.appendChild(loadMoreButtonWrapper); // Ajouter le wrapper au container principal
+  } else {
+    loadMoreButton.style.display = 'block'; // Rendre le bouton à nouveau visible si nécessaire
+  }
+
+  // Lorsque le bouton est cliqué, chargez plus d'opérations et cachez ce bouton
+  loadMoreButton.onclick = function() {
+    loadMoreButtonWrapper.remove();  // Supprimer le bouton après le clic
+    loadHistoriqueVirements(true);
   };
 }
 
@@ -1523,71 +1555,67 @@ function addCategoryIcon(){
 
 let currentIndex = 0; // Commence à 0, puis mise à jour avec le nombre d'opérations déjà chargées
 
-
-function loadHistoriqueVirements(){
+function loadHistoriqueVirements(loadMore = false){
   var banque_id = document.getElementById('bankListContent').value; 
   banque_id = parseInt(banque_id);
 
-  document.getElementById('contentHistoriques').innerHTML = '';
+  if (!loadMore) {
+    document.getElementById('contentHistoriques').innerHTML = ''; // Réinitialiser uniquement si chargement initial
+    currentIndex = 0; // Réinitialiser l'indice si chargement initial
+  }
 
   const transaction = db.transaction(['virements'], 'readonly');
   const store = transaction.objectStore('virements');
-  
-  // Supposons que vous avez un index sur la date dans votre objectStore 'virements' nommé 'date'
-  const index = store.index('date'); // Assurez-vous que cet index existe
-  const request = index.getAll(); // Récupère tous les virements
+  const index = store.index('date');
+  const request = index.getAll();
 
   request.onsuccess = function(event) {
-    const virements = event.target.result
-      .filter(virement => virement.banques_id === parseInt(banque_id)) // Assurez-vous que les types correspondent
-      .sort((a, b) => b.date.localeCompare(a.date)) // Trie par date en ordre décroissant
-      .slice(0, 20); // Prend les 20 premiers éléments après le tri
+    let allVirements = event.target.result.filter(virement => virement.banques_id === parseInt(banque_id));
 
-    // Si aucune opération à afficher : message
-    if(virements.length === 0){
-      var newDiv = document.createElement('div');
-      newDiv.className = 'contentHistoriquesValues d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
-      // Ajouter le contenu HTML à la nouvelle div
-      newDiv.innerHTML = `
-      <p class="pas_historique mb-0">Aucun historique à afficher.</p>
-      `;
-
-      var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
-      container.append(newDiv);
-    }
-
-    // Boucler sur chaque opération récupérée
-    virements.forEach(virement => {
-      // Récupération et traitement des informations de l'opération
-      let compte_debiteur = virement.compte_debit; 
-      let compte_crediteur = virement.compte_credit; 
-      let montant = virement.montant; 
-      let dateString = virement.date; 
-      let banque_name = virement.banque_name;
-
-      var newDiv = document.createElement('div');
-      newDiv.className = 'contentHistoriquesValues d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
-      // Ajouter le contenu HTML à la nouvelle div
-      newDiv.innerHTML = `
-      <p class="historique_date_virement mb-0">${dateString}</p>
-      <p class="historique_banque_virement mb-0">${banque_name}</p>
-      <p class="historique_debit_virement badge bg-debit text-white mb-0">Débit : ${compte_debiteur}</p>
-      <p class="historique_credit_virement badge bg-credit text-white mb-0">Crédit : ${compte_crediteur}</p>
-      <p class="historique_montant_virement mb-0">${montant.toLocaleString('fr-FR')}€</p>
-      `;
-
-      var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
-      container.append(newDiv);
+    // Tri des virements par date de manière décroissante
+    allVirements.sort((a, b) => {
+      // Convertir les dates du format DD/MM/YYYY au format YYYYMMDD pour le tri
+      let reformattedDateA = a.date.split('/').reverse().join('');
+      let reformattedDateB = b.date.split('/').reverse().join('');
+      return reformattedDateB.localeCompare(reformattedDateA);
     });
 
-    // Ici, vous devez effectivement mettre à jour l'interface utilisateur avec les informations des virements
-    // Par exemple, en ajoutant chaque virement à un élément HTML.
+    const virementsToLoad = allVirements.slice(currentIndex, currentIndex + 20); // Charger 20 virements à la fois
+    currentIndex += virementsToLoad.length; // Mettre à jour l'indice pour le prochain chargement
+
+    if(virementsToLoad.length === 0 && !loadMore){
+      var newDiv = document.createElement('div');
+      newDiv.className = 'contentHistoriquesValues d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+      newDiv.innerHTML = `<p class="pas_historique mb-0">Aucun historique de virement à afficher.</p>`;
+      document.getElementById('contentHistoriques').appendChild(newDiv);
+    } else {
+      virementsToLoad.forEach(displayVirement);
+    }
+
+    if (currentIndex < allVirements.length) {
+      addLoadMoreButtonVirement();
+    }
   };
 
   request.onerror = function(event) {
     console.error('Erreur lors de la récupération des virements', event);
   };
 }
+
+function displayVirement(virement){
+  let { compte_debit, compte_credit, montant, date, banque_name } = virement;
+  var newDiv = document.createElement('div');
+  newDiv.className = 'contentHistoriquesValues d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
+  newDiv.innerHTML = `
+  <p class="historique_date_virement mb-0">${date}</p>
+  <p class="historique_banque_virement mb-0">${banque_name}</p>
+  <p class="historique_debit_virement badge bg-debit text-white mb-0">Débit : ${compte_debit}</p>
+  <p class="historique_credit_virement badge bg-credit text-white mb-0">Crédit : ${compte_credit}</p>
+  <p class="historique_montant_virement mb-0">${montant.toLocaleString('fr-FR')}€</p>
+  `;
+  document.getElementById('contentHistoriques').appendChild(newDiv);
+}
+
 
 function loadHistoriqueOperations(loadMore = false){
   var banque_id = document.getElementById('bankListContent').value; 
@@ -1685,7 +1713,7 @@ function loadHistoriqueOperations(loadMore = false){
       container.append(newDiv);
     });
     if (currentIndex < allOperations.length) {
-      addLoadMoreButton(banque_id);
+      addLoadMoreButtonOperation();
     }
   };
 
