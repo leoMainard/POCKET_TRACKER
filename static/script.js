@@ -1401,6 +1401,8 @@ function loadContent(){
     // mise à jour des montants des comptes
     updateSolde(banque_id);
 
+    loadMonthYearList(banque_id);
+
     // Mise à jour de l'historique des opérations
     var checkbox = document.getElementById('operations-checkbox');
     checkbox.checked = true; // Cocher le checkbox
@@ -1409,6 +1411,7 @@ function loadContent(){
     // Cache les éléments si banque_id est 0
     document.getElementById('containerContentHistoriques').style.display = 'none';
     document.getElementById('topRow').style.display = 'none';
+    document.getElementById('graphiquesContainer').style.display = 'none';
   }
 }
 
@@ -1416,6 +1419,8 @@ function loadContent(){
 document.getElementById('bankListContent').addEventListener('change', function() {
   loadContent();
 });
+
+// ------------------------------------------------ SOLDE + BUDGET
 
 function updateSolde(banque_id){
   const transaction = db.transaction(['comptes'], 'readonly');
@@ -1461,6 +1466,70 @@ function updateSolde(banque_id){
     console.error('Update solde : erreur', event);
   };
 }
+
+function loadMonthYearList(banque_id) {
+  const transaction = db.transaction(['operations'], 'readonly');
+  const store = transaction.objectStore('operations');
+  const index = store.index('banques_id');
+  const request = index.getAll(banque_id);
+
+  const monthMap = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  ];
+
+  let uniqueMonths = new Set();
+  let uniqueYears = new Set();
+
+  request.onsuccess = function(event) {
+    const operations = event.target.result;
+
+    operations.forEach(op => {
+      const dateParts = op.date.split('/');
+      const month = dateParts[1]; // MM
+      const year = dateParts[2]; // YYYY
+
+      uniqueMonths.add(month);
+      uniqueYears.add(year);
+    });
+
+    const monthSelect = document.getElementById('dateMonthList');
+    const yearSelect = document.getElementById('dateYearList');
+
+    // Clear the current options
+    monthSelect.innerHTML = '<option value="">Mois</option>';
+    yearSelect.innerHTML = '<option value="">Année</option>';
+
+    uniqueMonths.forEach(month => {
+      // Create new option element for month
+      const monthOption = document.createElement('option');
+      monthOption.value = month; // The value is the month number
+      monthOption.textContent = monthMap[parseInt(month, 10) - 1]; // The text is the month name
+      monthSelect.appendChild(monthOption);
+    });
+
+    uniqueYears.forEach(year => {
+      // Create new option element for year
+      const yearOption = document.createElement('option');
+      yearOption.value = year;
+      yearOption.textContent = year;
+      yearSelect.appendChild(yearOption);
+    });
+  };
+
+  request.onerror = function(event) {
+    console.error('Unable to load dates for bank ID:', banque_id, event);
+  };
+}
+
+
+
+// ------------------------------------------------ GRAPHIQUES
+
+
+
+// ------------------------------------------------ HISTORIQUE
+
 
 function addLoadMoreButtonOperation() {
   let container = document.getElementById('contentHistoriques');

@@ -301,10 +301,49 @@
                 </div>
         
                 <div class="dashboard">
-                    <!-- Contenu du dashboard ici -->
+                    <div class="dashboardEntete">
+                        <p>Où en êtes-vous dans votre budget ?</p>
+
+                        <div class="selectionDateContent">
+                            <div class="flex-grow-1" id="dateMonth">
+                                <select id="dateMonthList" class="form-control">
+                                    <option value="">Mois</option>
+                                </select>
+                                <i class="fas fa-arrows-alt-v"></i>
+                            </div>
+            
+                            <div class="flex-grow-1" id="dateYear">
+                                <select id="dateYearList" class="form-control">
+                                    <option value="">Année</option>
+                                </select>
+                                <i class="fas fa-arrows-alt-v"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboardContenu">
+                        <div class="contentBudgetRevenu">
+                            <p>TEST</p>
+                        </div>
+                        <div class="contentBudgetAutres">
+                            <div class="row">
+                                <div class="contentBudgetCourses col-4"><p>TEST</p></div>
+                                <div class="contentBudgetLoisirs col-4"><p>TEST</p></div>
+                                <div class="contentBudgetCharges col-4"><p>TEST</p></div>
+                            </div>
+                            <div class="row">
+                                <div class="contentBudgetAbonnements col-4"><p>TEST</p></div>
+                                <div class="contentBudgetVirements col-4"><p>TEST</p></div>
+                                <div class="contentBudgetDivers col-4"><p>TEST</p></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <div class="graphiques" id="graphiquesContainer">
+                <h1>graphiques</h1>
+            </div>
             
         
             <div class="containerContentHistoriques" id="containerContentHistoriques">

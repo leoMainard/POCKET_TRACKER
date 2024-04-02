@@ -525,6 +525,9 @@ input[type="number"] {
     margin-bottom:0;
 }
 
+
+/* ------------------------------------------------ Dashboard */
+
 .dashboard {
     flex: 1; /* Occupe l'espace restant */
     margin: 10px;
@@ -532,6 +535,67 @@ input[type="number"] {
     border-radius: 8px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.dashboardEntete{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin: 10px;
+}
+
+.dashboardEntete p{
+    font-size: 1.2em;
+}
+
+.selectionDateContent{
+    display: flex; 
+    justify-content: end; 
+    align-items: center;
+    float: right;
+}
+
+#dateMonth { 
+    margin-right: 5px;
+    width: 150px;
+}
+
+#dateYear { 
+    margin-left: 5px;
+    width: 100px;
+}
+
+#dateMonthList, #dateYearList{
+    background-color: var(--blanc-clair );
+    border-radius: 15px;
+}
+
+
+.dashboardContenu {
+    display: flex; /* Active Flexbox */
+  }
+  
+  .contentBudgetRevenu {
+    flex: 0 0 20%; 
+    background-color: red;
+  }
+  
+  .contentBudgetAutres {
+    flex: 1; 
+    background-color: green;
+  }
+  
+  .contentBudgetAutres .row {
+    display: flex;
+  }
+  
+  .contentBudgetAutres .col-4 {
+    flex: 1; /* Chaque div enfant prend un tiers de l'espace disponible */
+    /* Ajoutez des styles supplémentaires comme la marge, le padding si nécessaire */
+  }
+
+
+
+
 
 .containerContentHistoriques {
     display:none;

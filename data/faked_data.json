@@ -47,12 +47,12 @@
         {
             "banques_id": 999,
             "nom_compte": "CC",
-            "montant_compte": 724.14
+            "montant_compte": 1682.71
         },
         {
             "banques_id": 999,
             "nom_compte": "LEP",
-            "montant_compte": 200
+            "montant_compte": 1100
         },
         {
             "banques_id": 999,
@@ -61,6 +61,123 @@
         }
     ],
     "operations": [
+        {
+            "banques_id": 999,
+            "category": "SALAIRE",
+            "detail": "Salaire de Décembre",
+            "montant": 1600,
+            "banque_name": "EXEMPLE",
+            "date": "01/12/2023",
+            "operation_id": 887
+        },
+        {
+            "banques_id": 999,
+            "category": "CHARGES",
+            "detail": "Loyer",
+            "montant": -430,
+            "banque_name": "EXEMPLE",
+            "date": "02/12/2023",
+            "operation_id": 888
+        },
+        {
+            "banques_id": 999,
+            "category": "CHARGES",
+            "detail": "Electricite",
+            "montant": -70,
+            "banque_name": "EXEMPLE",
+            "date": "03/12/2023",
+            "operation_id": 889
+        },
+        {
+            "banques_id": 999,
+            "category": "AIDE",
+            "detail": "APL",
+            "montant": 270,
+            "banque_name": "EXEMPLE",
+            "date": "05/12/2023",
+            "operation_id": 890
+        },
+        {
+            "banques_id": 999,
+            "category": "AIDE",
+            "detail": "Prime activité",
+            "montant": 86,
+            "banque_name": "EXEMPLE",
+            "date": "07/12/2023",
+            "operation_id": 891
+        },
+        {
+            "banques_id": 999,
+            "category": "COURSES",
+            "detail": "Petites courses pour la semaine",
+            "montant": -28.55,
+            "banque_name": "EXEMPLE",
+            "date": "07/12/2023",
+            "operation_id": 892
+        },
+        {
+            "banques_id": 999,
+            "category": "ABONNEMENTS",
+            "detail": "Internet + téléphone",
+            "montant": -34.99,
+            "banque_name": "EXEMPLE",
+            "date": "08/12/2023",
+            "operation_id": 893
+        },
+        {
+            "banques_id": 999,
+            "category": "CHARGES",
+            "detail": "Essence voiture",
+            "montant": -65.21,
+            "banque_name": "EXEMPLE",
+            "date": "09/12/2023",
+            "operation_id": 894
+        },
+        {
+            "banques_id": 999,
+            "category": "ABONNEMENTS",
+            "detail": "Basic Fit + Spotify + Netflix",
+            "montant": -48,
+            "banque_name": "EXEMPLE",
+            "date": "10/12/2023",
+            "operation_id": 895
+        },
+        {
+            "banques_id": 999,
+            "category": "LOISIRS",
+            "detail": "Cadeau de Noel",
+            "montant": -249.99,
+            "banque_name": "EXEMPLE",
+            "date": "15/12/2023",
+            "operation_id": 896
+        },
+        {
+            "banques_id": 999,
+            "category": "COURSES",
+            "detail": "Courses Leclerc",
+            "montant": -56.80,
+            "banque_name": "EXEMPLE",
+            "date": "19/12/2023",
+            "operation_id": 897
+        },
+        {
+            "banques_id": 999,
+            "category": "LOISIRS",
+            "detail": "Bowling",
+            "montant": -15,
+            "banque_name": "EXEMPLE",
+            "date": "23/12/2023",
+            "operation_id": 898
+        },
+        {
+            "banques_id": 999,
+            "category": "COURSES",
+            "detail": "Repas de Noel",
+            "montant": -130,
+            "banque_name": "EXEMPLE",
+            "date": "23/12/2023",
+            "operation_id": 899
+        },
         {
             "banques_id": 999,
             "category": "SALAIRE",
@@ -313,10 +430,7 @@
             "banque_name": "EXEMPLE",
             "date": "26/02/2024",
             "operation_id": 927
-        }
-        
-        
-        
+        } 
     ],
     "virements": [
         {
@@ -325,7 +439,7 @@
             "compte_credit": "LEP",
             "montant": 200,
             "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
+            "date": "01/12/2023",
             "virement_id": 900
         },
         {
@@ -341,199 +455,19 @@
             "banques_id": 999,
             "compte_debit": "CC",
             "compte_credit": "LEP",
-            "montant": 200,
+            "montant": 400,
             "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
+            "date": "01/02/2024",
             "virement_id": 902
         },
         {
             "banques_id": 999,
             "compte_debit": "CC",
             "compte_credit": "LEP",
-            "montant": 200,
+            "montant": 300,
             "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
+            "date": "01/03/2024",
             "virement_id": 903
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 904
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 905
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 906
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 907
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 908
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 909
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 910
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 911
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 912
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 913
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 914
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 915
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 916
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 917
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 918
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 919
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 920
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 921
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 922
-        },
-        {
-            "banques_id": 999,
-            "compte_debit": "CC",
-            "compte_credit": "LEP",
-            "montant": 200,
-            "banque_name": "EXEMPLE",
-            "date": "02/01/2024",
-            "virement_id": 923
         }
     ]
 }
