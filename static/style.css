@@ -573,25 +573,24 @@ input[type="number"] {
 .dashboardContenu {
     display: flex; /* Active Flexbox */
   }
-  
-  .contentBudgetRevenu {
-    flex: 0 0 20%; 
-    background-color: red;
-  }
-  
-  .contentBudgetAutres {
+
+.contentBudgetAutres {
     flex: 1; 
     background-color: green;
-  }
-  
-  .contentBudgetAutres .row {
+}
+
+.contentBudgetAutres .row {
     display: flex;
-  }
-  
-  .contentBudgetAutres .col-4 {
+}
+
+.contentBudgetAutres .col-4 {
     flex: 1; /* Chaque div enfant prend un tiers de l'espace disponible */
     /* Ajoutez des styles supplémentaires comme la marge, le padding si nécessaire */
-  }
+}
+
+.contentBudgetTop, .contentBudgetEvolution{
+    display: flex;
+}
 
 
 

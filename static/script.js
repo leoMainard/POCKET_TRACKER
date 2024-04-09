@@ -1386,7 +1386,6 @@ document.getElementById('banqueList_virement').addEventListener('change', functi
 
 function loadContent(){
   var banque_id = document.getElementById('bankListContent').value;
-
   banque_id = parseInt(banque_id);
 
   if (banque_id > 0) {
@@ -1402,6 +1401,11 @@ function loadContent(){
     updateSolde(banque_id);
 
     loadMonthYearList(banque_id);
+    
+    var mois = document.getElementById('dateMonthList').value;
+    var annee = document.getElementById('dateYearList').value;
+
+    loadBudgetData(mois, annee, banque_id);
 
     // Mise à jour de l'historique des opérations
     var checkbox = document.getElementById('operations-checkbox');
@@ -1418,6 +1422,37 @@ function loadContent(){
 // Au changement de banque sélectionnée, on affiche ou non les éléments
 document.getElementById('bankListContent').addEventListener('change', function() {
   loadContent();
+});
+
+// Au changement de filtre date sélectionné, on affiche ou non les éléments
+document.getElementById('dateMonthList').addEventListener('change', function() {
+
+  var banque_id = document.getElementById('bankListContent').value;
+
+  banque_id = parseInt(banque_id);
+
+  if (banque_id > 0) {
+
+    var mois = document.getElementById('dateMonthList').value;
+    var annee = document.getElementById('dateYearList').value;
+
+    loadBudgetData(mois, annee, banque_id);
+  }
+});
+
+document.getElementById('dateYearList').addEventListener('change', function() {
+
+  var banque_id = document.getElementById('bankListContent').value;
+
+  banque_id = parseInt(banque_id);
+
+  if (banque_id > 0) {
+
+    var mois = document.getElementById('dateMonthList').value;
+    var annee = document.getElementById('dateYearList').value;
+
+    loadBudgetData(mois, annee, banque_id);
+  }
 });
 
 // ------------------------------------------------ SOLDE + BUDGET
@@ -1521,6 +1556,143 @@ function loadMonthYearList(banque_id) {
     console.error('Unable to load dates for bank ID:', banque_id, event);
   };
 }
+
+function budget(monthYear, banque_id, callback) {
+  const dbRequest = indexedDB.open("MaBaseDeDonnees");
+  
+  dbRequest.onsuccess = function(event) {
+    const db = event.target.result;
+    const transaction = db.transaction(['operations', 'budget'], 'readonly');
+    const operationsStore = transaction.objectStore('operations');
+    const budgetStore = transaction.objectStore('budget');
+    
+    // Préparation des données de sortie
+    let budgetResult = {
+      "COURSES": { depense: 0, budget: 0, evolution: 0 },
+      "LOISIRS": { depense: 0, budget: 0, evolution: 0 },
+      "CHARGES": { depense: 0, budget: 0, evolution: 0 },
+      "ABONNEMENTS": { depense: 0, budget: 0, evolution: 0 },
+      "VIREMENTS": { depense: 0, budget: 0, evolution: 0 },
+      "DIVERS": { depense: 0, budget: 0, evolution: 0 }
+    };
+    let operationsCount = {
+      "COURSES": 0,
+      "LOISIRS": 0,
+      "CHARGES": 0,
+      "ABONNEMENTS": 0,
+      "VIREMENTS": 0,
+      "DIVERS":0
+    };
+    let previousMonthDiff = {
+      "COURSES": 0,
+      "LOISIRS": 0,
+      "CHARGES": 0,
+      "ABONNEMENTS": 0,
+      "VIREMENTS": 0,
+      "DIVERS":0
+    };
+
+    // Filtrer les opérations par mois/année et banque_id
+    operationsStore.index('date').openCursor().onsuccess = function(event) {
+      const cursor = event.target.result;
+      if (cursor) {
+        if (cursor.value.banques_id === banque_id && cursor.value.date.includes(monthYear)) {
+          let op = cursor.value;
+          operationsCount[op.category]++;
+          budgetResult[op.category].depense += op.montant; // Assurez-vous que op.montant est un Number
+        }
+        cursor.continue();
+      } else {
+        // Une fois les opérations terminées, récupérer les données du budget
+        budgetStore.index('date').get(monthYear).onsuccess = function(event) {
+          const budgetData = event.target.result;
+          if (budgetData) {
+            // Mettre à jour le budget pour chaque catégorie
+            for (let category in budgetResult) {
+              budgetResult[category].budget = budgetData[category];
+            }
+          }
+          // Calcul de l'évolution (exemple simple, nécessiterait des ajustements pour votre cas d'utilisation spécifique)
+          budgetStore.index('date').get(getPreviousMonthYear(monthYear)).onsuccess = function(event) {
+            const previousBudgetData = event.target.result;
+            if (previousBudgetData) {
+              for (let category in budgetResult) {
+                previousMonthDiff[category] = budgetResult[category].budget - previousBudgetData[category];
+              }
+            }
+            // Une fois tous les calculs terminés, appeler le callback avec les résultats
+            callback(budgetResult, operationsCount, previousMonthDiff);
+          };
+        };
+      }
+    };
+  };
+  
+  dbRequest.onerror = function(event) {
+    console.error('Database error: ', event.target.errorCode);
+  };
+}
+
+// Fonction d'assistance pour obtenir le mois/année précédent
+function getPreviousMonthYear(monthYear) {
+  let [month, year] = monthYear.split('/').map(Number);
+  if (month === 1) {
+    month = 12;
+    year -= 1;
+  } else {
+    month -= 1;
+  }
+  return `${month.toString().padStart(2, '0')}/${year}`;
+}
+
+
+
+
+function loadBudgetData(banque_id, mois, annee) {
+  const categories = {
+    "COURSES": ".contentBudgetCourses",
+    "LOISIRS": ".contentBudgetLoisirs",
+    "CHARGES": ".contentBudgetCharges",
+    "ABONNEMENTS": ".contentBudgetAbonnements",
+    "VIREMENTS": ".contentBudgetVirements",
+    "DIVERS": ".contentBudgetDivers"
+  };
+
+  const monthYear = `${mois}/${annee}`;
+  // ... (autres parties de votre fonction)
+
+  // Appeler la fonction budget qui récupère et traite les données
+  budget(monthYear, banque_id, function(budgetResult, operationsCount, previousMonthDiff) {
+    // Boucle pour mettre à jour l'interface pour chaque catégorie
+    Object.entries(categories).forEach(([category, divId]) => {
+      const categoryDiv = document.querySelectorAll(divId);
+      console.log(categoryDiv);
+      if (categoryDiv) {
+        const categoryData = budgetResult[category];
+        const evolutionIcon = categoryData.evolution > 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
+
+        const categoryHtml = `
+          <div class="contentBudgetTop">
+            <i class="fa-solid fa-utensils"></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
+            <p>${category}</p>
+            <div class="contentBudgetEvolution">
+              <i class="fa-solid ${evolutionIcon}"></i>
+              <p>${categoryData.evolution}</p>
+            </div>
+          </div>
+          <div class="contentBudgetDiff">${categoryData.depense.toLocaleString()} / ${categoryData.budget.toLocaleString()}</div>
+          <div class="contentBudgetNbOperation">${operationsCount[category]}</div>
+        `;
+
+        const categoryDiv = document.querySelectorAll(divId);
+        categoryDiv.innerHTML = categoryHtml;
+      } else {
+        console.error(`L'élément avec l'ID "${divId}" n'existe pas.`);
+      }
+    });
+  });
+}
+
 
 
 
