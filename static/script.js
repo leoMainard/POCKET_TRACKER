@@ -1405,7 +1405,7 @@ function loadContent(){
     var mois = document.getElementById('dateMonthList').value;
     var annee = document.getElementById('dateYearList').value;
 
-    loadBudgetData(mois, annee, banque_id);
+    loadBudgetData(banque_id, mois, annee);
 
     // Mise à jour de l'historique des opérations
     var checkbox = document.getElementById('operations-checkbox');
@@ -1436,7 +1436,7 @@ document.getElementById('dateMonthList').addEventListener('change', function() {
     var mois = document.getElementById('dateMonthList').value;
     var annee = document.getElementById('dateYearList').value;
 
-    loadBudgetData(mois, annee, banque_id);
+    loadBudgetData(banque_id, mois, annee);
   }
 });
 
@@ -1451,7 +1451,7 @@ document.getElementById('dateYearList').addEventListener('change', function() {
     var mois = document.getElementById('dateMonthList').value;
     var annee = document.getElementById('dateYearList').value;
 
-    loadBudgetData(mois, annee, banque_id);
+    loadBudgetData(banque_id, mois, annee);
   }
 });
 
@@ -1557,7 +1557,8 @@ function loadMonthYearList(banque_id) {
   };
 }
 
-function budget(monthYear, banque_id, callback) {
+function content_budget(monthYear, banque_id, callback) {
+
   const dbRequest = indexedDB.open("MaBaseDeDonnees");
   
   dbRequest.onsuccess = function(event) {
@@ -1568,22 +1569,14 @@ function budget(monthYear, banque_id, callback) {
     
     // Préparation des données de sortie
     let budgetResult = {
-      "COURSES": { depense: 0, budget: 0, evolution: 0 },
-      "LOISIRS": { depense: 0, budget: 0, evolution: 0 },
-      "CHARGES": { depense: 0, budget: 0, evolution: 0 },
-      "ABONNEMENTS": { depense: 0, budget: 0, evolution: 0 },
-      "VIREMENTS": { depense: 0, budget: 0, evolution: 0 },
-      "DIVERS": { depense: 0, budget: 0, evolution: 0 }
+      "COURSES": { depense: 0, budget: 0, reste: 0 },
+      "LOISIRS": { depense: 0, budget: 0,  reste: 0 },
+      "CHARGES": { depense: 0, budget: 0, reste: 0 },
+      "ABONNEMENTS": { depense: 0, budget: 0, reste: 0 },
+      "VIREMENTS": { depense: 0, budget: 0, reste: 0 },
+      "DIVERS": { depense: 0, budget: 0, reste: 0 }
     };
     let operationsCount = {
-      "COURSES": 0,
-      "LOISIRS": 0,
-      "CHARGES": 0,
-      "ABONNEMENTS": 0,
-      "VIREMENTS": 0,
-      "DIVERS":0
-    };
-    let previousMonthDiff = {
       "COURSES": 0,
       "LOISIRS": 0,
       "CHARGES": 0,
@@ -1596,10 +1589,12 @@ function budget(monthYear, banque_id, callback) {
     operationsStore.index('date').openCursor().onsuccess = function(event) {
       const cursor = event.target.result;
       if (cursor) {
-        if (cursor.value.banques_id === banque_id && cursor.value.date.includes(monthYear)) {
+        if (parseInt(cursor.value.banques_id) === banque_id && cursor.value.date.includes(monthYear)) {
           let op = cursor.value;
-          operationsCount[op.category]++;
-          budgetResult[op.category].depense += op.montant; // Assurez-vous que op.montant est un Number
+          if (budgetResult[op.category]) {
+            operationsCount[op.category]++;
+            budgetResult[op.category].depense += op.montant; // Assurez-vous que op.montant est un Number
+          }
         }
         cursor.continue();
       } else {
@@ -1607,22 +1602,15 @@ function budget(monthYear, banque_id, callback) {
         budgetStore.index('date').get(monthYear).onsuccess = function(event) {
           const budgetData = event.target.result;
           if (budgetData) {
-            // Mettre à jour le budget pour chaque catégorie
-            for (let category in budgetResult) {
-              budgetResult[category].budget = budgetData[category];
-            }
-          }
-          // Calcul de l'évolution (exemple simple, nécessiterait des ajustements pour votre cas d'utilisation spécifique)
-          budgetStore.index('date').get(getPreviousMonthYear(monthYear)).onsuccess = function(event) {
-            const previousBudgetData = event.target.result;
-            if (previousBudgetData) {
-              for (let category in budgetResult) {
-                previousMonthDiff[category] = budgetResult[category].budget - previousBudgetData[category];
+            Object.keys(budgetResult).forEach(category => {
+              if (budgetData['budget_' + category.toLowerCase()]) {
+                budgetResult[category].budget = budgetData['budget_' + category.toLowerCase()];
+                budgetResult[category].reste = Math.round(budgetResult[category].budget + budgetResult[category].depense);
               }
-            }
-            // Une fois tous les calculs terminés, appeler le callback avec les résultats
-            callback(budgetResult, operationsCount, previousMonthDiff);
-          };
+            });
+          }
+          // Appel du callback après toutes les mises à jour
+          callback(budgetResult, operationsCount);
         };
       }
     };
@@ -1633,59 +1621,52 @@ function budget(monthYear, banque_id, callback) {
   };
 }
 
-// Fonction d'assistance pour obtenir le mois/année précédent
-function getPreviousMonthYear(monthYear) {
-  let [month, year] = monthYear.split('/').map(Number);
-  if (month === 1) {
-    month = 12;
-    year -= 1;
-  } else {
-    month -= 1;
-  }
-  return `${month.toString().padStart(2, '0')}/${year}`;
-}
-
 
 
 
 function loadBudgetData(banque_id, mois, annee) {
+  document.getElementById('row_1').innerHTML = '';
+  document.getElementById('row_2').innerHTML = '';
+
   const categories = {
-    "COURSES": ".contentBudgetCourses",
-    "LOISIRS": ".contentBudgetLoisirs",
-    "CHARGES": ".contentBudgetCharges",
-    "ABONNEMENTS": ".contentBudgetAbonnements",
-    "VIREMENTS": ".contentBudgetVirements",
-    "DIVERS": ".contentBudgetDivers"
+    "COURSES": "row_1",
+    "LOISIRS": "row_1",
+    "CHARGES": "row_1",
+    "ABONNEMENTS": "row_2",
+    "VIREMENTS": "row_2",
+    "DIVERS": "row_2"
   };
 
   const monthYear = `${mois}/${annee}`;
-  // ... (autres parties de votre fonction)
 
   // Appeler la fonction budget qui récupère et traite les données
-  budget(monthYear, banque_id, function(budgetResult, operationsCount, previousMonthDiff) {
+  content_budget(monthYear, banque_id, function(budgetResult, operationsCount) {
     // Boucle pour mettre à jour l'interface pour chaque catégorie
     Object.entries(categories).forEach(([category, divId]) => {
-      const categoryDiv = document.querySelectorAll(divId);
-      console.log(categoryDiv);
+      const categoryDiv = document.getElementById(divId);
+
       if (categoryDiv) {
         const categoryData = budgetResult[category];
-        const evolutionIcon = categoryData.evolution > 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
+        const evolutionIcon = categoryData.reste > 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
 
-        const categoryHtml = `
+        var newDiv = document.createElement('div');
+        newDiv.className = 'content_budget mb-2 p-2 border rounded';
+        newDiv.innerHTML = `
           <div class="contentBudgetTop">
             <i class="fa-solid fa-utensils"></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
             <p>${category}</p>
             <div class="contentBudgetEvolution">
               <i class="fa-solid ${evolutionIcon}"></i>
-              <p>${categoryData.evolution}</p>
+              <p>${categoryData.reste}€</p>
             </div>
           </div>
-          <div class="contentBudgetDiff">${categoryData.depense.toLocaleString()} / ${categoryData.budget.toLocaleString()}</div>
-          <div class="contentBudgetNbOperation">${operationsCount[category]}</div>
+          <div class="contentBudgetDiff">${categoryData.depense.toLocaleString()}€ / ${categoryData.budget.toLocaleString()}€</div>
+          <div class="contentBudgetNbOperation">${operationsCount[category]} opération(s)</div>
         `;
 
-        const categoryDiv = document.querySelectorAll(divId);
-        categoryDiv.innerHTML = categoryHtml;
+        var container = document.getElementById(divId); // Assurez-vous que cet ID existe dans votre HTML
+        container.append(newDiv);
+
       } else {
         console.error(`L'élément avec l'ID "${divId}" n'existe pas.`);
       }

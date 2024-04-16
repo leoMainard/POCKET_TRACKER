@@ -576,12 +576,18 @@ input[type="number"] {
 
 .contentBudgetAutres {
     flex: 1; 
-    background-color: green;
 }
 
-.contentBudgetAutres .row {
-    display: flex;
-}
+.row_content_budgets {
+    display: flex; /* Applique un conteneur flex */
+    width: 100%; /* La largeur totale de la ligne */
+  }
+  
+  .row_content_budgets > div {
+    flex: 1; /* Chaque div prendra un espace égal dans le conteneur */
+    border: 1px solid #ccc; /* Ajoute une bordure pour visualiser les divs (optionnel) */
+    padding: 10px; /* Espacement intérieur pour ne pas coller au bord (optionnel) */
+  }
 
 .contentBudgetAutres .col-4 {
     flex: 1; /* Chaque div enfant prend un tiers de l'espace disponible */
