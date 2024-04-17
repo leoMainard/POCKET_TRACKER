@@ -18,6 +18,14 @@
     --bg-abonnements:#00b4d8;
     --bg-virements:#b5179e;
     --bg-courses:#f17105;
+    --bg-divers-second:#a5a58d;
+    --bg-salaire-second:#6a994e;
+    --bg-aide-second:#f72585;
+    --bg-loisirs-second:#ffb703;
+    --bg-charges-second:#ef233c;
+    --bg-abonnements-second:#00b4d8;
+    --bg-virements-second:#b5179e;
+    --bg-courses-second:#f17105;
     --blanc-clair:#f7f7f7;
     --blanc-fonce:#EEEEEE;
 }
@@ -588,6 +596,10 @@ input[type="number"] {
     border: 1px solid #ccc; /* Ajoute une bordure pour visualiser les divs (optionnel) */
     padding: 10px; /* Espacement intérieur pour ne pas coller au bord (optionnel) */
   }
+
+.contentBudgetTop{
+    display: flex;
+}
 
 .contentBudgetAutres .col-4 {
     flex: 1; /* Chaque div enfant prend un tiers de l'espace disponible */

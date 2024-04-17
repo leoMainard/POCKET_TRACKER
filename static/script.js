@@ -1629,12 +1629,12 @@ function loadBudgetData(banque_id, mois, annee) {
   document.getElementById('row_2').innerHTML = '';
 
   const categories = {
-    "COURSES": "row_1",
-    "LOISIRS": "row_1",
-    "CHARGES": "row_1",
-    "ABONNEMENTS": "row_2",
-    "VIREMENTS": "row_2",
-    "DIVERS": "row_2"
+    "COURSES": ["row_1","bg-courses","var(--bg-courses-second)"],
+    "LOISIRS": ["row_1","var(--bg-loisirs)","var(--bg-loisirs-second)"],
+    "CHARGES": ["row_1","var(--bg-charges)","var(--bg-charges-second)"],
+    "ABONNEMENTS": ["row_2","var(--bg-abonnements)","var(--bg-abonnements-second)"],
+    "VIREMENTS": ["row_2","var(--bg-virements)","var(--bg-virements-second)"],
+    "DIVERS": ["row_2","var(--bg-divers)","var(--bg-divers-second)"]
   };
 
   const monthYear = `${mois}/${annee}`;
@@ -1642,7 +1642,11 @@ function loadBudgetData(banque_id, mois, annee) {
   // Appeler la fonction budget qui récupère et traite les données
   content_budget(monthYear, banque_id, function(budgetResult, operationsCount) {
     // Boucle pour mettre à jour l'interface pour chaque catégorie
-    Object.entries(categories).forEach(([category, divId]) => {
+    Object.entries(categories).forEach(([category, content]) => {
+      var divId = content[0];
+      var couleurPremier = content[1];
+      var couleurSecond = content[2];
+
       const categoryDiv = document.getElementById(divId);
 
       if (categoryDiv) {
@@ -1653,7 +1657,7 @@ function loadBudgetData(banque_id, mois, annee) {
         newDiv.className = 'content_budget mb-2 p-2 border rounded';
         newDiv.innerHTML = `
           <div class="contentBudgetTop">
-            <i class="fa-solid fa-utensils"></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
+            <i class="fa-solid fa-utensils ${couleurPremier}"></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
             <p>${category}</p>
             <div class="contentBudgetEvolution">
               <i class="fa-solid ${evolutionIcon}"></i>
