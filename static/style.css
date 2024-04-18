@@ -585,12 +585,35 @@ input[type="number"] {
   
   .row_content_budgets > div {
     flex: 1; /* Chaque div prendra un espace égal dans le conteneur */
-    border: 1px solid #ccc; /* Ajoute une bordure pour visualiser les divs (optionnel) */
     padding: 10px; /* Espacement intérieur pour ne pas coller au bord (optionnel) */
   }
 
   .content_budget{
     margin: 10px;
+  }
+
+  .bg-budget-courses{
+    border: 2px solid #FFD3AD;
+  }
+
+  .bg-budget-loisirs{
+    border: 2px solid #FFE197;
+  }
+
+  .bg-budget-charges{
+    border: 2px solid #EB95A0;
+  }
+
+  .bg-budget-abo{
+    border: 2px solid #A2D6E1;
+  }
+
+  .bg-budget-vir{
+    border: 2px solid #E29FD8;
+  }
+
+  .bg-budget-divers{
+    border: 2px solid #EDEDE9;
   }
 
 .contentBudgetTop{

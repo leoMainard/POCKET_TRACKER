@@ -1629,12 +1629,12 @@ function loadBudgetData(banque_id, mois, annee) {
   document.getElementById('row_2').innerHTML = '';
 
   const categories = {
-    "COURSES": ["row_1","bg-courses","#f17105"],
-    "LOISIRS": ["row_1","bg-loisirs","#ffb703"],
-    "CHARGES": ["row_1","bg-charges","#ef233c"],
-    "ABONNEMENTS": ["row_2","bg-abonnements","#00b4d8"],
-    "VIREMENTS": ["row_2","bg-virements","#b5179e"],
-    "DIVERS": ["row_2","bg-divers","#a5a58d"]
+    "COURSES": ["row_1","bg-courses","bg-budget-courses"],
+    "LOISIRS": ["row_1","bg-loisirs","bg-budget-loisirs"],
+    "CHARGES": ["row_1","bg-charges","bg-budget-charges"],
+    "ABONNEMENTS": ["row_2","bg-abonnements","bg-budget-abo"],
+    "VIREMENTS": ["row_2","bg-virements","bg-budget-vir"],
+    "DIVERS": ["row_2","bg-divers","bg-budget-divers"]
   };
 
 
@@ -1646,7 +1646,7 @@ function loadBudgetData(banque_id, mois, annee) {
     Object.entries(categories).forEach(([category, content]) => {
       var divId = content[0];
       var couleurPremier = content[1];
-      var couleurBordure = content[2];
+      var couleurBackground = content[2];
 
       const categoryDiv = document.getElementById(divId);
 
@@ -1655,7 +1655,7 @@ function loadBudgetData(banque_id, mois, annee) {
         const evolutionIcon = categoryData.reste > 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
 
         var newDiv = document.createElement('div');
-        newDiv.className = 'content_budget mb-2 p-2 border rounded';
+        newDiv.className = `content_budget mb-2 p-2 rounded ${couleurBackground}`;
         newDiv.innerHTML = `
           <div class="contentBudgetTop">
             <i class="iconBudgetCategorie fa-solid fa-utensils ${couleurPremier}" ></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
