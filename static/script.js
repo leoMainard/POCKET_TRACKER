@@ -999,6 +999,8 @@ function addBudget(banque_id, budget_revenu, budget_courses, budget_loisirs, bud
         store.put(updateData);
         showSuccess('<i class="fa-solid fa-check"></i> Budget mis à jour avec succès.');
         budgetFound = true; // Marquer qu'un budget a été trouvé et mis à jour
+
+        loadContent()
       } else {
         cursor.continue(); // Continuer le parcours si ce n'est pas le bon enregistrement
       }
@@ -1017,6 +1019,8 @@ function addBudget(banque_id, budget_revenu, budget_courses, budget_loisirs, bud
       };
       store.add(newData);
       showSuccess('<i class="fa-solid fa-check"></i> Nouveau budget ajouté avec succès.');
+
+      loadContent()
     }
   };
 
@@ -1396,21 +1400,20 @@ function loadContent(){
     //Remise à zéro des éléments
     document.getElementById('montantDesComptes').innerHTML = '';
 
+    // Mise à jour de l'historique des opérations
+    var checkbox = document.getElementById('operations-checkbox');
+    checkbox.checked = true; // Cocher le checkbox
+    checkbox.dispatchEvent(new Event('change')); // Déclencher l'événement change manuellement
 
     // mise à jour des montants des comptes
     updateSolde(banque_id);
 
     loadMonthYearList(banque_id);
     
-    var mois = document.getElementById('dateMonthList').value;
-    var annee = document.getElementById('dateYearList').value;
+    // var mois = document.getElementById('dateMonthList').value;
+    // var annee = document.getElementById('dateYearList').value;
 
-    loadBudgetData(banque_id, mois, annee);
-
-    // Mise à jour de l'historique des opérations
-    var checkbox = document.getElementById('operations-checkbox');
-    checkbox.checked = true; // Cocher le checkbox
-    checkbox.dispatchEvent(new Event('change')); // Déclencher l'événement change manuellement
+    // loadBudgetData(banque_id, mois, annee);
   } else {
     // Cache les éléments si banque_id est 0
     document.getElementById('containerContentHistoriques').style.display = 'none';
@@ -1426,34 +1429,26 @@ document.getElementById('bankListContent').addEventListener('change', function()
 
 // Au changement de filtre date sélectionné, on affiche ou non les éléments
 document.getElementById('dateMonthList').addEventListener('change', function() {
-
-  var banque_id = document.getElementById('bankListContent').value;
-
-  banque_id = parseInt(banque_id);
-
-  if (banque_id > 0) {
-
-    var mois = document.getElementById('dateMonthList').value;
-    var annee = document.getElementById('dateYearList').value;
-
-    loadBudgetData(banque_id, mois, annee);
-  }
+  updateDataBasedOnSelection();
 });
 
 document.getElementById('dateYearList').addEventListener('change', function() {
-
-  var banque_id = document.getElementById('bankListContent').value;
-
-  banque_id = parseInt(banque_id);
-
-  if (banque_id > 0) {
-
-    var mois = document.getElementById('dateMonthList').value;
-    var annee = document.getElementById('dateYearList').value;
-
-    loadBudgetData(banque_id, mois, annee);
-  }
+  updateDataBasedOnSelection();
 });
+
+function updateDataBasedOnSelection() {
+  var banque_id = parseInt(document.getElementById('bankListContent').value);
+  var mois = document.getElementById('dateMonthList').value;
+  var annee = document.getElementById('dateYearList').value;
+
+  if (banque_id > 0 && mois && annee) {
+    // Supposons que loadBudgetData soit une fonction que vous voulez exécuter
+    loadBudgetData(banque_id, mois, annee);
+  } else {
+    console.log("Toutes les sélections nécessaires ne sont pas faites.");
+  }
+}
+
 
 // ------------------------------------------------ SOLDE + BUDGET
 
@@ -1516,6 +1511,10 @@ function loadMonthYearList(banque_id) {
   let uniqueMonths = new Set();
   let uniqueYears = new Set();
 
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+  const currentYear = currentDate.getFullYear();
+
   request.onsuccess = function(event) {
     const operations = event.target.result;
 
@@ -1536,20 +1535,31 @@ function loadMonthYearList(banque_id) {
     yearSelect.innerHTML = '<option value="">Année</option>';
 
     uniqueMonths.forEach(month => {
-      // Create new option element for month
       const monthOption = document.createElement('option');
-      monthOption.value = month; // The value is the month number
-      monthOption.textContent = monthMap[parseInt(month, 10) - 1]; // The text is the month name
+      monthOption.value = month;
+      monthOption.textContent = monthMap[parseInt(month, 10) - 1];
       monthSelect.appendChild(monthOption);
     });
 
     uniqueYears.forEach(year => {
-      // Create new option element for year
       const yearOption = document.createElement('option');
       yearOption.value = year;
       yearOption.textContent = year;
       yearSelect.appendChild(yearOption);
     });
+
+    // Find closest year and month if current is not available
+    let closestYear = [...uniqueYears].reduce((prev, curr) => Math.abs(curr - currentYear) < Math.abs(prev - currentYear) ? curr : prev);
+    let closestMonth = [...uniqueMonths].reduce((prev, curr) => Math.abs(curr - currentMonth) < Math.abs(prev - currentMonth) ? curr : prev);
+
+    // Adjust closestMonth if year was not the current year
+    if (parseInt(closestYear) !== currentYear) {
+      closestMonth = '12'; // Default to December if not current year
+    }
+
+    monthSelect.value = closestMonth;
+    yearSelect.value = closestYear;
+    yearSelect.dispatchEvent(new Event('change')); // Déclencher l'événement change manuellement
   };
 
   request.onerror = function(event) {
@@ -1621,20 +1631,17 @@ function content_budget(monthYear, banque_id, callback) {
   };
 }
 
-
-
-
 function loadBudgetData(banque_id, mois, annee) {
   document.getElementById('row_1').innerHTML = '';
   document.getElementById('row_2').innerHTML = '';
 
   const categories = {
-    "COURSES": ["row_1","bg-courses"],
-    "LOISIRS": ["row_1","bg-loisirs"],
-    "CHARGES": ["row_1","bg-charges"],
-    "ABONNEMENTS": ["row_2","bg-abonnements"],
-    "VIREMENTS": ["row_2","bg-virements"],
-    "DIVERS": ["row_2","bg-divers"]
+    "COURSES": ["row_1","bg-courses","fa-solid fa-utensils"],
+    "LOISIRS": ["row_1","bg-loisirs","fa-solid fa-cart-shopping"],
+    "CHARGES": ["row_1","bg-charges","fa-solid fa-file-invoice-dollar"],
+    "ABONNEMENTS": ["row_2","bg-abonnements","fa-regular fa-credit-card"],
+    "VIREMENTS": ["row_2","bg-virements","fa-solid fa-cash-register"],
+    "DIVERS": ["row_2","bg-divers","fa-solid fa-otter"]
   };
 
 
@@ -1646,6 +1653,7 @@ function loadBudgetData(banque_id, mois, annee) {
     Object.entries(categories).forEach(([category, content]) => {
       var divId = content[0];
       var couleurPremier = content[1];
+      var iconBudget = content[2];
 
       const categoryDiv = document.getElementById(divId);
 
@@ -1659,7 +1667,7 @@ function loadBudgetData(banque_id, mois, annee) {
         newDiv.className = `content_budget mb-2 rounded`;
         newDiv.innerHTML = `
           <div class="contentBudgetTop">
-            <i class="iconBudgetCategorie fa-solid fa-utensils ${couleurPremier}" ></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
+            <i class="iconBudgetCategorie ${iconBudget} ${couleurPremier}" ></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
             <p class="categorieBudgetTitre">${category}</p>
             <div class="contentBudgetEvolution ${evolutionBgColor}">
               <i class="fa-solid ${evolutionIcon}"></i>
