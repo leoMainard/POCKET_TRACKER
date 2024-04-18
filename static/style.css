@@ -478,6 +478,7 @@ input[type="number"] {
 
 .solde p{
     margin-bottom: 0px;
+    font-size: 1.2em;
 }
 
 .soldeCC {
@@ -501,10 +502,6 @@ input[type="number"] {
 
 }
 
-.solde p{
-    font-size: 1.2em;
-}
-
 .titreMesComptes p{
     font-size: 1.2em;
     margin-bottom:0;
@@ -525,6 +522,31 @@ input[type="number"] {
     margin-bottom:0;
 }
 
+
+.epargneContent{
+    background-color: var(--blanc-clair);
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    text-align: center; /* Centre le texte horizontalement */
+    display: flex; /* Utilise Flexbox */
+    flex-direction: column; /* Organise les enfants en colonne */
+    align-items: center; /* Centre les éléments enfants verticalement */
+    justify-content: center; /* Centre les éléments enfants horizontalement */
+    padding:10px;
+    margin-top: 10px;
+}
+
+.epargneContent p{
+    margin-bottom: 0px;
+    font-size: 1.2em;
+}
+
+.montantEpargne {
+    color: var(--principal); /* Définit la couleur du texte en bleu */
+    font-size: 2em; /* Augmente la taille du texte */
+    font-weight: bold; /* Rend le texte en gras pour plus d'impact */
+  }
 
 /* ------------------------------------------------ Dashboard */
 
