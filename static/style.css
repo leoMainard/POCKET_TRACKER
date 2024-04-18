@@ -579,52 +579,75 @@ input[type="number"] {
 }
 
 .row_content_budgets {
+    position: relative;
     display: flex; /* Applique un conteneur flex */
     width: 100%; /* La largeur totale de la ligne */
+  }
+
+  
+.row_content_budgets::after {
+    content: ''; /* Nécessaire pour générer le pseudo-élément */
+    display: block; /* Le pseudo-élément est traité comme un bloc */
+    margin: 0 auto; /* Centre le pseudo-élément horizontalement */
+    width: 98%; /* Largeur du pseudo-élément à 80% de celle du parent */
+    height: 2px; /* Hauteur de la ligne, peut être ajustée selon le besoin */
+    background-color: #E1E1E1; /* Couleur de la ligne séparatrice */
+    position: absolute;
+    bottom: 0; /* Positionne le pseudo-élément en bas de la div parent */
+    left: 0;
+    right: 0;
+  }
+  
+  .row_content_budgets:last-child::after {
+    display: none; /* Empêche la dernière div de générer un pseudo-élément */
   }
   
   .row_content_budgets > div {
     flex: 1; /* Chaque div prendra un espace égal dans le conteneur */
-    padding: 10px; /* Espacement intérieur pour ne pas coller au bord (optionnel) */
   }
 
   .content_budget{
+    position: relative;
     margin: 10px;
+    padding: 30px;
   }
 
-  .bg-budget-courses{
-    border: 2px solid #FFD3AD;
+  .content_budget:not(:last-child)::after {
+    content: ''; /* Nécessaire pour générer le pseudo-élément */
+    display: block; /* Le pseudo-élément est traité comme un bloc */
+    position: absolute;
+    top: 10%; /* Position de départ du trait, 10% depuis le haut pour centrer le trait à 80% de la hauteur */
+    bottom: 10%; /* Cela crée un espace en haut et en bas, réduisant la hauteur du trait à 80% de celle du parent */
+    right: 0; /* Positionne le pseudo-élément sur la droite de la div parent */
+    width: 2px; /* Largeur de la ligne, ajustez selon l'épaisseur désirée */
+    background-color: #E1E1E1; /* Couleur de la ligne séparatrice */
   }
 
-  .bg-budget-loisirs{
-    border: 2px solid #FFE197;
+  .evolutionRed{
+    color: var(--bg-charges);
+    background-color: #FBCBD1;
+    border-radius: 10px;
+    align-items: center;
+  }
+  .evolutionGreen{
+    color: var(--bg-salaire);
+    background-color: #DBF5CC;
+    border-radius: 10px;
+    align-items: center;
   }
 
-  .bg-budget-charges{
-    border: 2px solid #EB95A0;
-  }
-
-  .bg-budget-abo{
-    border: 2px solid #A2D6E1;
-  }
-
-  .bg-budget-vir{
-    border: 2px solid #E29FD8;
-  }
-
-  .bg-budget-divers{
-    border: 2px solid #EDEDE9;
+  .contentBudgetEvolution p{
+    margin:0;
   }
 
 .contentBudgetTop{
     display: flex;
     margin-bottom: 15px;
     align-items: center;
+    justify-content: space-between;
 }
 
 .contentBudgetTop .categorieBudgetTitre{
-    flex-basis: 40%;
-    flex-shrink: 0;
     margin: 0;
 }
 
@@ -633,17 +656,28 @@ input[type="number"] {
     justify-content: center;
     border-radius: 8px;
     color: white;
+    flex: 0 0 auto;
 }
+
+.categorieBudgetTitre {
+    font-weight: 700;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    margin-left: 10px; /* Ajustez selon vos besoins pour l'espacement */
+    margin-right: 10px; /* Ajustez selon vos besoins pour l'espacement */
+  }
 
 .contentBudgetEvolution {
     display: flex; /* Utilise Flexbox pour aligner les enfants sur la même ligne */
-    flex-basis: 40%; /* Alloue 40% de l'espace de la div parent */
+    flex-basis: 20%; /* Alloue 40% de l'espace de la div parent */
     justify-content: space-between; /* Espacement entre les éléments internes */
+    padding: 5px;
   }
 
   .contentBudgetDiff{
     display: flex;
-    font-size: 1.7em;
+    font-size: 2em;
     font-weight: bold;
   }
 
@@ -656,9 +690,7 @@ input[type="number"] {
     /* Ajoutez des styles supplémentaires comme la marge, le padding si nécessaire */
 }
 
-.contentBudgetTop, .contentBudgetEvolution{
-    display: flex;
-}
+
 
 
 

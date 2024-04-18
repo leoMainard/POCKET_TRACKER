@@ -1629,12 +1629,12 @@ function loadBudgetData(banque_id, mois, annee) {
   document.getElementById('row_2').innerHTML = '';
 
   const categories = {
-    "COURSES": ["row_1","bg-courses","bg-budget-courses"],
-    "LOISIRS": ["row_1","bg-loisirs","bg-budget-loisirs"],
-    "CHARGES": ["row_1","bg-charges","bg-budget-charges"],
-    "ABONNEMENTS": ["row_2","bg-abonnements","bg-budget-abo"],
-    "VIREMENTS": ["row_2","bg-virements","bg-budget-vir"],
-    "DIVERS": ["row_2","bg-divers","bg-budget-divers"]
+    "COURSES": ["row_1","bg-courses"],
+    "LOISIRS": ["row_1","bg-loisirs"],
+    "CHARGES": ["row_1","bg-charges"],
+    "ABONNEMENTS": ["row_2","bg-abonnements"],
+    "VIREMENTS": ["row_2","bg-virements"],
+    "DIVERS": ["row_2","bg-divers"]
   };
 
 
@@ -1646,7 +1646,6 @@ function loadBudgetData(banque_id, mois, annee) {
     Object.entries(categories).forEach(([category, content]) => {
       var divId = content[0];
       var couleurPremier = content[1];
-      var couleurBackground = content[2];
 
       const categoryDiv = document.getElementById(divId);
 
@@ -1654,13 +1653,15 @@ function loadBudgetData(banque_id, mois, annee) {
         const categoryData = budgetResult[category];
         const evolutionIcon = categoryData.reste > 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
 
+        const evolutionBgColor = categoryData.reste > 0 ? "evolutionGreen": "evolutionRed";
+
         var newDiv = document.createElement('div');
-        newDiv.className = `content_budget mb-2 p-2 rounded ${couleurBackground}`;
+        newDiv.className = `content_budget mb-2 rounded`;
         newDiv.innerHTML = `
           <div class="contentBudgetTop">
             <i class="iconBudgetCategorie fa-solid fa-utensils ${couleurPremier}" ></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
             <p class="categorieBudgetTitre">${category}</p>
-            <div class="contentBudgetEvolution">
+            <div class="contentBudgetEvolution ${evolutionBgColor}">
               <i class="fa-solid ${evolutionIcon}"></i>
               <p>${categoryData.reste}€</p>
             </div>
