@@ -1629,13 +1629,14 @@ function loadBudgetData(banque_id, mois, annee) {
   document.getElementById('row_2').innerHTML = '';
 
   const categories = {
-    "COURSES": ["row_1","bg-courses","var(--bg-courses-second)"],
-    "LOISIRS": ["row_1","var(--bg-loisirs)","var(--bg-loisirs-second)"],
-    "CHARGES": ["row_1","var(--bg-charges)","var(--bg-charges-second)"],
-    "ABONNEMENTS": ["row_2","var(--bg-abonnements)","var(--bg-abonnements-second)"],
-    "VIREMENTS": ["row_2","var(--bg-virements)","var(--bg-virements-second)"],
-    "DIVERS": ["row_2","var(--bg-divers)","var(--bg-divers-second)"]
+    "COURSES": ["row_1","bg-courses","#f17105"],
+    "LOISIRS": ["row_1","bg-loisirs","#ffb703"],
+    "CHARGES": ["row_1","bg-charges","#ef233c"],
+    "ABONNEMENTS": ["row_2","bg-abonnements","#00b4d8"],
+    "VIREMENTS": ["row_2","bg-virements","#b5179e"],
+    "DIVERS": ["row_2","bg-divers","#a5a58d"]
   };
+
 
   const monthYear = `${mois}/${annee}`;
 
@@ -1645,7 +1646,7 @@ function loadBudgetData(banque_id, mois, annee) {
     Object.entries(categories).forEach(([category, content]) => {
       var divId = content[0];
       var couleurPremier = content[1];
-      var couleurSecond = content[2];
+      var couleurBordure = content[2];
 
       const categoryDiv = document.getElementById(divId);
 
@@ -1657,14 +1658,17 @@ function loadBudgetData(banque_id, mois, annee) {
         newDiv.className = 'content_budget mb-2 p-2 border rounded';
         newDiv.innerHTML = `
           <div class="contentBudgetTop">
-            <i class="fa-solid fa-utensils ${couleurPremier}"></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
-            <p>${category}</p>
+            <i class="iconBudgetCategorie fa-solid fa-utensils ${couleurPremier}" ></i> <!-- Vous devrez adapter l'icône en fonction de la catégorie -->
+            <p class="categorieBudgetTitre">${category}</p>
             <div class="contentBudgetEvolution">
               <i class="fa-solid ${evolutionIcon}"></i>
               <p>${categoryData.reste}€</p>
             </div>
           </div>
-          <div class="contentBudgetDiff">${categoryData.depense.toLocaleString()}€ / ${categoryData.budget.toLocaleString()}€</div>
+          <div class="contentBudgetDiff">
+            <p class="budgetDiffDepense">${categoryData.depense.toLocaleString()}</p>
+            <p class="budgetDiffbudget"> / ${categoryData.budget.toLocaleString()}</p>
+          </div>
           <div class="contentBudgetNbOperation">${operationsCount[category]} opération(s)</div>
         `;
 
