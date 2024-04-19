@@ -1396,6 +1396,7 @@ function loadContent(){
   // Affiche les éléments si banque_id n'est pas 0 et met à jour les affichages
     document.getElementById('containerContentHistoriques').style.display = 'block';
     document.getElementById('topRow').style.display = 'flex';
+    document.getElementById('graphiquesContainer').style.display = 'block';
 
     //Remise à zéro des éléments
     document.getElementById('montantDesComptes').innerHTML = '';
@@ -1409,11 +1410,6 @@ function loadContent(){
     updateSolde(banque_id);
 
     loadMonthYearList(banque_id);
-    
-    // var mois = document.getElementById('dateMonthList').value;
-    // var annee = document.getElementById('dateYearList').value;
-
-    // loadBudgetData(banque_id, mois, annee);
   } else {
     // Cache les éléments si banque_id est 0
     document.getElementById('containerContentHistoriques').style.display = 'none';
@@ -1441,10 +1437,11 @@ function updateDataBasedOnSelection() {
   var mois = document.getElementById('dateMonthList').value;
   var annee = document.getElementById('dateYearList').value;
 
-  if (banque_id > 0 && mois && annee) {
-    // Supposons que loadBudgetData soit une fonction que vous voulez exécuter
+  if (banque_id > 0) {
     loadBudgetData(banque_id, mois, annee);
+    loadPieChart(banque_id, mois, annee);
     updateEpargne(banque_id, mois, annee);
+    
   } else {
     console.log("Toutes les sélections nécessaires ne sont pas faites.");
   }
@@ -1597,6 +1594,8 @@ function loadMonthYearList(banque_id) {
 
 function content_budget(monthYear, banque_id, callback) {
 
+  console.log(monthYear);
+
   const dbRequest = indexedDB.open("MaBaseDeDonnees");
   
   dbRequest.onsuccess = function(event) {
@@ -1724,10 +1723,116 @@ function loadBudgetData(banque_id, mois, annee) {
 
 // ------------------------------------------------ GRAPHIQUES
 
+function loadPieChart(banque_id, mois, annee) {
+  const monthYear = `${mois}/${annee}`;
+  const container = document.querySelector(".camembert");
+  container.innerHTML = '';
+
+  const dbRequest = indexedDB.open("MaBaseDeDonnees");
+
+  dbRequest.onsuccess = function(event) {
+    const db = event.target.result;
+    const transaction = db.transaction(['operations'], 'readonly');
+    const store = transaction.objectStore('operations');
+    const index = store.index('date');
+    const request = index.getAll();
+
+    request.onsuccess = function(event) {
+      const operations = event.target.result;
+      const filteredOperations = operations.filter(operation => 
+        operation.date.includes(monthYear) && 
+        operation.banques_id === banque_id &&
+        operation.montant < 0
+      );
+
+      let categorySpending = {};
+      let totalSpending = 0;
+
+      filteredOperations.forEach(op => {
+        if (categorySpending[op.category]) {
+          categorySpending[op.category] += Math.abs(op.montant);
+        } else {
+          categorySpending[op.category] = Math.abs(op.montant);
+        }
+        totalSpending += Math.abs(op.montant);
+      });
+
+      const chartData = {
+        series: Object.values(categorySpending),
+        labels: Object.keys(categorySpending)
+      };
+
+      const categoryColors = {
+        "DIVERS": '#a5a58d',
+        "SALAIRE": '#6a994e',
+        "AIDE": '#f72585',
+        "LOISIRS": '#ffb703',
+        "CHARGES": '#ef233c',
+        "ABONNEMENTS": '#00b4d8',
+        "VIREMENTS": '#b5179e',
+        "COURSES": '#f17105'
+      };
+      
+      const chartColors = chartData.labels.map(label => categoryColors[label.toUpperCase()]);
+
+      var options = {
+        series: chartData.series,
+        chart: {
+          type: 'donut',
+          height: 350
+        },
+        labels: chartData.labels,
+        colors: chartColors,
+        tooltip: {
+          y: {
+            formatter: (value) => `${value.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}€`
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        plotOptions: {
+          pie: {
+            customScale: 0.9,
+            donut: {
+              labels: {
+                show: true,
+                total: {
+                  show: true,
+                  label: 'Total dépenses',
+                  fontWeight : 'bold',
+                  fontSize: '1.5em',
+                  formatter: function (w) {
+                    // Calculer le total
+                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                    // Utiliser toLocaleString pour formater le total
+                    return total.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) + '€';
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+
+      var chart = new ApexCharts(container, options);
+      chart.render();
+    };
+
+    request.onerror = function(event) {
+      console.error('Erreur lors de la récupération des données pour le graphique', event);
+    };
+  };
+
+  dbRequest.onerror = function(event) {
+    console.error("Erreur lors de l'ouverture de la base de données:", event);
+  };
+}
+
+
 
 
 // ------------------------------------------------ HISTORIQUE
-
 
 function addLoadMoreButtonOperation() {
   let container = document.getElementById('contentHistoriques');
@@ -1882,7 +1987,6 @@ function displayVirement(virement){
   `;
   document.getElementById('contentHistoriques').appendChild(newDiv);
 }
-
 
 function loadHistoriqueOperations(loadMore = false){
   var banque_id = document.getElementById('bankListContent').value; 

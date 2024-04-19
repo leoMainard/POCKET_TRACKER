@@ -713,6 +713,24 @@ input[type="number"] {
 }
 
 
+/* ----------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- */
+
+/* GRAPHIQUES */
+
+.camembert{
+    background-color: var(--blanc-clair);
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    text-align: center; /* Centre le texte horizontalement */
+    display: flex; /* Utilise Flexbox */
+    flex-direction: column; /* Organise les enfants en colonne */
+    align-items: center; /* Centre les éléments enfants verticalement */
+    justify-content: center; /* Centre les éléments enfants horizontalement */
+    margin:10px;
+}
 
 
 
@@ -723,7 +741,18 @@ input[type="number"] {
 
 
 
-  
+
+
+
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------- */  
 
 .containerContentHistoriques {
     display:none;

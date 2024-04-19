@@ -59,54 +59,58 @@ function handleExport() {
 
 
 function importJsonToIndexedDB(databaseName, jsonString, callback) {
-    const parsedData = JSON.parse(jsonString);
-    const request = indexedDB.open(databaseName);
+    try{
+        const parsedData = JSON.parse(jsonString);
 
-    request.onsuccess = function(event) {
-        const db = event.target.result;
-        const storeNames = Object.keys(parsedData);
-        const promises = [];
+        const request = indexedDB.open(databaseName);
 
-        storeNames.forEach(storeName => {
-            const transaction = db.transaction(storeName, "readwrite");
-            const store = transaction.objectStore(storeName);
-            const data = parsedData[storeName];
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const storeNames = Object.keys(parsedData);
+            const promises = [];
 
-            const clearPromise = new Promise((resolve, reject) => {
-                // Effacer les données existantes
-                const clearRequest = store.clear();
-                clearRequest.onsuccess = () => {
-                    // Ajouter les nouvelles données
-                    const addPromises = data.map(item => new Promise((resolve, reject) => {
-                        const addRequest = store.add(item);
-                        addRequest.onsuccess = resolve;
-                        addRequest.onerror = () => reject(addRequest.error);
-                    }));
+            storeNames.forEach(storeName => {
+                const transaction = db.transaction(storeName, "readwrite");
+                const store = transaction.objectStore(storeName);
+                const data = parsedData[storeName];
 
-                    // Attendre que toutes les données soient ajoutées
-                    Promise.all(addPromises).then(resolve).catch(reject);
-                };
-                clearRequest.onerror = () => reject(clearRequest.error);
+                const clearPromise = new Promise((resolve, reject) => {
+                    // Effacer les données existantes
+                    const clearRequest = store.clear();
+                    clearRequest.onsuccess = () => {
+                        // Ajouter les nouvelles données
+                        const addPromises = data.map(item => new Promise((resolve, reject) => {
+                            const addRequest = store.add(item);
+                            addRequest.onsuccess = resolve;
+                            addRequest.onerror = () => reject(addRequest.error);
+                        }));
+
+                        // Attendre que toutes les données soient ajoutées
+                        Promise.all(addPromises).then(resolve).catch(reject);
+                    };
+                    clearRequest.onerror = () => reject(clearRequest.error);
+                });
+
+                promises.push(clearPromise);
             });
 
-            promises.push(clearPromise);
-        });
+            // Attendre la fin de toutes les transactions
+            Promise.all(promises)
+                .then(() => callback(null, 'Importation réussie'))
+                .catch(error => callback(`Erreur lors de l'importation: ${error}`, null));
+        };
 
-        // Attendre la fin de toutes les transactions
-        Promise.all(promises)
-            .then(() => callback(null, 'Importation réussie'))
-            .catch(error => callback(`Erreur lors de l'importation: ${error}`, null));
-    };
-
-    request.onerror = function(event) {
-        callback(`Erreur lors de l'ouverture de la base de données: ${event.target.error}`, null);
-    };
+        request.onerror = function(event) {
+            callback(`Erreur lors de l'ouverture de la base de données: ${event.target.error}`, null);
+        };
+    } catch{
+        showAlert(`<i class="fa-solid fa-xmark"></i> Une erreur est survenue lors de la lecture de votre fichier. Veuillez vérifier son contenu.`);
+    }
 }
 
 
 
 function handleFileImport(event) {
-    console.log("quelque chose");
     // Demande de confirmation avant de poursuivre
     const isConfirmed = confirm("Êtes-vous sûr de vouloir importer ce fichier ? Cela remplacera les données existantes.");
     
