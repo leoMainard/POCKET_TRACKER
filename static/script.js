@@ -1437,7 +1437,7 @@ function updateDataBasedOnSelection() {
   var mois = document.getElementById('dateMonthList').value;
   var annee = document.getElementById('dateYearList').value;
 
-  if (banque_id > 0) {
+  if (banque_id > 0 && mois && annee) {
     loadBudgetData(banque_id, mois, annee);
     loadPieChart(banque_id, mois, annee);
     updateEpargne(banque_id, mois, annee);
@@ -1594,8 +1594,6 @@ function loadMonthYearList(banque_id) {
 
 function content_budget(monthYear, banque_id, callback) {
 
-  console.log(monthYear);
-
   const dbRequest = indexedDB.open("MaBaseDeDonnees");
   
   dbRequest.onsuccess = function(event) {
@@ -1745,78 +1743,82 @@ function loadPieChart(banque_id, mois, annee) {
         operation.montant < 0
       );
 
-      let categorySpending = {};
-      let totalSpending = 0;
+      if(filteredOperations.length > 0){
+        let categorySpending = {};
+        let totalSpending = 0;
 
-      filteredOperations.forEach(op => {
-        if (categorySpending[op.category]) {
-          categorySpending[op.category] += Math.abs(op.montant);
-        } else {
-          categorySpending[op.category] = Math.abs(op.montant);
-        }
-        totalSpending += Math.abs(op.montant);
-      });
-
-      const chartData = {
-        series: Object.values(categorySpending),
-        labels: Object.keys(categorySpending)
-      };
-
-      const categoryColors = {
-        "DIVERS": '#a5a58d',
-        "SALAIRE": '#6a994e',
-        "AIDE": '#f72585',
-        "LOISIRS": '#ffb703',
-        "CHARGES": '#ef233c',
-        "ABONNEMENTS": '#00b4d8',
-        "VIREMENTS": '#b5179e',
-        "COURSES": '#f17105'
-      };
-      
-      const chartColors = chartData.labels.map(label => categoryColors[label.toUpperCase()]);
-
-      var options = {
-        series: chartData.series,
-        chart: {
-          type: 'donut',
-          height: 350
-        },
-        labels: chartData.labels,
-        colors: chartColors,
-        tooltip: {
-          y: {
-            formatter: (value) => `${value.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}€`
+        filteredOperations.forEach(op => {
+          if (categorySpending[op.category]) {
+            categorySpending[op.category] += Math.abs(op.montant);
+          } else {
+            categorySpending[op.category] = Math.abs(op.montant);
           }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        plotOptions: {
-          pie: {
-            customScale: 0.9,
-            donut: {
-              labels: {
-                show: true,
-                total: {
+          totalSpending += Math.abs(op.montant);
+        });
+
+        const chartData = {
+          series: Object.values(categorySpending),
+          labels: Object.keys(categorySpending)
+        };
+
+        const categoryColors = {
+          "DIVERS": '#a5a58d',
+          "SALAIRE": '#6a994e',
+          "AIDE": '#f72585',
+          "LOISIRS": '#ffb703',
+          "CHARGES": '#ef233c',
+          "ABONNEMENTS": '#00b4d8',
+          "VIREMENTS": '#b5179e',
+          "COURSES": '#f17105'
+        };
+        
+        const chartColors = chartData.labels.map(label => categoryColors[label.toUpperCase()]);
+
+        var options = {
+          series: chartData.series,
+          chart: {
+            type: 'donut',
+            height: 350
+          },
+          labels: chartData.labels,
+          colors: chartColors,
+          tooltip: {
+            y: {
+              formatter: (value) => `${value.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}€`
+            }
+          },
+          dataLabels: {
+            enabled: false // on affiche ou non les données sur le graphique
+          },
+          plotOptions: {
+            pie: {
+              customScale: 0.9,
+              donut: {
+                labels: {
                   show: true,
-                  label: 'Total dépenses',
-                  fontWeight : 'bold',
-                  fontSize: '1.5em',
-                  formatter: function (w) {
-                    // Calculer le total
-                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                    // Utiliser toLocaleString pour formater le total
-                    return total.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) + '€';
+                  total: {
+                    show: true,
+                    label: 'Total dépenses',
+                    fontWeight : 'bold',
+                    fontSize: '1.5em',
+                    formatter: function (w) {
+                      // Calculer le total
+                      const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                      // Utiliser toLocaleString pour formater le total
+                      return total.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) + '€';
+                    }
                   }
                 }
               }
             }
           }
-        }
-      };
+        };
 
-      var chart = new ApexCharts(container, options);
-      chart.render();
+        var chart = new ApexCharts(container, options);
+        chart.render();
+      }else{
+        container.innerHTML = `Sélection invalide. Mois : ${mois}, Année : ${annee}`;
+      }
     };
 
     request.onerror = function(event) {
