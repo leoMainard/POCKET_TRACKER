@@ -692,7 +692,7 @@ input[type="number"] {
 
 .contentBudgetEvolution {
     display: flex; /* Utilise Flexbox pour aligner les enfants sur la même ligne */
-    flex-basis: 20%; /* Alloue 40% de l'espace de la div parent */
+    flex-basis: 30%; /* Alloue 30% de l'espace de la div parent */
     justify-content: space-between; /* Espacement entre les éléments internes */
     padding: 5px;
   }
@@ -730,10 +730,12 @@ input[type="number"] {
     align-items: center; /* Centre les éléments enfants verticalement */
     justify-content: center; /* Centre les éléments enfants horizontalement */
     margin:10px;
+    padding: 10px;
 }
 
-
-
+.camembertTitre{
+    font-size: 1.2em;
+}
 
 
 

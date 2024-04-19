@@ -1724,7 +1724,7 @@ function loadBudgetData(banque_id, mois, annee) {
 function loadPieChart(banque_id, mois, annee) {
   const monthYear = `${mois}/${annee}`;
   const container = document.querySelector(".camembert");
-  container.innerHTML = '';
+  container.innerHTML = '<p class="camembertTitre">Mes dépenses</p>';
 
   const dbRequest = indexedDB.open("MaBaseDeDonnees");
 
