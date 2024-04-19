@@ -1444,6 +1444,7 @@ function updateDataBasedOnSelection() {
   if (banque_id > 0 && mois && annee) {
     // Supposons que loadBudgetData soit une fonction que vous voulez exécuter
     loadBudgetData(banque_id, mois, annee);
+    updateEpargne(banque_id, mois, annee);
   } else {
     console.log("Toutes les sélections nécessaires ne sont pas faites.");
   }
@@ -1494,6 +1495,33 @@ function updateSolde(banque_id){
 
   getRequest.onerror = function(event) {
     console.error('Update solde : erreur', event);
+  };
+}
+
+function updateEpargne(banque_id, mois, annee){
+  const transaction = db.transaction(['operations'], 'readonly');
+  const objectStore_operation = transaction.objectStore('operations');
+
+  const monthYear = `${mois}/${annee}`;
+
+  var epargne = 0;
+
+
+  objectStore_operation.index('date').openCursor().onsuccess = function(event) {
+    const cursor = event.target.result;
+    if (cursor) {
+      if (parseInt(cursor.value.banques_id) === banque_id && cursor.value.date.includes(monthYear)) {
+        let op = cursor.value;
+        epargne += op.montant;
+      }
+      cursor.continue();
+    }else{
+      var signeEpargne = epargne >= 0 ? '+' : '';
+      var couleurEpargne = epargne > 0 ? '#6a994e' : '#ef233c';
+
+      document.getElementById('montantEpargne').innerHTML = signeEpargne + ' ' + epargne.toLocaleString('fr-FR') + '€';
+      document.getElementById('montantEpargne').style.color = couleurEpargne;
+    }
   };
 }
 
