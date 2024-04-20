@@ -1442,7 +1442,7 @@ function updateDataBasedOnSelection() {
     loadBudgetData(banque_id, mois, annee);
     loadPieChart(banque_id, mois, annee);
     updateEpargne(banque_id, mois, annee);
-    loadLinearChart(banque_id, true, mois, annee);
+    updateDataBasedOnOption();
   } else {
     console.log("Toutes les sélections nécessaires ne sont pas faites.");
   }
@@ -1451,23 +1451,26 @@ function updateDataBasedOnSelection() {
 
 // Au changement de bouton radio Mois ou Annee, on change le graphique linéaire
 document.getElementById('optionMois').addEventListener('change', function() {
-  updateDataBasedOnOption(false);
+  updateDataBasedOnOption();
 });
 
 document.getElementById('optionAnnee').addEventListener('change', function() {
-  updateDataBasedOnOption(true);
+  updateDataBasedOnOption();
 });
 
 
-function updateDataBasedOnOption(selectionAnnee = true) {
+function updateDataBasedOnOption() {
   var banque_id = parseInt(document.getElementById('bankListContent').value);
   var mois = document.getElementById('dateMonthList').value;
   var annee = document.getElementById('dateYearList').value;
 
+  var optionAnneeCheck = document.getElementById('optionAnnee').checked;
+
   if (banque_id > 0 && mois && annee) {
-    loadLinearChart(banque_id, selectionAnnee, mois, annee);
+    loadLinearChart(banque_id, optionAnneeCheck, mois, annee);
   } else {
     console.log("Toutes les sélections nécessaires ne sont pas faites.");
+    document.getElementById('linearGraph').innerHTML = "La sélection des filtres Mois et Année n'est pas bonne.";
   }
 }
 
@@ -1905,8 +1908,6 @@ function loadLinearChart(banque_id, selectionAnnee = true, mois, annee) {
     const container = document.querySelector(".linearGraph");
     container.innerHTML = '';
 
-    console.log(soldeEvolution);
-    
     if (error) {
       console.error('Erreur lors de la récupération de l\'évolution du solde:', error);
     } else {
@@ -1918,15 +1919,15 @@ function loadLinearChart(banque_id, selectionAnnee = true, mois, annee) {
         .sort((a, b) => new Date(a[0]) - new Date(b[0]))
         .forEach(([date, montant]) => {
           const [d, m, y] = date.split('/').map(Number);
-          if (selectionAnnee && y === annee) {
-            let formattedMonth = `${y}-${m.toString().padStart(2, '0')}`;
+          if (selectionAnnee && y === parseInt(annee)) {
+            let formattedMonth = `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
             if (!categories.includes(formattedMonth)) {
               categories.push(formattedMonth);
-              seriesData.push(montant);
+              seriesData.push(parseFloat(montant.toFixed(2)));
             }
-          } else if (!selectionAnnee && y === annee && m === mois) {
-            categories.push(`${d.toString().padStart(2, '0')}/${m.toString().padStart(2, '0')}/${y}`);
-            seriesData.push(montant);
+          } else if (!selectionAnnee && y === parseInt(annee) && m === parseInt(mois)) {
+            categories.push(`${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`);
+            seriesData.push(parseFloat(montant.toFixed(2)));
           }
         });
 

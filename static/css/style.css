@@ -719,6 +719,11 @@ input[type="number"] {
 
 /* GRAPHIQUES */
 
+/* .graphiques{
+    display: flex;
+    flex-direction: column;
+} */
+
 .lineaire{
     background-color: var(--blanc-clair);
     border-radius: 8px;
