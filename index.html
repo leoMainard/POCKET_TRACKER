@@ -347,19 +347,23 @@
                 <div class="lineaire">
                     <div class="lineaireTop">
                         <!-- contient le titre plus les boutons radios -->
-                        <p class="lineaireTitre">
-                            Évolution de mon solde
-                        </p>
-                        <input type="radio" class="btnLineaire-check" name="lineaireOption" id="optionMois" autocomplete="off">
-                        <label class="btnLineaire" for="option5">Mois</label>
+                        <p class="linearTitre">Evolution de mes soldes</p>
+                        <div class="boutonsRadioLineaire">
+                            <input type="radio" class="btn-check" name="options-base" id="optionMois" autocomplete="off">
+                            <label class="btn" for="optionMois">Mois</label>
 
-                        <input type="radio" class="btnLineaire-check" name="lineaireOption" id="optionAnnee" autocomplete="off" checked>
-                        <label class="btnLineaire" for="option6">Année</label>
+                            <input type="radio" class="btn-check" name="options-base" id="optionAnnee" autocomplete="off" checked>
+                            <label class="btn" for="optionAnnee">Annee</label>
+                        </div>
+                    </div>
+                    <div class="linearGraph">
+
                     </div>
                     
                 </div>
                 <div class="camembert">
-                    <!-- contient le titre plus le graphique -->
+                    <p class="camembertTitre">Mes dépenses</p>
+                    <div class="camembertGraph"></div>
                 </div>
             </div>
             

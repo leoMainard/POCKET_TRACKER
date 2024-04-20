@@ -1410,6 +1410,7 @@ function loadContent(){
     updateSolde(banque_id);
 
     loadMonthYearList(banque_id);
+
   } else {
     // Cache les éléments si banque_id est 0
     document.getElementById('containerContentHistoriques').style.display = 'none';
@@ -1441,11 +1442,35 @@ function updateDataBasedOnSelection() {
     loadBudgetData(banque_id, mois, annee);
     loadPieChart(banque_id, mois, annee);
     updateEpargne(banque_id, mois, annee);
-    
+    loadLinearChart(banque_id, true, mois, annee);
   } else {
     console.log("Toutes les sélections nécessaires ne sont pas faites.");
   }
 }
+
+
+// Au changement de bouton radio Mois ou Annee, on change le graphique linéaire
+document.getElementById('optionMois').addEventListener('change', function() {
+  updateDataBasedOnOption(false);
+});
+
+document.getElementById('optionAnnee').addEventListener('change', function() {
+  updateDataBasedOnOption(true);
+});
+
+
+function updateDataBasedOnOption(selectionAnnee = true) {
+  var banque_id = parseInt(document.getElementById('bankListContent').value);
+  var mois = document.getElementById('dateMonthList').value;
+  var annee = document.getElementById('dateYearList').value;
+
+  if (banque_id > 0 && mois && annee) {
+    loadLinearChart(banque_id, selectionAnnee, mois, annee);
+  } else {
+    console.log("Toutes les sélections nécessaires ne sont pas faites.");
+  }
+}
+
 
 
 // ------------------------------------------------ SOLDE + BUDGET
@@ -1723,8 +1748,8 @@ function loadBudgetData(banque_id, mois, annee) {
 
 function loadPieChart(banque_id, mois, annee) {
   const monthYear = `${mois}/${annee}`;
-  const container = document.querySelector(".camembert");
-  container.innerHTML = '<p class="camembertTitre">Mes dépenses</p>';
+  const container = document.querySelector(".camembertGraph");
+  container.innerHTML = '';
 
   const dbRequest = indexedDB.open("MaBaseDeDonnees");
 
@@ -1788,7 +1813,7 @@ function loadPieChart(banque_id, mois, annee) {
             }
           },
           dataLabels: {
-            enabled: false // on affiche ou non les données sur le graphique
+            enabled: true // on affiche ou non les données sur le graphique
           },
           plotOptions: {
             pie: {
@@ -1830,6 +1855,139 @@ function loadPieChart(banque_id, mois, annee) {
     console.error("Erreur lors de l'ouverture de la base de données:", event);
   };
 }
+
+function get_evolution_solde(banque_id, callback) {
+  const dbRequest = indexedDB.open("MaBaseDeDonnees");
+  let soldeEvolution = {};
+
+  dbRequest.onsuccess = function(event) {
+    const db = event.target.result;
+    const transaction = db.transaction(['operations'], 'readonly');
+    const operationsStore = transaction.objectStore('operations');
+    const index = operationsStore.index('banques_id');
+    const request = index.getAll(banque_id);
+
+    request.onsuccess = function(event) {
+      const operations = event.target.result;
+      let currentBalance = 0; // Debut avec une balance de 0
+
+      // First, sort the operations by date
+      operations.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      operations.forEach(op => {
+        const opDate = op.date;
+        if (!soldeEvolution[opDate]) {
+          soldeEvolution[opDate] = currentBalance;
+        }
+        // Add or subtract the operation amount from the current balance
+        currentBalance += op.montant;
+        // Update the balance for the operation date
+        soldeEvolution[opDate] = currentBalance;
+      });
+
+      callback(null, soldeEvolution); // Return the balance evolution
+    };
+
+    request.onerror = function(event) {
+      console.error('Erreur lors de la récupération des opérations:', event.target.error);
+      callback(event.target.error, null);
+    };
+  };
+
+  dbRequest.onerror = function(event) {
+    console.error("Erreur lors de l'ouverture de la base de données:", event.target.error);
+    callback(event.target.error, null);
+  };
+}
+
+function loadLinearChart(banque_id, selectionAnnee = true, mois, annee) {
+  get_evolution_solde(banque_id, function(error, soldeEvolution) {
+    const container = document.querySelector(".linearGraph");
+    container.innerHTML = '';
+
+    console.log(soldeEvolution);
+    
+    if (error) {
+      console.error('Erreur lors de la récupération de l\'évolution du solde:', error);
+    } else {
+      let categories = [];
+      let seriesData = [];
+
+      // Convertir l'objet soldeEvolution en tableau et trier par date
+      Object.entries(soldeEvolution)
+        .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+        .forEach(([date, montant]) => {
+          const [d, m, y] = date.split('/').map(Number);
+          if (selectionAnnee && y === annee) {
+            let formattedMonth = `${y}-${m.toString().padStart(2, '0')}`;
+            if (!categories.includes(formattedMonth)) {
+              categories.push(formattedMonth);
+              seriesData.push(montant);
+            }
+          } else if (!selectionAnnee && y === annee && m === mois) {
+            categories.push(`${d.toString().padStart(2, '0')}/${m.toString().padStart(2, '0')}/${y}`);
+            seriesData.push(montant);
+          }
+        });
+
+      // Configuration du graphique ApexCharts
+      var options = {
+        series: [{
+          name: 'Solde',
+          data: seriesData
+        }],
+        chart: {
+          type: 'area',
+          height: 350,
+          toolbar: {
+            show: true
+          },
+          zoom: {
+            enabled: false
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        xaxis: {
+          categories: categories,
+          type: 'datetime',
+          labels: {
+            rotate: -15,
+            rotateAlways: true
+          }
+        },
+        tooltip: {
+          x: {
+            format: 'dd/MM/yy'
+          }
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100]
+          }
+        }
+      };
+
+      // Sélection de la div pour le graphique
+      var chart = new ApexCharts(container, options);
+      chart.render();
+    }
+  });
+}
+
+
+
+
+
 
 
 
