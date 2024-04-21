@@ -1429,23 +1429,74 @@ document.getElementById('dateMonthList').addEventListener('change', function() {
   updateDataBasedOnSelection();
 });
 
-document.getElementById('dateYearList').addEventListener('change', function() {
+document.getElementById('dateYearList').addEventListener('change', function() {  
   updateDataBasedOnSelection();
 });
+
+function verify_selected_filters(mois, annee, callback) {
+  const dbRequest = indexedDB.open("MaBaseDeDonnees");
+
+  dbRequest.onsuccess = function(event) {
+    const db = event.target.result;
+    const transaction = db.transaction(['operations'], 'readonly');
+    const store = transaction.objectStore('operations');
+    const request = store.getAll();
+
+    request.onsuccess = function() {
+      const operations = request.result;
+      let dates = new Set();  // Utilisation d'un Set pour éviter les doublons
+
+      // Parcourir toutes les opérations pour extraire les combinaisons mois/année
+      operations.forEach(operation => {
+        const [day, month, year] = operation.date.split('/');
+        if (month && year) {  // S'assurer que le mois et l'année sont disponibles
+          dates.add(`${month}/${year}`);
+        }
+      });
+
+
+      // Vérifier si la combinaison mois/année sélectionnée est présente dans les données extraites
+      const selectedMonthYear = `${mois.toString().padStart(2, '0')}/${annee}`;
+
+      console.log(dates);
+      console.log(selectedMonthYear);
+
+      const isAvailable = dates.has(selectedMonthYear);
+      callback(null, isAvailable);  // Appeler le callback avec le résultat
+    };
+
+    request.onerror = function(event) {
+      console.error('Erreur lors de la récupération des opérations:', event.target.error);
+      callback(event.target.error, null);
+    };
+  };
+
+  dbRequest.onerror = function(event) {
+    console.error("Erreur lors de l'ouverture de la base de données:", event.target.error);
+    callback(event.target.error, null);
+  };
+}
 
 function updateDataBasedOnSelection() {
   var banque_id = parseInt(document.getElementById('bankListContent').value);
   var mois = document.getElementById('dateMonthList').value;
   var annee = document.getElementById('dateYearList').value;
 
-  if (banque_id > 0 && mois && annee) {
-    loadBudgetData(banque_id, mois, annee);
-    loadPieChart(banque_id, mois, annee);
-    updateEpargne(banque_id, mois, annee);
-    updateDataBasedOnOption();
-  } else {
-    console.log("Toutes les sélections nécessaires ne sont pas faites.");
-  }
+  verify_selected_filters(mois, annee, function(error, isAvailable) {
+    if (error) {
+      document.getElementById('linearGraph').innerHTML = `La sélection des filtres est incorrecte. Mois : ${mois}, Année : ${annee}`;
+      document.getElementById('camembertGraph').innerHTML = `La sélection des filtres est incorrecte. Mois : ${mois}, Année : ${annee}`;
+
+      console.log('Erreur lors de la vérification des filtres:', error);
+    } else if(banque_id){
+      loadBudgetData(banque_id, mois, annee);
+      loadPieChart(banque_id, mois, annee);
+      updateEpargne(banque_id, mois, annee);
+      updateDataBasedOnOption();
+    }else{
+      console.log("Toutes les sélections nécessaires ne sont pas faites.");
+    }
+  });  
 }
 
 
