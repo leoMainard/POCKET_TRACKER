@@ -1396,7 +1396,7 @@ function loadContent(){
   // Affiche les éléments si banque_id n'est pas 0 et met à jour les affichages
     document.getElementById('containerContentHistoriques').style.display = 'block';
     document.getElementById('topRow').style.display = 'flex';
-    document.getElementById('graphiquesContainer').style.display = 'block';
+    document.getElementById('graphiquesContainer').style.display = 'flex';
 
     //Remise à zéro des éléments
     document.getElementById('montantDesComptes').innerHTML = '';
@@ -1458,10 +1458,8 @@ function verify_selected_filters(mois, annee, callback) {
       // Vérifier si la combinaison mois/année sélectionnée est présente dans les données extraites
       const selectedMonthYear = `${mois.toString().padStart(2, '0')}/${annee}`;
 
-      console.log(dates);
-      console.log(selectedMonthYear);
-
       const isAvailable = dates.has(selectedMonthYear);
+
       callback(null, isAvailable);  // Appeler le callback avec le résultat
     };
 
@@ -1482,30 +1480,51 @@ function updateDataBasedOnSelection() {
   var mois = document.getElementById('dateMonthList').value;
   var annee = document.getElementById('dateYearList').value;
 
+  var optionAnneeCamCheck = document.getElementById('optionAnneeCam').checked;
+
   verify_selected_filters(mois, annee, function(error, isAvailable) {
     if (error) {
-      document.getElementById('linearGraph').innerHTML = `La sélection des filtres est incorrecte. Mois : ${mois}, Année : ${annee}`;
-      document.getElementById('camembertGraph').innerHTML = `La sélection des filtres est incorrecte. Mois : ${mois}, Année : ${annee}`;
-
       console.log('Erreur lors de la vérification des filtres:', error);
-    } else if(banque_id){
+    } else if(banque_id && isAvailable){
       loadBudgetData(banque_id, mois, annee);
-      loadPieChart(banque_id, mois, annee);
+
+      if (optionAnneeCamCheck){
+        loadPieChart(banque_id, '', annee);
+      }else{
+        loadPieChart(banque_id, mois, annee);
+      }
+      
       updateEpargne(banque_id, mois, annee);
       updateDataBasedOnOption();
     }else{
+      showAlert(`<i class="fa-solid fa-xmark"></i> La sélection des filtres est incorrecte. Mois : ${mois}, Année : ${annee}`);
       console.log("Toutes les sélections nécessaires ne sont pas faites.");
     }
   });  
 }
 
+// Au changement de bouton radio Mois ou Annee, on change le graphique linéaire
+document.getElementById('optionMoisCam').addEventListener('change', function() {
+  var banque_id = parseInt(document.getElementById('bankListContent').value);
+  var mois = document.getElementById('dateMonthList').value;
+  var annee = document.getElementById('dateYearList').value;
+
+  loadPieChart(banque_id, mois, annee);
+});
+
+document.getElementById('optionAnneeCam').addEventListener('change', function() {
+  var banque_id = parseInt(document.getElementById('bankListContent').value);
+  var annee = document.getElementById('dateYearList').value;
+  loadPieChart(banque_id, '', annee);
+});
+
 
 // Au changement de bouton radio Mois ou Annee, on change le graphique linéaire
-document.getElementById('optionMois').addEventListener('change', function() {
+document.getElementById('optionMoisLin').addEventListener('change', function() {
   updateDataBasedOnOption();
 });
 
-document.getElementById('optionAnnee').addEventListener('change', function() {
+document.getElementById('optionAnneeLin').addEventListener('change', function() {
   updateDataBasedOnOption();
 });
 
@@ -1515,14 +1534,19 @@ function updateDataBasedOnOption() {
   var mois = document.getElementById('dateMonthList').value;
   var annee = document.getElementById('dateYearList').value;
 
-  var optionAnneeCheck = document.getElementById('optionAnnee').checked;
+  var optionAnneeLinCheck = document.getElementById('optionAnneeLin').checked;
 
-  if (banque_id > 0 && mois && annee) {
-    loadLinearChart(banque_id, optionAnneeCheck, mois, annee);
-  } else {
-    console.log("Toutes les sélections nécessaires ne sont pas faites.");
-    document.getElementById('linearGraph').innerHTML = "La sélection des filtres Mois et Année n'est pas bonne.";
-  }
+
+  verify_selected_filters(mois, annee, function(error, isAvailable) {
+    if (error) {
+      console.log('Erreur lors de la vérification des filtres:', error);
+    } else if(banque_id && isAvailable){
+      loadLinearChart(banque_id, optionAnneeLinCheck, mois, annee);
+    }else{
+      showAlert(`<i class="fa-solid fa-xmark"></i> La sélection des filtres est incorrecte. Mois : ${mois}, Année : ${annee}`);
+      console.log("Toutes les sélections nécessaires ne sont pas faites.");
+    }
+  }); 
 }
 
 
@@ -1985,7 +2009,7 @@ function loadLinearChart(banque_id, selectionAnnee = true, mois, annee) {
       // Configuration du graphique ApexCharts
       var options = {
         series: [{
-          name: 'Solde',
+          name: 'Compte Courant',
           data: seriesData
         }],
         chart: {
@@ -2003,6 +2027,19 @@ function loadLinearChart(banque_id, selectionAnnee = true, mois, annee) {
         },
         stroke: {
           curve: 'smooth'
+        },
+        markers: { // Configuration des marqueurs
+          size: 5, // Taille des marqueurs
+          colors: undefined, // Couleur des marqueurs, undefined prend la couleur de la série
+          strokeColors: '#fff', // Couleur de contour des marqueurs
+          strokeWidth: 2, // Épaisseur du contour des marqueurs
+          strokeOpacity: 0.9, // Opacité du contour
+          fillOpacity: 1, // Opacité de remplissage des marqueurs
+          discrete: [], // Vous pouvez définir des marqueurs discrets avec des styles spéciaux
+          shape: "circle", // Forme des marqueurs (circle, square, rect)
+          radius: 2, // Rayon pour arrondir les coins si la forme est square ou rect
+          offsetX: 0, // Décalage horizontal des marqueurs
+          offsetY: 0 // Décalage vertical des marqueurs
         },
         xaxis: {
           categories: categories,

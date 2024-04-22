@@ -306,7 +306,7 @@
                         </div>
                     </div>
                     
-                    <div class="epargneContent">
+                    <div class="epargneContent" id="epargneContent">
                         <p>Votre épargne est de</p>
                         <div class="montantEpargne" id="montantEpargne"></div>
                     </div>
@@ -334,7 +334,7 @@
                         </div>
                     </div>
 
-                    <div class="dashboardContenu">
+                    <div class="dashboardContenu" id="dashboardContenu">
                         <div class="contentBudgetAutres">
                             <div class="row_content_budgets row_1" id="row_1"></div>
                             <div class="row_content_budgets row_2" id="row_2"></div>
@@ -349,11 +349,11 @@
                         <!-- contient le titre plus les boutons radios -->
                         <p class="linearTitre">Evolution de mes soldes</p>
                         <div class="boutonsRadioLineaire">
-                            <input type="radio" class="btn-check" name="options-base" id="optionMois" autocomplete="off">
-                            <label class="btn" for="optionMois">Mois</label>
+                            <input type="radio" class="btn-check" name="options-base" id="optionMoisLin" autocomplete="off">
+                            <label class="btn" for="optionMoisLin">Mois</label>
 
-                            <input type="radio" class="btn-check" name="options-base" id="optionAnnee" autocomplete="off" checked>
-                            <label class="btn" for="optionAnnee">Annee</label>
+                            <input type="radio" class="btn-check" name="options-base" id="optionAnneeLin" autocomplete="off" checked>
+                            <label class="btn" for="optionAnneeLin">Annee</label>
                         </div>
                     </div>
                     <div class="linearGraph" id="linearGraph">
@@ -362,8 +362,17 @@
                     
                 </div>
                 <div class="camembert">
-                    <p class="camembertTitre">Mes dépenses</p>
-                    <div class="camembertGraph"></div>
+                    <div class="camembertTop">
+                        <p class="camembertTitre">Mes dépenses</p>
+                        <div class="boutonsRadioLineaire">
+                            <input type="radio" class="btn-check" name="options-base-cam" id="optionMoisCam" autocomplete="off" checked>
+                            <label class="btn" for="optionMoisCam">Mois</label>
+
+                            <input type="radio" class="btn-check" name="options-base-cam" id="optionAnneeCam" autocomplete="off">
+                            <label class="btn" for="optionAnneeCam">Annee</label>
+                        </div>
+                    </div>
+                    <div class="camembertGraph" id="camembertGraph"></div>
                 </div>
             </div>
             

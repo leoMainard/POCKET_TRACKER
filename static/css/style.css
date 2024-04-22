@@ -719,10 +719,20 @@ input[type="number"] {
 
 /* GRAPHIQUES */
 
-/* .graphiques{
+.graphiques{
     display: flex;
-    flex-direction: column;
-} */
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.lineaire, .camembert {
+    flex: 1; /* Chaque enfant prend une part égale */
+    padding: 10px; /* Un peu de padding autour des graphiques pour ne pas toucher les bords */
+  }
+
+.alertErrorSelection{
+    color: var(--bg-charges);
+}
 
 .lineaire{
     background-color: var(--blanc-clair);
@@ -737,7 +747,7 @@ input[type="number"] {
     padding: 10px;
 }
 
-.lineaireTop{
+.lineaireTop, .camembertTop{
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
@@ -757,10 +767,7 @@ input[type="number"] {
     padding: 10px;
 }
 
-.camembertTitre{
-    font-size: 1.2em;
-    text-align: left;
-}
+
 
 
 
