@@ -361,7 +361,7 @@ function deleteCompteFromDb(nom_compte) {
 
     // Création d'une opération de récupération de montant
     operationToCompte(parseInt(bank_id), parseFloat(parseFloat(montant).toFixed(2)));
-    operationToHistorique(parseInt(bank_id), banque_name, 'VIREMENTS', 'Suppression du compte ' + nom_compte, parseFloat(montant.toFixed(2)), dateString);
+    // operationToHistorique(parseInt(bank_id), banque_name, 'VIREMENTS', 'Suppression du compte ' + nom_compte, parseFloat(montant.toFixed(2)), dateString);
 
     const request = objectStore.delete([parseInt(bank_id), nom_compte]);
 
@@ -819,7 +819,9 @@ function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_co
       operationToCompte(banque_id, montant, nom_credit_compte); // Créditer
       
       virementToHistorique(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date);
-      
+
+      // operationToHistorique(banque_id, banque_name, 'VIREMENTS', `Virement interne de ${nom_debit_compte} vers ${nom_credit_compte}`, -montant, date);
+
       showSuccess('<i class="fa-solid fa-check"></i> Virement effectué.');
 
       updateVirementListHistorique(banque_id); // Mettre à jour l'affichage, si nécessaire
