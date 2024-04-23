@@ -455,11 +455,10 @@ input[type="number"] {
 .topRow {
     display: none;
     flex-wrap: wrap;
-    gap: 5px; /* Espacement entre infoComptes et dashboard */
 }
 
 .infoComptes {
-    flex: 0 0 20%; /* Fixe la largeur à 20%, sans rétrécissement ou agrandissement */
+    /* flex: 0 0 20%; Fixe la largeur à 20%, sans rétrécissement ou agrandissement */
     margin: 10px;
 }
 
@@ -527,13 +526,11 @@ input[type="number"] {
     background-color: var(--blanc-clair);
     border-radius: 8px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
     text-align: center; /* Centre le texte horizontalement */
     display: flex; /* Utilise Flexbox */
     flex-direction: column; /* Organise les enfants en colonne */
     align-items: center; /* Centre les éléments enfants verticalement */
     justify-content: center; /* Centre les éléments enfants horizontalement */
-    padding:10px;
     margin-top: 10px;
 }
 
@@ -743,7 +740,7 @@ input[type="number"] {
     display: flex; /* Utilise Flexbox */
     flex-direction: column; /* Organise les enfants en colonne */
     justify-content: center; /* Centre les éléments enfants horizontalement */
-    margin:10px 10px 20px 10px;
+    margin:10px 10px 10px 10px;
     padding: 10px;
 }
 

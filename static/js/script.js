@@ -1388,6 +1388,41 @@ document.getElementById('banqueList_virement').addEventListener('change', functi
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------
 
+// Pour le responsive des deux graphiques
+function adjustDisplayForScreenSize() {
+  var banque_id = document.getElementById('bankListContent').value;
+  banque_id = parseInt(banque_id);
+
+  const mediaQuery = window.matchMedia("(max-width: 1200px)");
+  const mediaQuerySecondo = window.matchMedia("(max-width: 1400px)");
+
+  if(banque_id > 0){
+    if(mediaQuery.matches){
+      document.getElementById('graphiquesContainer').style.display = 'block';
+      var element = document.getElementById('infoComptes');
+      element.style.flex = '';
+      element.style.width = '100%';
+
+      document.getElementById('infoComptes').style.display = 'block';
+    }else if(mediaQuerySecondo.matches){
+      document.getElementById('graphiquesContainer').style.display = 'block';
+      document.getElementById('infoComptes').style.flex = '0 0 20%';
+    }else{
+      document.getElementById('graphiquesContainer').style.display = 'flex';
+      document.getElementById('infoComptes').style.flex = '0 0 20%';
+    }
+  } else {
+    // Si la largeur de l'écran est supérieure à 1000px
+    document.getElementById('graphiquesContainer').style.display = 'none';
+    document.getElementById('infoComptes').style.flex = '0 0 20%';
+  }
+}
+
+// Ecouteur d'événements pour gérer les changements de taille de la fenêtre
+window.addEventListener('resize', adjustDisplayForScreenSize);
+
+
+
 function loadContent(){
   var banque_id = document.getElementById('bankListContent').value;
   banque_id = parseInt(banque_id);
@@ -1396,7 +1431,9 @@ function loadContent(){
   // Affiche les éléments si banque_id n'est pas 0 et met à jour les affichages
     document.getElementById('containerContentHistoriques').style.display = 'block';
     document.getElementById('topRow').style.display = 'flex';
-    document.getElementById('graphiquesContainer').style.display = 'flex';
+    
+    // fonction pour déterminer l'affichage des graphiques
+    adjustDisplayForScreenSize();
 
     //Remise à zéro des éléments
     document.getElementById('montantDesComptes').innerHTML = '';
@@ -1917,8 +1954,11 @@ function loadPieChart(banque_id, mois, annee) {
           }
         };
 
-        var chart = new ApexCharts(container, options);
-        chart.render();
+        // Attente de 50ms avant d'afficher le graphique, pour qu'il ait le temps de charger
+        setTimeout(function() {
+          var chart = new ApexCharts(container, options);
+          chart.render();
+        }, 100);
       }else{
         container.innerHTML = `Sélection invalide. Mois : ${mois}, Année : ${annee}`;
       }
