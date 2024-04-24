@@ -1770,27 +1770,38 @@ function content_budget(monthYear, banque_id, callback) {
           let op = cursor.value;
           if (budgetResult[op.category]) {
             operationsCount[op.category]++;
-            budgetResult[op.category].depense += op.montant; // Assurez-vous que op.montant est un Number
+            budgetResult[op.category].depense += op.montant;
           }
         }
-        cursor.continue();
+        cursor.continue(); // Poursuivre avec le prochain élément
       } else {
-        // Une fois les opérations terminées, récupérer les données du budget
-        budgetStore.index('date').get(monthYear).onsuccess = function(event) {
-          const budgetData = event.target.result;
-          if (budgetData) {
-            Object.keys(budgetResult).forEach(category => {
-              if (budgetData['budget_' + category.toLowerCase()]) {
-                budgetResult[category].budget = budgetData['budget_' + category.toLowerCase()];
-                budgetResult[category].reste = Math.round(budgetResult[category].budget + budgetResult[category].depense);
-              }
-            });
+        // Une fois toutes les opérations traitées, traiter les données de budget
+        budgetStore.index('date').openCursor(IDBKeyRange.only(monthYear)).onsuccess = function(event) {
+          const cursorBudgetData = event.target.result;
+          if (cursorBudgetData) {
+            if (parseInt(cursorBudgetData.value.banque_id) === banque_id) {
+              const budgetData = cursorBudgetData.value;
+              Object.keys(budgetResult).forEach(category => {
+                if (budgetData['budget_' + category.toLowerCase()]) {
+                  budgetResult[category].budget = budgetData['budget_' + category.toLowerCase()];
+                  budgetResult[category].reste = Math.round(budgetResult[category].budget + budgetResult[category].depense);
+                }
+              });
+              cursorBudgetData.continue(); // Continuer à parcourir
+            } else {
+              cursorBudgetData.continue(); // Ne correspond pas, continuer
+            }
+          } else {
+            // Aucun autre élément à traiter, appeler le callback
+            callback(budgetResult, operationsCount);
           }
-          // Appel du callback après toutes les mises à jour
-          callback(budgetResult, operationsCount);
         };
       }
     };
+    
+    dbRequest.onerror = function(event) {
+      console.error('Erreur lors de la récupération des opérations:', event.target.error);
+    };    
   };
   
   dbRequest.onerror = function(event) {
@@ -2051,7 +2062,7 @@ function loadLinearChart(banque_id, selectionAnnee = true, mois, annee) {
       // Configuration du graphique ApexCharts
       var options = {
         series: [{
-          name: 'Compte Courant',
+          name: 'Total des avoirs',
           data: seriesData
         }],
         chart: {
