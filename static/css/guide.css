@@ -1,0 +1,23 @@
+.guideContainer {
+    display: flex;
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center; /* Centrer verticalement */
+    height: 500px;
+}
+
+.buttonGuide {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    background-color: #0077b6;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.buttonGuide:hover {
+    background-color: #1b4965;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}

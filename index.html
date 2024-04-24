@@ -13,6 +13,7 @@
 
         <link rel="stylesheet" type="text/css" href="static/css/style.css">
         <link rel="stylesheet" type="text/css" href="static/css/responsive.css">
+        <link rel="stylesheet" type="text/css" href="static/css/guide.css">
         <!-- icons -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <!-- Bootstrap -->
@@ -273,7 +274,12 @@
         
 
         <div class="resultsContent">
-            <div class="selectionBanqueContent">
+            <div class="guideContainer" id="guideContainer">
+                <a href="destination.html" class="buttonGuide">Première utilisation ?</a>
+            </div>
+            
+
+            <div class="selectionBanqueContent" id="selectionBanqueContent">
                 <div class="flex-grow-1" id="bankListContentConteneur">
                     <select id="bankListContent" class="form-control">
                         <option value="">Sélectionnez une banque</option>
@@ -376,7 +382,6 @@
                 </div>
             </div>
             
-        
             <div class="containerContentHistoriques" id="containerContentHistoriques">
                 <div class="contentHistoriqueBoutons">
                     <label>

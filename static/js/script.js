@@ -9,6 +9,8 @@ let categoryColorMap = {
   "DIVERS": ["bg-divers",'<i class="fa-solid fa-otter"></i>', "var(--bg-divers)"]
 };
 
+
+
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------ PopUp
@@ -1259,9 +1261,40 @@ function virement() {
 // ----------------------------------------------------------------------------------- Chargement de la page
 // ------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------
-// Appeler cette fonction au chargement de la page
+function guideOrNot(){
+  var dbRequest = indexedDB.open("MaBaseDeDonnees");
+
+  dbRequest.onsuccess = function(event) {
+    const db = event.target.result;
+    const transaction = db.transaction(['banques'], 'readonly'); 
+    const store = transaction.objectStore('banques');
+    const countRequest = store.count();
+  
+    countRequest.onsuccess = function() {
+      const numberOfBanks = countRequest.result;
+      if (numberOfBanks > 0) {
+        document.getElementById('guideContainer').style.display = 'none';
+        document.getElementById('selectionBanqueContent').style.display = 'block';
+      } else {
+        document.getElementById('guideContainer').style.display = 'flex';
+        document.getElementById('selectionBanqueContent').style.display = 'none';
+      }
+    };
+  
+    countRequest.onerror = function(event) {
+      console.error("Erreur lors de la récupération du nombre de banques:", event.target.error);
+    };
+  };
+  
+  dbRequest.onerror = function(event) {
+    console.error("Erreur lors de l'ouverture de la base de données:", event.target.error);
+  };
+  
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-  initDb();
+  initDb(); // Création de la base de données
+  guideOrNot(); // Affichage du guide lors de la première utilisation
 });
 
 
@@ -1426,6 +1459,8 @@ window.addEventListener('resize', adjustDisplayForScreenSize);
 
 
 function loadContent(){
+  guideOrNot();
+
   var banque_id = document.getElementById('bankListContent').value;
   banque_id = parseInt(banque_id);
 
@@ -1451,7 +1486,7 @@ function loadContent(){
     loadMonthYearList(banque_id);
 
   } else {
-    // Cache les éléments si banque_id est 0
+    // Cache les éléments si banque_id est 0 
     document.getElementById('containerContentHistoriques').style.display = 'none';
     document.getElementById('topRow').style.display = 'none';
     document.getElementById('graphiquesContainer').style.display = 'none';
