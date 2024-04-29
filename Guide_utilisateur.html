@@ -1,0 +1,699 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Guide utilisateur</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="181e5513-3f9a-453c-9b37-616918034ffa" class="page sans"><header><img class="page-cover-image" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/miniature.png" style="object-position:center 50%"/><div class="page-header-icon page-header-icon-with-cover"><span class="icon">🆘</span></div><h1 class="page-title">Guide utilisateur</h1><p class="page-description"></p></header><div class="page-body"><p id="4bfc9183-e2b8-4b30-a587-a1f5dddfbe06" class="">
+</p><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="5b2c3263-051c-4401-b288-9b779239911a"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">Bienvenue dans ce guide utilisateur. Vous y trouverez toutes les réponses à vos questions.<br/>Vous pouvez retrouver ce guide en cliquant sur le bouton ℹ️ (en haut à gauche de l’application) <br/></div></figure><nav id="d1c85321-64ad-4774-8657-4757acc3dc50" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#831fd24c-4a1a-4c61-b0ca-8c3d782456de">Qu’est-ce que Pocket Tracker ?</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#90782b28-0ab1-464d-abf1-04bfc7326bee">Commencer rapidement</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#c933ff74-7cf7-49a1-a2eb-eba2394ed118">1 - Banque / Comptes</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#6d289e9f-a09d-44bc-a377-55481f7a5075">2 - Opération</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#7c06a443-8f98-4a4b-af9f-d389f7ba9cdf">3 - Virement interne</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f0940b25-8b2a-449e-989f-09916672a8a3">4 - Budget</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#58d9dee8-cdc7-4424-931a-3414783b1f33">5 - Dashboard</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#bf908239-50d9-485e-8a15-91c43593e7c5">6 - Où sont stockés vos données ?</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7fc1f94a-650c-420a-b3bc-084c9dab5d5b">6.1 - IndexedDB</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#a1e5d56f-5e46-4137-9664-d1f9bf3279ff">6.2 - Import / Export</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#7cf01708-e15a-4714-93c9-aa42e82228ac">Contact</a></div></nav><h1 id="831fd24c-4a1a-4c61-b0ca-8c3d782456de" class="">Qu’est-ce que Pocket Tracker ?</h1><p id="3383eba0-52a5-4bb8-9fd7-8f9b1111a800" class="">Pocket Tracker est une application web conçue pour vous aider à gérer vos finances personnelles de manière intuitive et sécurisée. Elle vous permet de suivre vos opérations bancaires, de gérer vos comptes, de planifier votre budget, et de visualiser vos dépenses à travers différents graphiques et résumés.</p><p id="00310f6c-3afa-4530-bbe1-690e5d414f60" class="">
+</p><h1 id="90782b28-0ab1-464d-abf1-04bfc7326bee" class="">Commencer rapidement</h1><ul id="0967549b-5605-45b0-a9d2-1093686927d1" class="bulleted-list"><li style="list-style-type:disc">Commencez par ajouter une banque  dans l’onglet “Banque / Comptes”</li></ul><ul id="cd54ec4d-911b-43de-86d7-5c36a866a9de" class="bulleted-list"><li style="list-style-type:disc">Ajoutez des comptes à cette banque, si besoin</li></ul><ul id="5e451641-24f1-4a1d-9438-b06b2cf4c4f9" class="bulleted-list"><li style="list-style-type:disc">Vous pouvez désormais visualiser votre tableau de bord en sélectionnant une banque. Il ne contient pour le moment aucune information</li></ul><ul id="ab504a82-1a67-4790-942d-9cb88474586a" class="bulleted-list"><li style="list-style-type:disc">Ajouter des opérations avec l’onglet “Opération”</li></ul><ul id="a6971a02-d6d8-4d5c-80f4-3947e8b8cd5e" class="bulleted-list"><li style="list-style-type:disc">Vous pouvez également effectuer des virements interne si besoin dans l’onglet “Virement interne”</li></ul><ul id="517a3743-e4e1-4bd0-94ba-faf6238f704c" class="bulleted-list"><li style="list-style-type:disc">Vous pouvez aussi définir votre budget du mois dans l’onglet “budget”</li></ul><ul id="fc54d909-bfdc-4175-93ac-505ec8e41bd4" class="bulleted-list"><li style="list-style-type:disc">Avec les opérations ajoutées, vous devriez désormais voir des informations dans votre tableau de bord. </li></ul><p id="2cbe661a-12b7-422f-9205-15a1a38bd4a8" class="">Continuez d’ajouter vos entrées et sorties d’argent quotidiennement pour avoir un tableau de bord complet.</p><h1 id="c933ff74-7cf7-49a1-a2eb-eba2394ed118" class="">1 - Banque / Comptes</h1><p id="47e54cf7-0d5a-45f7-9807-faa9465316fc" class="">La première étape en ouvrant pour la première fois l’application, est d’ajouter une banque. Pour cela, ouvrez l’onglet “Banque / Comptes” dans la barre de navigation en haut de l’écran:</p><figure id="53f5a7b3-d7ab-4302-9042-53605a213347" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_banque.png"><img style="width:1112px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_banque.png"/></a></figure><p id="a54ce806-bf8e-47aa-a7b7-861259b5ea89" class="">
+</p><p id="826c46bc-ab4c-4b2b-a956-68a9c8a5c386" class="">En cliquant sur cet onglet, vous ouvrez le module suivant :</p><figure id="ecc79e7b-4b8c-4ea7-bbb0-e016fdbe65be" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled.png"><img style="width:656.4000244140625px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled.png"/></a></figure><p id="1d3a2f8e-4c4e-4d43-b222-e7d569f37b4e" class="">Ce module vous permet d’ajouter / supprimer les Banques / Comptes. Il est composé d’une partie “Vos banques” et une partie “Vos Comptes”. Dans ces deux parties, vous trouverez une liste déroulante pour sélectionner une banque ou un compte, un emplacement de saisi pour ajouter une banque ou un compte, un bouton <mark class="highlight-blue_background">➕</mark><mark class="highlight-blue"><strong> </strong></mark><mark class="highlight-default">pour valider l’ajout, et un bouton </mark><mark class="highlight-red_background">🗑️</mark><mark class="highlight-default"> pour supprimer une banque ou un compte sélectionné.</mark></p><p id="7e813420-e2c8-4a2c-85dd-54f102088e75" class=""><br/>Pour ajouter une banque, il vous suffit de vous placer dans l’emplacement de saisi “Ajoutez une banque”. <br/></p><figure id="22391d0b-9a03-4aae-bbeb-a25497d264b1" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%201.png"><img style="width:1027px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%201.png"/></a></figure><p id="12b6bf4c-9d8d-4464-ac1d-57e3ee393def" class="">Inscrivez le nom de votre banque puis cliquez sur le bouton <mark class="highlight-blue_background">➕</mark> situé à droite. Vous devriez désormais voir votre banque ajoutée dans la liste de sélection du dessus. </p><figure id="32389703-88ab-4665-959f-71e434e5112b" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%202.png"><img style="width:1027px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%202.png"/></a></figure><p id="5013377e-f04c-4e7a-8215-41a8f4866126" class="">Lorsque vous ajoutez une nouvelle banque, un compte courant (CC) est automatiquement ajouté. </p><figure id="d89a33b4-77bf-442d-9d4d-aae994067f5d" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%203.png"><img style="width:1015px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%203.png"/></a></figure><p id="4f187c60-3e61-45bf-a21a-a6c2af9ceb6a" class="">Pour visualiser les comptes d’une banque, vous devez sélectionner votre banque dans la liste des banques, puis vous trouverez dans la liste des comptes, l’ensemble des comptes associés à la banque sélectionnée. </p><p id="5fd115b9-2186-4531-b792-0d46f8f77465" class="">Vous pouvez ajouter autant de comptes que vous le souhaitez en suivant le même principe que pour la partie “Vos banques”. Vous ne pouvez cependant pas ajouter de compte si vous n’avez pas sélectionné de banque. </p><p id="146dc516-d2a1-4c8b-93f4-d3b3c0604158" class="">
+</p><p id="4abe9ba9-c8bf-4298-bb30-39d6e295db8f" class="">Pour supprimer une banque, il vous suffit de la sélectionner puis d’appuyez sur le bouton <mark class="highlight-red_background">🗑️.</mark><mark class="highlight-default"> Attention, cette manipulation est définitive et aura pour effet de supprimer tous les comptes associés à la banque sélectionnée, ainsi que toutes les informations et données associées.</mark></p><p id="7b77279d-1b08-4462-a857-a095c897fbc6" class="">Pour supprimer un compte, il vous suffit de sélectionner une banque, puis de sélectionner le compte que vous souhaitez supprimer, puis d’appuyer sur le bouton <mark class="highlight-red_background">🗑️.</mark><mark class="highlight-default"> Attention, cette manipulation est définitive et aura pour effet de supprimer toutes les informations et données associées. Il vous ait cependant impossible de supprimer le compte courant.</mark></p><p id="9cc48ed8-2fb3-4206-ad46-a30fa1d697ad" class="">Lorsque vous supprimer un compte contenant un solde d’argent, celui-ci est versé sur le compte courant. </p><h1 id="6d289e9f-a09d-44bc-a377-55481f7a5075" class="">2 - Opération</h1><figure id="d8954ee6-e3f7-4ed3-a1df-439c145afa47" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_operation.png"><img style="width:1110px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_operation.png"/></a></figure><p id="6cdb25ef-a8dc-4f54-b048-62917c69c21c" class="">Le deuxième onglet “Opération” dans la barre de navigation en haut de l’écran ouvre le module suivant : </p><figure id="d2d8be69-74e1-4617-a55e-adc3227e4adc" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%204.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%204.png"/></a></figure><p id="8ade5bd2-ea8e-49f5-bba0-96ab23984e19" class="">Dans ce module, vous pouvez ajouter toutes les entrées ou sorties d’argent. Il se compose d’une partie “Opération” pour ajouter des opérations et d’une partie “Historique des opérations du jour” pour visualiser les opérations que vous avez réalisé aujourd’hui et les supprimer si besoin. </p><p id="2c6f130f-00c8-44fc-a534-9a57e515c667" class="">Pour ajouter une opération, vous devez tout d’abord sélectionner une banque dans la liste déroulante. Vous devriez y trouver les banques que vous avez ajouté. Si vous n’en avez pas encore ajouté, veuillez ouvrir l’onglet “Banque / Comptes” et ajouter une banque. Pour plus d’informations, veuillez vous diriger vers la section <em><strong>1 - Banque / Comptes</strong></em>. </p><p id="30e0b6dc-2160-4e13-a765-7fb189488548" class="">Vous pouvez ensuite :</p><ul id="4790d4df-37cf-4d98-b3ed-4bdfe66ce0c6" class="bulleted-list"><li style="list-style-type:disc">Ajouter une description à cette opération dans “Détail de l’opération” (optionnel)</li></ul><ul id="13487512-9dad-4367-bd3d-cec68782c28a" class="bulleted-list"><li style="list-style-type:disc">Ajouter le montant de l’opération (obligatoire)</li></ul><ul id="9e6ac7a3-6d61-47e4-8578-03214c713037" class="bulleted-list"><li style="list-style-type:disc">Sélectionner <mark class="highlight-teal_background">➕</mark><mark class="highlight-default"> ou </mark><mark class="highlight-red_background">➖</mark><mark class="highlight-default"> pour définir si cette opération est une entrée ou une sortie d’argent. Par défaut </mark><mark class="highlight-teal_background">➕</mark><mark class="highlight-default"> sera sélectionnée pour une entrée d’argent.</mark></li></ul><ul id="ad1262e5-190f-4ff6-9cf0-35e79d0e6692" class="bulleted-list"><li style="list-style-type:disc">Sélectionner la catégorie de votre opération avec la liste de sélection (obligatoire)</li></ul><ul id="45f549db-2a6f-4f5b-a696-9aebad0434b7" class="bulleted-list"><li style="list-style-type:disc">Valider l’opération en appuyant sur le bouton ☑️</li></ul><figure id="89bd42ff-ac36-4ee7-b5bb-b49b1bd5892e" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%205.png"><img style="width:1150px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%205.png"/></a></figure><p id="b5afca83-ac90-4811-8572-0a550b19fde8" class="">
+</p><p id="b4a1cd6c-cb86-4d3a-91ba-136454f72110" class="">Toutes les opérations sont faites sur le compte courant. Lorsqu’une opération est faite, elle s’affiche dans la partie “Historique des opérations du jour”. Dans l’exemple ci-dessous, l’opération suivante a été ajoutée :</p><ul id="80bcfc71-016e-4f47-b303-7779b272e482" class="bulleted-list"><li style="list-style-type:disc">détail : Guide utilisateur</li></ul><ul id="8beb867e-9b94-49a4-9155-fe996376941b" class="bulleted-list"><li style="list-style-type:disc">Montant : 50</li></ul><ul id="197e6024-47e8-4eb7-baae-def8d5a5546e" class="bulleted-list"><li style="list-style-type:disc">Entrée / Sortie : <mark class="highlight-teal_background">➕</mark></li></ul><ul id="91acc500-0a9f-4955-93b1-7e8c0a6d4796" class="bulleted-list"><li style="list-style-type:disc">Catégorie : Aide</li></ul><figure id="4467f6ce-9c6e-42e0-bdad-367bb9fde7b4" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%206.png"><img style="width:1350px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%206.png"/></a></figure><p id="65b7c7b8-e876-4eef-bef5-321025638ee4" class="">Si je souhaite supprimer une opération réalisée, il me suffit d’appuyer sur le bouton <mark class="highlight-red_background">🗑️</mark> .</p><p id="c5ac90eb-44a0-4a25-8017-e7121dad7b62" class="">
+</p><p id="79dc8409-2edf-44e3-a701-48dc8130f555" class="">Attention, seules les opérations effectuées le jour même sont affichées dans “Historique des opérations du jour”. Si vous effectuez une opération le lundi à 23h55, le mardi à 00h01, cette opération ne sera plus visible dans l’historique et vous ne pourrez plus la supprimer si besoin.</p><h1 id="7c06a443-8f98-4a4b-af9f-d389f7ba9cdf" class="">3 - Virement interne</h1><figure id="80dd01a9-e3ed-4d80-a0e1-88d00fceab61" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_virement.png"><img style="width:1107px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_virement.png"/></a></figure><p id="87f852d2-c52b-435e-85f4-4b11c26d089e" class="">Le troisième onglet “Virement interne” dans la barre de navigation en haut de l’écran ouvre le module suivant : </p><figure id="58385f86-2cbb-4e42-abfc-80f6422c424a" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%207.png"><img style="width:1357px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%207.png"/></a></figure><p id="106fdca7-d3ef-47d4-9d22-82492d3f66da" class="">Ce module vous permet d’effectuer un virement interne, d’un compte vers un autre. Il se compose d’une partie “Virement interne” pour effectuer des virements internes et d’une partie “Historique des virements du jour” pour visualiser les virements internes que vous avez réalisé aujourd’hui et les supprimer si besoin. </p><p id="b036d8a4-4723-4cbd-8db1-79ae733c84fc" class="">Pour effectuer un virement interne, vous devez tout d’abord sélectionner une banque dans la liste déroulante. Vous devriez y trouver les banques que vous avez ajouté. Si vous n’en avez pas encore ajouté, veuillez ouvrir l’onglet “Banque / Comptes” et ajouter une banque. Pour plus d’informations, veuillez vous diriger vers la section <em><strong>1 - Banque / Comptes</strong></em>. </p><p id="6526e86e-0387-4ed3-9d21-06ec2d49c7ba" class="">Une fois la banque sélectionnée, vous devriez voir vos comptes ainsi que le montant de leur solde s’afficher dans les listes déroulantes “Compte débiteur” et “Compte créditeur”. </p><figure id="688623a3-a5e3-4c6a-a7d0-3642a0fccd93" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%208.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%208.png"/></a></figure><p id="a11d2530-e944-46b6-9e05-a9eb0e4af6c1" class="">Vous devez ensuite :</p><ul id="c1f58b00-47a3-4965-a070-bc873fbf4904" class="bulleted-list"><li style="list-style-type:disc">Sélectionner un compte débiteur à gauche</li></ul><ul id="5f0ca47a-717c-469e-bfc8-78fe7e0b9c82" class="bulleted-list"><li style="list-style-type:disc">Sélectionner un compte créditeur à droite (différent du premier)</li></ul><ul id="bb0ac2a3-2383-413b-a1d6-3cc15dda2b52" class="bulleted-list"><li style="list-style-type:disc">Ajouter le montant du virement (montant ≤ solde du compte débiteur)</li></ul><ul id="16139927-9785-4233-963e-ea89d4ecd83c" class="bulleted-list"><li style="list-style-type:disc">Valider le virement interne en appuyant sur le bouton ☑️</li></ul><p id="96c89f21-cbf6-4107-9417-a1f28f22c148" class="">
+</p><p id="abbdf006-e38b-4658-becc-fefde51e8126" class="">Lorsqu’un virement interne est fait, il s’affiche dans la partie “Historique des virements du jour”. Dans l’exemple ci-dessous, le virement suivant a été ajoutée :</p><ul id="c94aad42-ab73-4ad1-a469-30f922274ed4" class="bulleted-list"><li style="list-style-type:disc">Banque : EXEMPLE</li></ul><ul id="30af7963-b3a7-442b-a366-1df694a5aba8" class="bulleted-list"><li style="list-style-type:disc">Compte débiteur : CC</li></ul><ul id="2a4f31b0-5c85-4c44-8985-c7b04006409a" class="bulleted-list"><li style="list-style-type:disc">Compte créditeur : Livret A</li></ul><ul id="146388eb-dcd2-409c-9f48-57331dd89121" class="bulleted-list"><li style="list-style-type:disc">Montant : 200</li></ul><figure id="22862e62-d264-49c6-8a5a-e86b0968b52f" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%209.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%209.png"/></a></figure><p id="94e27e93-db12-4a5a-ab4c-460bf49cb23f" class="">Si je souhaite supprimer un virement réalisé, il me suffit d’appuyer sur le bouton <mark class="highlight-red_background">🗑️</mark>.</p><p id="6bbe43c1-dca7-4991-a44e-4b894a37f8b7" class="">
+</p><p id="216cfee1-f4e4-46c2-9df2-8f93a1f89671" class="">Attention, seules les virements effectués le jour même sont affichées dans “Historique des virements du jour”. Si vous effectuez un virement le lundi à 23h55, le mardi à 00h01, ce virement ne sera plus visible dans l’historique et vous ne pourrez plus le supprimer si besoin.</p><h1 id="f0940b25-8b2a-449e-989f-09916672a8a3" class="">4 - Budget</h1><figure id="ebdc17da-37ea-4458-b194-90fd87c23df6" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_budget.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_budget.png"/></a></figure><p id="885c0622-e793-4b0d-aae5-4044f1bcc541" class="">Le quatrième onglet “Budget” dans la barre de navigation en haut de l’écran ouvre le module suivant : </p><figure id="e89ca657-c691-4715-87a7-d464f05b7a7a" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2010.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2010.png"/></a></figure><p id="7ae742d2-2c05-46d9-abb8-544ef4680a13" class="">Cette onglet vous permet de planifier votre budget pour chaque catégorie. Il vous suffit de sélectionner une banque avec la liste de sélection. Vous devriez y trouver les banques que vous avez ajouté. Si vous n’en avez pas encore ajouté, veuillez ouvrir l’onglet “Banque / Comptes” et ajouter une banque. Pour plus d’informations, veuillez vous diriger vers la section <em><strong>1 - Banque / Comptes</strong></em>. </p><p id="74df91c3-1eca-4b3a-9fc0-95a88e65960a" class="">Ensuite, inscrivez le montant du budget dans chaque catégorie puis validez à l’aide du bouton “Valider on budget ☑️”</p><p id="8227a4af-6c2f-4e46-858e-4cd01dbf1a65" class="">⚠️ La somme des montants des catégories ne peut dépasser le montant de vos revenus.</p><p id="e7970fb2-95a7-4643-b14e-60a9811cd277" class="">⚠️ Toutes les catégories doivent être remplies pour valider votre budget. Si vous ne souhaitez pas définir de budget pour une catégorie, vous n’avez qu’à inscrire la valeur 0 dans cette catégorie.<br/><br/>Si vous souhaitez plus tard mettre à jour votre budget du mois, il vous suffit d’ouvrir à nouveau l’onglet de budget, de sélectionner votre banque, et de modifier les valeurs dans chaque catégorie.<br/><br/></p><h1 id="58d9dee8-cdc7-4424-931a-3414783b1f33" class="">5 - Dashboard</h1><p id="7925161b-a39e-41af-bf56-7a8f9fa4f16d" class="">Maintenant que vous savez comment ajouter une banque, des comptes, des opérations, effectuer des virements internes et définir votre budget du mois, il ne vous reste plus qu’à visualiser et analyser ce qu’il se passe dans votre banque.</p><p id="3a7a886b-3caa-4c16-82d8-93b91f0bd5d4" class="">Puisque vous avez créé une banque, vous devriez maintenant voir apparaître ceci : </p><figure id="8e440d72-c789-4ab5-99c2-264d6708a73e" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2011.png"><img style="width:1889px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2011.png"/></a></figure><p id="ea9c9258-a525-470d-a12a-9e67d7d6130b" class="">Vous pouvez désormais sélectionner la banque de votre choix pour afficher le tableau de bord.</p><p id="7e63f90b-0cc2-4d57-b06a-c971e4c86a53" class="">Si vous n’avez encore effectué aucune opération, le tableau de bord ressemble à ceci :</p><figure id="b2b54144-6ac4-425c-8e9f-7367aa54e50e" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2012.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2012.png"/></a></figure><p id="f17570c9-866b-4cea-a26d-146c835ce446" class="">Si vous utilisez l’application depuis un certain temps, il pourrait ressembler à cela :</p><div id="d370d5c1-9fe9-4570-b271-fc5164fdb13d" class="column-list"><div id="473cac22-96d6-431d-9c6e-437fa766971f" style="width:50%" class="column"><figure id="76f63813-ef12-49a9-86e3-29564493f0ac" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2013.png"><img style="width:1896px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2013.png"/></a></figure></div><div id="f05ff532-d00b-4f1b-817d-c9505bbfb97a" style="width:50%" class="column"><figure id="68f0dfd5-9c5f-4838-8523-f5a5f4d12e33" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2014.png"><img style="width:331px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2014.png"/></a></figure></div></div><p id="f2e18338-3527-4c1f-a7f7-73b1e2673359" class="">
+</p><p id="28b416b5-0f7c-46d2-876a-b39764c0ade6" class="">Dans le tableau de bord, on retrouve 6️⃣ parties.</p><hr id="69f8561f-126b-43fc-bf24-39e712521680"/><p id="f83448b6-501c-4cb3-b35e-a5c3e159191a" class="">1️⃣</p><p id="f8da53c2-0ead-4821-9e15-e9a50f277078" class="">La première partie concerne les montants des soldes de la banque.</p><figure id="7e0bf058-d83c-4e33-81f0-3abebe98b964" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2015.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2015.png"/></a></figure><p id="637f41f0-b9d9-4d0c-932f-1387d697695f" class="">On y retrouve :</p><ul id="e1c75957-a26d-402c-bcf4-4d7cf5a764cb" class="bulleted-list"><li style="list-style-type:disc">le montant de votre solde (montant de votre compte courant)</li></ul><ul id="6f2b1925-1c33-4551-a9d1-ea7c086a7221" class="bulleted-list"><li style="list-style-type:disc">le montant total de vos avoirs (somme des montants de vos comptes)</li></ul><ul id="bbeda437-a7e1-41cc-baef-baaef02469c3" class="bulleted-list"><li style="list-style-type:disc">le montant de vos autres comptes</li></ul><hr id="7324b8c2-95b7-4dcb-be82-fbf7f15d6d56"/><p id="04115547-c923-4e4d-a8d3-cb248ad43685" class="">2️⃣</p><p id="f5cb7c22-8139-4395-8754-2e994f92955b" class="">La second partie concerne vos dépenses par rapport à votre budget.</p><figure id="c470876d-8780-44c9-bdd1-db870803cc39" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2016.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2016.png"/></a></figure><p id="234e5cb0-36e3-4c3c-8014-397e5b5776a5" class="">On retrouve pour les 6 catégories de dépenses :</p><ul id="53c48e2f-ae9a-4bfe-bfde-cf83806b0f2e" class="bulleted-list"><li style="list-style-type:disc">le montant de vos dépenses par rapport au budget défini</li></ul><ul id="572d2ec9-8809-4f26-9b6b-3e745fba9c93" class="bulleted-list"><li style="list-style-type:disc">le nombre d’opérations effectuées pour la catégorie</li></ul><ul id="e5d1f295-2aa9-42f1-9dde-1798bc825178" class="bulleted-list"><li style="list-style-type:disc">la différence entre le budget défini et les dépenses</li></ul><figure id="b487994b-c443-4936-b04e-942f9ba51d23" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2017.png"><img style="width:528px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2017.png"/></a></figure><p id="d2cf336c-1e4c-40f9-878b-71acffad3ef9" class="">Lorsque la différence est positive, l’indicateur est vert, et dans le cas inverse l’indicateur est rouge.</p><p id="a34eedfa-4663-420a-b28e-18f0816fd259" class="">Dans cette partie, vous avez également la possibilité de filtrer sur le mois et l’année. </p><figure id="e8a1c64a-06cf-4374-81f5-ec5705dc1ca3" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2018.png"><img style="width:999px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2018.png"/></a></figure><p id="d1d09485-f91b-4c59-a80c-315cf1827c5d" class="">S’afficheront dans ces filtres les mois et années pour lesquels vous avez effectué au moins une opération. Lorsque vous changez de mois ou d’année, les données se mettent à jour.</p><p id="1664e31d-2e75-4a99-b885-466f4ac8d84f" class="">
+</p><hr id="2fbb0502-1b95-4365-8626-6615504073cb"/><p id="d74ab1d5-33c1-4238-a9ee-2ba38a358f37" class="">3️⃣</p><p id="4b4809be-7532-47b9-9c68-b50a537d72be" class="">La troisième partie est le montant de votre épargne dans le mois. Il s’agit de la différence entre vos entrées et vos sorties d’argent.</p><figure id="4242a0f3-9b6b-4aa9-bc49-9ed25b6e2996" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2019.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2019.png"/></a></figure><p id="8b911bf6-12e2-4a9d-ae8f-c44cb519dd7a" class="">Si l’indicateur est vert, votre épargne est positive, si il est rouge, votre épargne est négative.</p><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="6e9e7c8d-d623-46af-87f5-29f0a82891ba"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">Cet indicateur évolue en fonction des filtres Mois et Année de la partie 2️⃣ “Où en êtes-vous dans votre budget ?”.</div></figure><p id="9724c513-77b6-4d89-a3d5-5bb7c6d65758" class="">
+</p><hr id="acf7a46e-8255-4fc2-ba7d-5eb62313a5d7"/><p id="81a61888-9a52-4457-bbb8-b1e00fb1851d" class="">4️⃣</p><p id="291cc83a-3fae-4972-9d8a-b8dc7d4e2571" class="">La quatrième partie est l’évolution du total de vos avoirs.</p><figure id="4a330b97-65fb-4d79-89fe-f9cf4026b258" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2020.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2020.png"/></a></figure><p id="109d2195-73bb-4703-b40d-3fd7d20a9815" class="">Sur ce graphique, vous pouvez choisir de le visualiser en vision Mois ou Année en cliquant sur les deux boutons en haut à droite. Par défaut, la vision annuelle est activée.</p><p id="a8b3012b-c657-4922-b648-d5b09e628f61" class="">Ce graphique évolue en fonction des filtres Mois et Année de la partie 2️⃣ “Où en êtes-vous dans votre budget ?”. </p><p id="c68849bd-dab2-4544-8a65-d2d88df32c8f" class=""><strong>Exemple </strong>: Vous sélectionnez le mois de Janvier et l’année 2024</p><ul id="89788fb3-9664-406d-acae-367dc509cc1f" class="bulleted-list"><li style="list-style-type:disc">Si vous cliquez sur le bouton <mark class="highlight-teal"><strong>Mois</strong></mark><mark class="highlight-default">, le graphique affichera l’évolution pour le mois de janvier 2024</mark></li></ul><ul id="03936f34-e7fc-4917-92bf-282c7f2b9cad" class="bulleted-list"><li style="list-style-type:disc">Si vous cliquez sur le bouton <mark class="highlight-orange"><strong>Annee</strong></mark>, le graphique affichera l’évolution pour l’année 2024, tout mois confondu</li></ul><figure id="8565f23b-5049-40b2-8722-14d728b6aaa2" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2021.png"><img style="width:989px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2021.png"/></a></figure><p id="62d0ecec-902e-48c8-b68b-89c28612bd11" class="">
+</p><p id="527719ca-6cfb-4b42-aa5f-be2112ce0a04" class="">Ce graphique est interactif, vous pouvez donc survolez les points avec votre souris pour afficher le montant de vos avoirs à une date précise.</p><figure id="12c64a5c-3a10-4cd9-aed0-1d5bdaae59b8" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2022.png"><img style="width:1250px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2022.png"/></a></figure><p id="7fe2d996-2c0d-43cf-8b98-e87ee596654d" class="">
+</p><hr id="934e7cd1-1feb-4ccd-a44e-e7a0c4c1bbf1"/><p id="28011fcd-a05a-4442-b69e-c2f95b0cc994" class="">5️⃣</p><p id="5bc1ab04-e0ae-4092-b3a8-9e5e121a7700" class="">La cinquième partie vous montre la répartition de vos dépenses par catégories. </p><figure id="e3315497-887b-4564-b0bd-9a927a1bf696" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2023.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2023.png"/></a></figure><p id="70893743-4d0b-4837-b96a-88c2ddde214d" class="">Sur ce graphique, vous pouvez également choisir de le visualiser en vision Mois ou Année en cliquant sur les deux boutons en haut à droite. Par défaut, la vision mensuelle est activée.</p><p id="f7a5560d-6e89-4391-ac99-d850adb8cada" class="">Ce graphique évolue en fonction des filtres Mois et Année de la partie 2️⃣ “Où en êtes-vous dans votre budget ?”. </p><p id="cf073e1e-7a97-49b8-b6d5-3edc3c983c0e" class="">Ce graphique est également interactif, n’hésitez pas à le survoler pour afficher le détail de chaque catégorie.</p><p id="61143117-2a32-4af7-a718-108bb140f5c5" class="">
+</p><hr id="2a0f2281-fc43-41ab-9dc2-a06660a74439"/><p id="24b5d6a7-dfb3-44f6-b882-e6e08703c7ce" class="">6️⃣</p><p id="eb787be3-d685-4c20-ad69-33b1b649d226" class="">Enfin, la sixième partie vous permet de consulter l’historique de vos opérations et de vos virements internes.</p><figure id="bb39bbbe-fcf4-4c86-be81-faea6baa8372" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2024.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2024.png"/></a></figure><p id="d192af24-ef41-4926-8576-cfd659f1cf4b" class="">
+</p><p id="92810291-c4a4-4c87-bc87-289474d90b82" class="">Par défaut, l’application affiche l’historique des opérations. Sur chaque opération, vous retrouverez :</p><ul id="4e8ed9a4-9721-482f-94a2-1253832ad06a" class="bulleted-list"><li style="list-style-type:disc">la date </li></ul><ul id="af66fe31-3506-495f-b0de-b4cdff8b328c" class="bulleted-list"><li style="list-style-type:disc">la banque</li></ul><ul id="a1bb0234-b8bb-4f4e-920a-3b0b533ad448" class="bulleted-list"><li style="list-style-type:disc">le détail</li></ul><ul id="0f540a08-ff71-4644-9e59-6c444dbe785c" class="bulleted-list"><li style="list-style-type:disc">la catégorie</li></ul><ul id="7bcef707-cd76-49b8-8c5c-a255c89976d1" class="bulleted-list"><li style="list-style-type:disc">le montant de l’opération</li></ul><p id="10db7188-933a-4ba9-88e8-afd7dc5a92fc" class="">
+</p><p id="7ff82c45-74c5-4c67-bc12-50044c6fa86d" class="">Vous avez la possibilité de n’afficher que certaines catégories en cliquant sur un ou plusieurs boutons de sélection : </p><figure id="bfc0dc4d-3b7e-49ec-a957-ca618f8cd54c" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2025.png"><img style="width:1123px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2025.png"/></a></figure><p id="318f48bb-5c89-4c3b-a334-f5656ee2928a" class="">Pour les désélectionner, cliquez à nouveau dessus.</p><p id="835b7a34-e650-4327-827b-4a976ecda8ad" class="">L’historique affiche les 20 dernières opérations ou virements. Si vous souhaitez en afficher plus, cliquez sur le bouton <mark class="highlight-blue_background">➕</mark> en fin de page :</p><figure id="605fde02-b85d-44ac-ae8e-acec04776ac9" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2026.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2026.png"/></a></figure><p id="81c6e87c-c234-404d-9e30-f0b5c61539db" class="">
+</p><p id="30d43ea2-f70c-4c6f-9d7a-129f018f9025" class="">Pour afficher l’historique des virements internes, cliquez sur “VIREMENTS” en haut de cette partie.</p><figure id="36e57b55-ec09-4940-88a0-b759aaa42a74" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2027.png"><img style="width:453px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2027.png"/></a></figure><figure id="4376136a-f42c-4afe-bfe5-0be81b345f44" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2028.png"><img style="width:708px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2028.png"/></a></figure><p id="d9b1f164-8fb5-4450-bd36-28cdf358bf33" class="">Sur chaque virement vous retrouverez :</p><ul id="c0d3f41e-0e09-4c35-8a68-56aa5af0a5e1" class="bulleted-list"><li style="list-style-type:disc">la date</li></ul><ul id="e2e74abe-231c-4167-a188-03aed7fd735b" class="bulleted-list"><li style="list-style-type:disc">la banque</li></ul><ul id="c251a98b-a52b-4fbc-8fa1-3f7c790b8c9b" class="bulleted-list"><li style="list-style-type:disc">le compte débiteur</li></ul><ul id="fcd9b699-64f2-41b6-a88f-e8ba9c878795" class="bulleted-list"><li style="list-style-type:disc">le compte créditeur</li></ul><ul id="ea5ea94e-2065-4564-991b-da3da2e14a89" class="bulleted-list"><li style="list-style-type:disc">le montant du virement interne</li></ul><p id="d1daa9a0-3ed1-420c-a5d4-caf5cbd56fd7" class="">
+</p><p id="ddc5bbfc-0f41-4468-9b53-c4e9abec4d62" class="">Chaque élément du tableau de bord se met à jour lorsque vous réalisez une action (ajout d’une opération, changement de budget, autre).</p><h1 id="bf908239-50d9-485e-8a15-91c43593e7c5" class="">6 - Où sont stockés vos données ?</h1><p id="ad82ca58-1b85-41d0-ac40-2e6321e79e08" class="">Toutes vos données sont stockés en local dans votre navigateur. Cela signifie que si vous ouvrez l’application sur un nouvel ordinateur, l’application ne contiendra pas vos données. Cette application ne contient pas de système de connexion, donc n’importe qui ayant accès à votre ordinateur, ouvrant cette application, accèdera aux données que vous aurez ajouté.</p><h2 id="7fc1f94a-650c-420a-b3bc-084c9dab5d5b" class="">6.1 - IndexedDB</h2><p id="f91bcf2d-8c5e-4df8-989b-a0ad5d4ac12c" class="">Vos données sont stockées dans la base de données IndexedDB. Vous pouvez accéder à cette base de données en faisant un clique sur la page de l’application puis “Inspecter”.</p><figure id="0fa6965f-e1db-45c6-934c-8adf9bb3ff29" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2029.png"><img style="width:326px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2029.png"/></a></figure><p id="69b8f4e5-0373-43d6-969c-cd66a8e1affa" class="">Rendez-vous ensuite dans l’onglet Application &gt; IndexedDB &gt; MaBaseDeDonnees</p><figure id="eafdff32-492a-4039-b98a-f070d89401b2" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2030.png"><img style="width:1281px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2030.png"/></a></figure><figure id="e7d7162a-f1e9-4f6e-b9e5-e201decba938" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2031.png"><img style="width:587px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/Untitled%2031.png"/></a></figure><p id="946e3c49-c9b8-4fc8-bd76-00464da3fbc7" class="">Vous trouverez ainsi toutes les données stockées de votre application. Si cela vous intéresse, vous êtes libre d’y jeter un œil. </p><p id="845f329e-10d7-4d15-91ea-4b9a9c6e09dd" class="">
+</p><h2 id="a1e5d56f-5e46-4137-9664-d1f9bf3279ff" class="">6.2 - Import / Export</h2><p id="36d87ebc-9c65-41ca-a7fb-aa6f154aed50" class="">Vous avez la possibilité d’importer une base de données au format json en cliquant sur le bouton d’import en haut à droite de la barre de navigation.</p><figure id="1632e561-8610-4bb1-8ca8-7f5b5cf8642f" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_import.png"><img style="width:1111px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_import.png"/></a></figure><p id="e3644f92-4bde-4384-9cdb-b8330d1321bb" class="">En cliquant dessus, vous pouvez sélectionner un fichier json et confirmer votre choix.</p><p id="a535347b-1d35-412e-be57-22650d45a2cc" class="block-color-red_background">⚠️ Cette action est définitive et entrainera le remplacement des données actuelles.</p><p id="03de2303-f798-404c-a3d3-ef7f52d32a58" class="">
+</p><p id="4885f5b8-452d-43e0-b9b1-cad68febb077" class="">Vous avez également la possibilité d’exporter la base de données de l’application, au format json, en cliquant sur le bouton d’export en haut à droite de barre de navigation.</p><figure id="e41f2d05-cf04-43a7-8d34-9002cbdce11c" class="image"><a href="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_export.png"><img style="width:1112px" src="Guide%20utilisateur%20181e55133f9a453c9b37616918034ffa/guide_export.png"/></a></figure><p id="85aa593d-7928-4dac-b0f5-9d41b6fd850e" class="">En cliquant dessus, cela lancera le téléchargement de la base de données.</p><p id="292004ec-051e-40c3-a77f-32d455782288" class="">Si vous souhaitez utiliser l’application sur un second ordinateur, je vous conseille d’effectuer cette action et d’importer sur votre second ordinateur votre base de données.</p><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="52db056f-4826-43f9-af2d-1b3aa6300a23"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">Exportez de temps en temps votre base de données pour avoir une sauvegarde locale, au cas où 😎.</div></figure><p id="3a471ca7-9e81-4876-9816-72ebfaaef1fd" class="">
+</p><h1 id="7cf01708-e15a-4714-93c9-aa42e82228ac" class="">Contact</h1><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="d857d042-d956-40aa-bb5f-55110b8c89e7"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">Pour toutes autres questions, vous pouvez me contacter :<br/>- Par mail : leomainard63@gmail.com<br/>- Via Linkedin : <br/><a href="http://www.linkedin.com/in/l%C3%A9o-mainard">www.linkedin.com/in/léo-mainard</a></div></figure><p id="d0673783-08c1-40fc-82dc-93cf7b787135" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
