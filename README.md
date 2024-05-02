@@ -1,5 +1,7 @@
 # POCKET TRACKER
 
+![](static/img/pocket_tracker.png)
+
 Pocket Tracker est une application web conçue pour vous aider à gérer vos finances personnelles de manière intuitive et sécurisée. Elle vous permet de suivre vos opérations bancaires, de gérer vos comptes, de planifier votre budget, et de visualiser vos dépenses à travers différents graphiques et résumés.
 
 ![Untitled (5).png](static/img/readme/Untitled_(5).png)
