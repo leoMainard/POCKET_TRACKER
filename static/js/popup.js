@@ -1,9 +1,7 @@
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------ PopUp
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-
+/**
+ * Affiche un message d'erreur dans un popup
+ * @param {string} message -message à faire passer dans le popup
+ */
 function showAlert(message) {
     const alertPopup = document.getElementById('popupAlert');
     
@@ -22,6 +20,10 @@ function showAlert(message) {
     }, 2500);
   }
   
+  /**
+ * Affiche un message de succes dans un popup
+ * @param {string} message -message à faire passer dans le popup
+ */
   function showSuccess(message) {
     const alertPopup = document.getElementById('popupSuccess');
     

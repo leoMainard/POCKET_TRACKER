@@ -1,4 +1,9 @@
-// ---------------------------------------------------------------------------------- Fonction pour ouvrir une modale spécifique
+
+/**
+ * Fonction pour ouvrir un module spécifique
+ * 
+ * @param {string} modalId -id html du module à ouvrir
+ */
 function openModal(modalId) {
     document.getElementById(modalId).style.display = 'block';
   
@@ -28,7 +33,11 @@ function openModal(modalId) {
   
   }
   
-  // Fonction pour fermer la modale spécifique
+  /**
+ * Fonction pour fermer un module spécifique
+ * 
+ * @param {string} modalId -id html du module à fermer
+ */
   function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
     document.getElementById('operation').disabled = false;

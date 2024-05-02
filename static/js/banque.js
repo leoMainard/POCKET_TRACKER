@@ -73,7 +73,7 @@ function addBankToDB(bankName) {
   }
   
 /**
- * Supprime une banque de l'object Banque ainsi que tous les comptes, opérations, virements associés
+ * Supprime une banque de l'object Banque ainsi que tous les comptes, opérations, virements internes associés
  * 
  * @param {Number} bankId - Id de la banque à supprimer
  */

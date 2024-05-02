@@ -1,3 +1,8 @@
+// Toutes les fonctions liées à la création de la base de données
+
+/**
+ * Instancie la base de données IndexedDB dans le navigateur si elle n'existe pas déjà
+ */
 function initDb() {
     const request = indexedDB.open('MaBaseDeDonnees', 2);
   
@@ -23,8 +28,6 @@ function initDb() {
         operationsStore.createIndex('banques_id', 'banques_id', { unique: false });
         operationsStore.createIndex('category', 'category', { unique: false });
         operationsStore.createIndex('date', 'date', { unique: false });
-        
-        // Note : Pas besoin de créer des index pour 'detail' et 'montant' à moins que vous n'ayez besoin de recherches spécifiques sur ces champs
       }
   
       if (!db.objectStoreNames.contains('virements')) {
@@ -35,7 +38,6 @@ function initDb() {
         operationsStore.createIndex('compte_debit', 'compte_debit', { unique: false });
         operationsStore.createIndex('compte_credit', 'compte_credit', { unique: false });
         operationsStore.createIndex('date', 'date', { unique: false });
-        // Note : Pas besoin de créer un index pour 'montant_virement'
       }
   
       if (!db.objectStoreNames.contains('budget')) {
@@ -57,6 +59,10 @@ function initDb() {
     };
   }
   
+
+  /**
+ * Supprime la base de données du navigateur
+ */
   function deleteDatabase() {
     var request = indexedDB.deleteDatabase('MaBaseDeDonnees');
   

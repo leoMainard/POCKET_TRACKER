@@ -1,3 +1,11 @@
+// Toutes les fonctions liées à l'import / export d'une base de données
+
+/**
+ * Exporte la base de données en json
+ * 
+ * @param {string} databaseName -nom de la base de données à exporter
+ * @param callback
+ */
 function exportAllIndexedDBToJson(databaseName, callback) {
     const request = indexedDB.open(databaseName);
 
@@ -36,6 +44,12 @@ function exportAllIndexedDBToJson(databaseName, callback) {
     };
 }
 
+/**
+ * Télécharge le fichier json
+ * 
+ * @param {json} jsonString -fichier json à télécharger
+ * @param {string} fileName -nom du fichier qui sera téléchargé
+ */
 function download(jsonString, fileName) {
     const blob = new Blob([jsonString], {type: "application/json"});
     const url = URL.createObjectURL(blob);
@@ -48,6 +62,9 @@ function download(jsonString, fileName) {
     URL.revokeObjectURL(url);
 }
 
+/**
+ * TGère le téléchargement de la base de données
+ */
 function handleExport() {
     exportAllIndexedDBToJson('MaBaseDeDonnees', function(error, jsonString) {
         if (!error) {
@@ -57,7 +74,13 @@ function handleExport() {
     });
 }
 
-
+/**
+ * Importe la base de données en json
+ * 
+ * @param {string} databaseName -nom de la base de données à exporter
+ * @param {json} jsonString -fichier json de la base de données à importer
+ * @param callback
+ */
 function importJsonToIndexedDB(databaseName, jsonString, callback) {
     try{
         const parsedData = JSON.parse(jsonString);
@@ -109,7 +132,9 @@ function importJsonToIndexedDB(databaseName, jsonString, callback) {
 }
 
 
-
+/**
+ * Gère l'import de la base de données
+ */
 function handleFileImport(event) {
     // Demande de confirmation avant de poursuivre
     const isConfirmed = confirm("Êtes-vous sûr de vouloir importer ce fichier ? Cela remplacera les données existantes.");

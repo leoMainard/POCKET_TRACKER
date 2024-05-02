@@ -1,9 +1,15 @@
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// --------------- Operations
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-
+/**
+ * Ajoute l'opération à l'objet Opération (historique des opérations)
+ * Met à jour le montant du compte courant
+ * Affiche l'opération dans l'historique du jour
+ * 
+ * @param {number} banque_id -id de la banque
+ * @param {string} banque_name -nom de la banque
+ * @param {string} category - Categorie de l'opération
+ * @param {string} date -date de l'opération
+ * @param {string} detail -detail de l'opération
+ * @param {number} montant -montant de l'opération
+ */
 function addOperationToDB(banque_id, banque_name, category, detail, montant, date){
     operationToCompte(banque_id, montant);
   
@@ -49,6 +55,13 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     }  
   }
   
+  /**
+ * Ajoute l'opération au compte, par défaut le compte courant
+ * 
+ * @param {number} banque_id -id de la banque
+ * @param {number} montant -montant de l'opération
+ * @param {string} [nom_compte='CC'] -nom du compte 
+ */
   function operationToCompte(banque_id, montant, nom_compte='CC'){
     // Ajout ou soustraction du montant dans le compte CC de la banque
     const operation_compte = db.transaction(['comptes'], 'readwrite');
@@ -82,6 +95,15 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     };
   }
   
+  /**
+   * Ajoute l'opération à l'historique des opérations (objet operations)
+   * @param {number} banque_id -id de la banque
+   * @param {string} banque_name -nom de la banque
+   * @param {string} category -category de l'opération
+   * @param {string} detail -detail de l'opération
+   * @param {number} montant -montant de l'opération
+   * @param {string} date -date de l'opération
+   */
   function operationToHistorique(banque_id, banque_name, category, detail, montant, date){
     const transaction = db.transaction(['operations'], 'readwrite');
     const store = transaction.objectStore('operations');
@@ -105,6 +127,10 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     };
   }
   
+  /**
+   * Met à jour l'historique des opérations du jour
+   * @param {number} banques_id -id de la banque
+   */
   function updateOperationListHistorique(banques_id){
     document.getElementById('historique_container_operation').innerHTML = '';
   
@@ -139,6 +165,7 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
         newDiv.className = 'operation_historique d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
         newDiv.setAttribute('data-operation-id', operation_id);
         
+        // Affichage d'une opération de suppresion de compte avec un bouton de suppression désactivé
         if(detail.trim().includes("Suppression du compte")){
           newDiv.innerHTML = `
           <p class="historique_date_operation mb-0">${date}</p>
@@ -175,6 +202,10 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     };
   }
   
+  /**
+   * Supprime une opération de l'historique des opérations
+   * @param {number} operationId -id de l'opération
+   */
   function suppressionOperationHistorique(operationId){
     const transaction = db.transaction(['operations'], 'readwrite');
     const objectStore = transaction.objectStore('operations');
@@ -189,6 +220,11 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     };
   }
   
+  /**
+   * Supprime une opération de l'historique et ré-ajoute le montant de cette opération au compte courant
+   * recharge l'historique des opérations et le contenu du tableau de bord
+   * @param {object} button -object bouton suppression
+   */
   function deleteOperationHistorique(button){
     // Récupération de l'id de l'operation
     var operationDiv = button.closest('.operation_historique');
@@ -216,7 +252,10 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     loadContent();
   }
 
-
+  /**
+   * Supprime une opération de l'historique des opérations (object operation)
+   * @param {number} bankId -id de la banque
+   */
   function deleteOperation(bankId) {
     // Supprime toutes les opérations liées à une banque (utile lors de la suppression de banque)
     const transaction = db.transaction(['operations'], 'readwrite');
@@ -243,20 +282,20 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
     };
   }
 
-
-
-  // ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------- Gestion des opérations
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// Bouton checked (+ / -)
+/**
+ * Déselectionne le second bouton radio + -
+ * @param {object} current -bouton radio + / -
+ * @param {string} otherId -id du second bouton radio qui n'est pas sélectionné
+ */
 function toggleCheckbox(current, otherId) {
   if (current.checked) {
     document.getElementById(otherId).checked = false;
   }
 }
 
+/**
+ * Vérifie que tous les éléments du module opérations sont correctes avant l'ajout d'une opération à l'historique
+ */
 function operation() {
   // Captation des éléments de l'operation
   var banque_id = document.getElementById('bankList_operation').value;

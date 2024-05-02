@@ -1,3 +1,6 @@
+/**
+ * Fonction pour afficher ou non le bouton de guide
+ */
 function guideOrNot(){
     var dbRequest = indexedDB.open("MaBaseDeDonnees");
   

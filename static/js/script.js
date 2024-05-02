@@ -1,3 +1,5 @@
+// Déclencheurs de toutes les fonctions
+
 let categoryColorMap = {
   "COURSES": ["bg-courses", '<i class="fa-solid fa-utensils"></i>', "var(--bg-courses)"],
   "SALAIRE": ["bg-salaire",'<i class="fa-solid fa-euro-sign"></i>', "var(--bg-salaire)"],
@@ -27,13 +29,9 @@ let db; // instanciation de la base de données
 
 
 
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------- Chargement de la page
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
 
-// au chargement de la page :
+
+// au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
   initDb(); // Création de la base de données
   guideOrNot(); // Affichage du guide lors de la première utilisation
@@ -41,13 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------- Autre
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------------- Introduction vers contenu
+// bouton Commencer qui dirige vers le contenu de l'application
 document.getElementById('startButton').addEventListener('click', function() {
   document.getElementById('appContent').scrollIntoView({behavior: 'smooth'});
 });
@@ -55,7 +48,6 @@ document.getElementById('startButton').addEventListener('click', function() {
 
 
 // Lors des changements de banque, les comptes s'adaptent
-
 
 document.getElementById('bankList_budget').addEventListener('change', function() {
   document.getElementById('budget_revenu').value = '';
@@ -76,6 +68,7 @@ document.getElementById('bankList_budget').addEventListener('change', function()
   loadBudget(parseInt(this.value));
 });
 
+// Chargement des bons comptes en fonction de la banque sélectionnée
 document.getElementById('bankList').addEventListener('change', function() {
   updateComptesListBasedOnBank(parseInt(this.value), 'modale1');
 });
@@ -84,6 +77,7 @@ document.getElementById('banqueList_virement').addEventListener('change', functi
   updateComptesListBasedOnBank(parseInt(this.value), 'modale2');
 });
 
+// Chargement de l'historique du jour operation / virement en fonction de la banque sélectionnée
 document.getElementById('bankList_operation').addEventListener('change', function() {
   document.getElementById('historique_container_operation').innerHTML = '';
   var banques_id = document.getElementById('bankList_operation').value;
@@ -103,7 +97,7 @@ document.getElementById('banqueList_virement').addEventListener('change', functi
 
 
 
-// Pour le responsive des deux graphiques
+// Pour le responsive des deux graphiques (camembert et linéaire)
 function adjustDisplayForScreenSize() {
   var banque_id = document.getElementById('bankListContent').value;
   banque_id = parseInt(banque_id);
@@ -136,12 +130,14 @@ function adjustDisplayForScreenSize() {
 // Ecouteur d'événements pour gérer les changements de taille de la fenêtre
 window.addEventListener('resize', adjustDisplayForScreenSize);
 
-// Au changement de banque sélectionnée, on affiche ou non les éléments
+
+
+// Affichage du tableau de bord en fonction de la banque
 document.getElementById('bankListContent').addEventListener('change', function() {
   loadContent();
 });
 
-// Au changement de filtre date sélectionné, on affiche ou non les éléments
+// Mise à jour des données en fonction des filtres Mois Année
 document.getElementById('dateMonthList').addEventListener('change', function() {
   updateDataBasedOnSelection();
 });
@@ -152,7 +148,7 @@ document.getElementById('dateYearList').addEventListener('change', function() {
 
 
 
-// Au changement de bouton radio Mois ou Annee, on change le graphique linéaire
+// Au changement de bouton radio Mois ou Annee, on change le graphique camembert
 document.getElementById('optionMoisCam').addEventListener('change', function() {
   var banque_id = parseInt(document.getElementById('bankListContent').value);
   var mois = document.getElementById('dateMonthList').value;

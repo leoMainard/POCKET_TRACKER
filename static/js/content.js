@@ -141,8 +141,6 @@ function loadContent(){
     }); 
   }
 
-
-
  /**
  * Met à jour le montant du solde du compte courant, du total des avoirs, et des comptes
  * 
@@ -227,6 +225,12 @@ function updateSolde(banque_id){
     };
   }
   
+/**
+ * Charge les filtres Mois et Annee en fonction de la banque sélectionnée
+ * Récupère les mois et année des opérations crées
+ * 
+ * @param {number} banque_id -id de la banque
+ */
   function loadMonthYearList(banque_id) {
     const transaction = db.transaction(['operations'], 'readonly');
     const store = transaction.objectStore('operations');
@@ -242,7 +246,7 @@ function updateSolde(banque_id){
     let uniqueYears = new Set();
   
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+    const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
   
     request.onsuccess = function(event) {
@@ -260,7 +264,7 @@ function updateSolde(banque_id){
       const monthSelect = document.getElementById('dateMonthList');
       const yearSelect = document.getElementById('dateYearList');
   
-      // Clear the current options
+      // Efface la sélection
       monthSelect.innerHTML = '<option value="">Mois</option>';
       yearSelect.innerHTML = '<option value="">Année</option>';
   
@@ -277,14 +281,13 @@ function updateSolde(banque_id){
         yearOption.textContent = year;
         yearSelect.appendChild(yearOption);
       });
-  
-      // Find closest year and month if current is not available
+      
+      // Trouve le mois et l'annee le plus proche si le mois et l'année actuels ne sont pas disponible
       let closestYear = [...uniqueYears].reduce((prev, curr) => Math.abs(curr - currentYear) < Math.abs(prev - currentYear) ? curr : prev);
       let closestMonth = [...uniqueMonths].reduce((prev, curr) => Math.abs(curr - currentMonth) < Math.abs(prev - currentMonth) ? curr : prev);
   
-      // Adjust closestMonth if year was not the current year
       if (parseInt(closestYear) !== currentYear) {
-        closestMonth = '12'; // Default to December if not current year
+        closestMonth = '12'; 
       }
   
       monthSelect.value = closestMonth;
@@ -297,6 +300,13 @@ function updateSolde(banque_id){
     };
   }
   
+  /**
+ * Vérifie que les filtres Mois et Annee sélectionnées forment une date disponible dans la base
+ * 
+ * @param {string} monthYear - date chiffrée mois/annee
+ * @param {number} banque_id -id de la banque
+ * @param callback
+ */
   function content_budget(monthYear, banque_id, callback) {
   
     const dbRequest = indexedDB.open("MaBaseDeDonnees");
@@ -372,6 +382,13 @@ function updateSolde(banque_id){
     };
   }
   
+/**
+ * Charge les données pour la partie budget
+ * 
+ * @param {number} banque_id -id de la banque
+ * @param {string} mois - Numéro du mois
+ * @param {string} annee - Numéro de l'année
+ */
   function loadBudgetData(banque_id, mois, annee) {
     document.getElementById('row_1').innerHTML = '';
     document.getElementById('row_2').innerHTML = '';
@@ -422,7 +439,7 @@ function updateSolde(banque_id){
             <div class="contentBudgetNbOperation">${operationsCount[category]} opération(s)</div>
           `;
   
-          var container = document.getElementById(divId); // Assurez-vous que cet ID existe dans votre HTML
+          var container = document.getElementById(divId);
           container.append(newDiv);
   
         } else {
@@ -432,11 +449,15 @@ function updateSolde(banque_id){
     });
   }
   
-  
-  
-  
-  // ------------------------------------------------ GRAPHIQUES
-  
+// ------------------------------------------------ GRAPHIQUES
+
+/**
+ * Charge les données du graphique Camembert - dépenses par catégories
+ * 
+ * @param {number} banque_id -id de la banque
+ * @param {string} mois -Numero du mois
+ * @param {string} annee -Numero de l'année
+ */
   function loadPieChart(banque_id, mois, annee) {
     const monthYear = `${mois}/${annee}`;
     const container = document.querySelector(".camembertGraph");
@@ -550,6 +571,12 @@ function updateSolde(banque_id){
     };
   }
   
+/**
+ * Récupère les données pour le graphique de l'évolution du total des avois
+ * 
+ * @param {number} banque_id -id de la banque
+ * @param callback
+ */
   function get_evolution_solde(banque_id, callback) {
     const dbRequest = indexedDB.open("MaBaseDeDonnees");
     let soldeEvolution = {};
@@ -565,7 +592,7 @@ function updateSolde(banque_id){
         const operations = event.target.result;
         let currentBalance = 0; // Debut avec une balance de 0
   
-        // First, sort the operations by date
+        // On tri les opérations par date
         operations.sort((a, b) => new Date(a.date) - new Date(b.date));
   
         operations.forEach(op => {
@@ -573,13 +600,11 @@ function updateSolde(banque_id){
           if (!soldeEvolution[opDate]) {
             soldeEvolution[opDate] = currentBalance;
           }
-          // Add or subtract the operation amount from the current balance
           currentBalance += op.montant;
-          // Update the balance for the operation date
           soldeEvolution[opDate] = currentBalance;
         });
   
-        callback(null, soldeEvolution); // Return the balance evolution
+        callback(null, soldeEvolution);
       };
   
       request.onerror = function(event) {
@@ -594,6 +619,14 @@ function updateSolde(banque_id){
     };
   }
   
+/**
+ * On charge les données du graphique linéaire de l'évolution des avoirs
+ * 
+ * @param {number} banque_id - id de la banque
+ * @param {boolean} selectionAnnee -bouton radio de sélection Annee ou Mois, par défaut True
+ * @param {string} mois -Numero du mois
+ * @param {string} annee -Numero de l'année
+ */
   function loadLinearChart(banque_id, selectionAnnee = true, mois, annee) {
     get_evolution_solde(banque_id, function(error, soldeEvolution) {
       const container = document.querySelector(".linearGraph");
@@ -698,7 +731,9 @@ function updateSolde(banque_id){
   
   
   // ------------------------------------------------ HISTORIQUE
-  
+/**
+ * Affiche un bouton + toutes les 20 opérations affichées dans l'historique
+ */
   function addLoadMoreButtonOperation() {
     let container = document.getElementById('contentHistoriques');
     let loadMoreButtonWrapper = document.createElement('div'); // Créer un nouveau conteneur pour le bouton
@@ -713,24 +748,23 @@ function updateSolde(banque_id){
       // Créer l'élément <i> pour l'icône
       let icon = document.createElement('i');
       icon.className = 'fa-solid fa-plus';
-      loadMoreButton.appendChild(icon); // Ajouter l'icône au bouton
-  
-      // Ajouter du texte au bouton
-      // loadMoreButton.appendChild(document.createTextNode(' Charger plus'));
-  
+      loadMoreButton.appendChild(icon); 
       loadMoreButtonWrapper.appendChild(loadMoreButton);
-      container.appendChild(loadMoreButtonWrapper); // Ajouter le wrapper au container principal
+      container.appendChild(loadMoreButtonWrapper);
     } else {
       loadMoreButton.style.display = 'block'; // Rendre le bouton à nouveau visible si nécessaire
     }
   
-    // Lorsque le bouton est cliqué, chargez plus d'opérations et cachez ce bouton
+    // Lorsque le bouton est cliqué, charge plus d'opérations et cachez ce bouton
     loadMoreButton.onclick = function() {
-      loadMoreButtonWrapper.remove();  // Supprimer le bouton après le clic
+      loadMoreButtonWrapper.remove();  // Supprime le bouton après le clic
       loadHistoriqueOperations(true);
     };
   }
   
+  /**
+ * Affiche un bouton + tous les 20 virements affichés dans l'historique
+ */
   function addLoadMoreButtonVirement() {
     let container = document.getElementById('contentHistoriques');
     let loadMoreButtonWrapper = document.createElement('div'); // Créer un nouveau conteneur pour le bouton
@@ -740,31 +774,30 @@ function updateSolde(banque_id){
     if (!loadMoreButton) {
       loadMoreButton = document.createElement('button');
       loadMoreButton.id = 'loadMoreOperations';
-      loadMoreButton.className = 'btn-load-more'; // Ajoutez des classes pour le style si nécessaire
+      loadMoreButton.className = 'btn-load-more';
   
       // Créer l'élément <i> pour l'icône
       let icon = document.createElement('i');
       icon.className = 'fa-solid fa-plus';
-      loadMoreButton.appendChild(icon); // Ajouter l'icône au bouton
-  
-      // Ajouter du texte au bouton
-      // loadMoreButton.appendChild(document.createTextNode(' Charger plus'));
+      loadMoreButton.appendChild(icon);
   
       loadMoreButtonWrapper.appendChild(loadMoreButton);
       container.appendChild(loadMoreButtonWrapper); // Ajouter le wrapper au container principal
     } else {
-      loadMoreButton.style.display = 'block'; // Rendre le bouton à nouveau visible si nécessaire
+      loadMoreButton.style.display = 'block';
     }
   
-    // Lorsque le bouton est cliqué, chargez plus d'opérations et cachez ce bouton
+    // Lorsque le bouton est cliqué, charge plus d'opérations et cachez ce bouton
     loadMoreButton.onclick = function() {
       loadMoreButtonWrapper.remove();  // Supprimer le bouton après le clic
       loadHistoriqueVirements(true);
     };
   }
   
+/**
+ * Ajoute des boutons de filtre pour les catégories des opérations
+ */
   function addCategoryIcon(){
-    // Point de départ : conteneur pour les checkboxes
     let container = document.getElementById('categoryCheckboxes');
   
     Object.entries(categoryColorMap).forEach(([category, [_, iconHtml, colorVariable]], index) => {
@@ -792,6 +825,11 @@ function updateSolde(banque_id){
   
   let currentIndex = 0; // Commence à 0, puis mise à jour avec le nombre d'opérations déjà chargées
   
+ /**
+ * Charge l'historique des virements
+ * 
+ * @param {boolean} loadMore - defaut False : différencie le premier chargement et les chargements supplémentaires
+ */
   function loadHistoriqueVirements(loadMore = false){
     var banque_id = document.getElementById('bankListContent').value; 
     banque_id = parseInt(banque_id);
@@ -839,6 +877,11 @@ function updateSolde(banque_id){
     };
   }
   
+/**
+ * Affiche les informations d'un virement
+ * 
+ * @param {Array} virements - 
+ */
   function displayVirement(virement){
     let { compte_debit, compte_credit, montant, date, banque_name } = virement;
     var newDiv = document.createElement('div');
@@ -853,6 +896,11 @@ function updateSolde(banque_id){
     document.getElementById('contentHistoriques').appendChild(newDiv);
   }
   
+/**
+ * Charge l'historique des opérations
+ * 
+ * @param {bool} loadMore - defaut False : différencie le premier chargement et les chargements supplémentaires
+ */
   function loadHistoriqueOperations(loadMore = false){
     var banque_id = document.getElementById('bankListContent').value; 
     banque_id = parseInt(banque_id);
@@ -908,7 +956,7 @@ function updateSolde(banque_id){
         <p class="pas_historique mb-0">Aucun historique à afficher.</p>
         `;
   
-        var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
+        var container = document.getElementById('contentHistoriques');
         container.append(newDiv);
       }
   
@@ -945,7 +993,7 @@ function updateSolde(banque_id){
         <p class="historique_montant_operation_content mb-0 ${couleurMontant} ${textBoldClass}">${signe}${montant.toLocaleString('fr-FR')}€</p>
         `;
   
-        var container = document.getElementById('contentHistoriques'); // Assurez-vous que cet ID existe dans votre HTML
+        var container = document.getElementById('contentHistoriques');
         container.append(newDiv);
       });
       if (currentIndex < allOperations.length) {
@@ -957,7 +1005,16 @@ function updateSolde(banque_id){
       console.error('Erreur lors de la récupération des opérations', event);
     };
   }
+
+
   
+  /**
+ * Permet de changer entre l'historique des opérations ou des virements
+ * et de charger le bon historique en conséquence
+ * 
+ * @param {array} current - élément bouton radio opération / virement dans l'historique
+ * @param {string} otherId - id de l'élément bouton radio non sélectionné
+ */
   function changeHistorique(current, otherId) {
     // Changement de bouton check
     if (current.checked) {

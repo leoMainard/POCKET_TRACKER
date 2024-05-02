@@ -1,8 +1,14 @@
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// --------------- Virements
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
+// Toutes les fonctions liées à la gestion des virements internes
+
+/**
+ * Ajoute le virement à l'historique des virements (object virements)
+ * @param {number} banque_id -id de la banque
+ * @param {string} banque_name -nom de la banque
+ * @param {string} compte_debit -nom du compte débiteur
+ * @param {string} compte_credit -nom du compte crediteur
+ * @param {number} montant -montant du virement interne
+ * @param {string} date -date du virement interne
+ */
 function virementToHistorique(banque_id, banque_name, compte_debit, compte_credit, montant, date){
     const transaction = db.transaction(['virements'], 'readwrite');
     const store = transaction.objectStore('virements');
@@ -26,6 +32,10 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
     };
   }
   
+/**
+ * Met à jour l'historique du jour des virements internes effectués
+ * @param {number} banques_id -id de la banque
+ */
   function updateVirementListHistorique(banques_id){
     document.getElementById('historique_container_virement').innerHTML = '';
   
@@ -111,6 +121,18 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
     
   }
   
+  /**
+   * Effectue le virement sur les différents comptes en banque (debiteur et crediteur)
+   * Appelle la fonction pour l'ajout du virement dans l'historique des virements
+   * Appelle la fonction qui met à jour l'historique des virements du jour
+   * 
+   * @param {number} banque_id -id de la banque
+   * @param {string} banque_name -nom de la banque
+   * @param {string} nom_debit_compte -nom du compte débiteur
+   * @param {string} nom_credit_compte -nom du compte créditeur
+   * @param {number} montant -montant du virement interne
+   * @param {string} date -date du virement interne
+   */
   function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date){
     // Vérification du solde avant le virement
     const transaction = db.transaction(['comptes'], 'readonly');
@@ -146,6 +168,10 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
     // car la vérification du solde et le virement sont asynchrones
   }
   
+  /**
+   * Supprime le virement de l'historique des virements internes (object virement)
+   * @param {number} virementID -id du virement interne
+   */
   function suppressionVirementHistorique(virementID){
     const transaction = db.transaction(['virements'], 'readwrite');
     const objectStore = transaction.objectStore('virements');
@@ -160,6 +186,13 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
     };
   }
   
+  /**
+   * Supprime le virement
+   * Effectue le virement inverse pour retrouver les montants originaux
+   * Met à jour l'historique du jour des virements
+   * 
+   * @param {object} button -object bouton poubelle de suppression   
+   */
   function deleteVirementHistorique(button){
     // Récupération de l'id de l'operation
     var virementDiv = button.closest('.virement_historique');
@@ -195,6 +228,10 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
   }
 
 
+  /**
+   * Supprime tous les virements associés à une banque
+   * @param {number} bankId -id de la banque
+   */
   function deleteVirement(bankId) {
     // Supprime tous les virements associés à une banque (utile lors de la suppression d'une banque)
     const transaction = db.transaction(['virements'], 'readwrite');
@@ -223,11 +260,10 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
 
 
 
-  // ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------- Gestion des virements
-// ------------------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------------------------------
+/**
+ * Vérifie que tous les éléments du modules de virement interne sont bons avant l'ajout du virement interne
+ * à la base de données
+ */
 function virement() {
   // Captation des éléments de l'operation
   var debit = document.getElementById('compteList_virement_debit').value;
