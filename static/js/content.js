@@ -433,7 +433,7 @@ function updateSolde(banque_id){
               </div>
             </div>
             <div class="contentBudgetDiff">
-              <p class="budgetDiffDepense">${categoryData.depense.toLocaleString()}</p>
+              <p class="budgetDiffDepense">${Math.abs(categoryData.depense).toLocaleString()}</p>
               <p class="budgetDiffbudget"> / ${categoryData.budget.toLocaleString()}</p>
             </div>
             <div class="contentBudgetNbOperation">${operationsCount[category]} opération(s)</div>
