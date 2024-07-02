@@ -243,6 +243,11 @@ body button:after {
 }
 
 
+#operation_date{
+    margin-top : 20px;
+    width: 40%;
+    margin-left: 10px;
+}
 
 /* Couleur de fond et couleur de texte par défaut du label */
 #btn-check-plus + .btn-success {
@@ -403,6 +408,10 @@ input[type="number"] {
     margin-right: 5px;
 }
 
+#virement_date{
+    width: 40%;
+    margin-left: 10px;
+}
 
 
 

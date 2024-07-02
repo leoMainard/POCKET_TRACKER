@@ -9,7 +9,7 @@
  * @param {number} montant -montant du virement interne
  * @param {string} date -date du virement interne
  */
-function virementToHistorique(banque_id, banque_name, compte_debit, compte_credit, montant, date){
+function virementToHistorique(banque_id, banque_name, compte_debit, compte_credit, montant, date, date_ajout_virement){
     const transaction = db.transaction(['virements'], 'readwrite');
     const store = transaction.objectStore('virements');
     
@@ -19,7 +19,8 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
       compte_credit: compte_credit,
       montant: montant,
       banque_name : banque_name,
-      date: date
+      date: date,
+      date_ajout_virement : date_ajout_virement
     };
   
     const request = store.add(operationData);
@@ -49,16 +50,16 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
       var comptes_existants = event.target.result;
       var noms_des_comptes = comptes_existants.map(compte => compte.nom_compte);
   
-      const date = new Date();
-      var day = ('0' + date.getDate()).slice(-2);
-      var month = ('0' + (date.getMonth() + 1)).slice(-2);
-      var year = date.getFullYear();
-      var dateString = `${day}/${month}/${year}`;
+      const date_virement_du_jour = new Date();
+      var day = ('0' + date_virement_du_jour.getDate()).slice(-2);
+      var month = ('0' + (date_virement_du_jour.getMonth() + 1)).slice(-2);
+      var year = date_virement_du_jour.getFullYear();
+      var date_virement_du_jour_string = `${day}/${month}/${year}`;
   
       const transaction = db.transaction(['virements'], 'readonly');
       const store = transaction.objectStore('virements');
-      const dateIndex = store.index('date');
-      const request = dateIndex.getAll(IDBKeyRange.only(dateString));
+      const dateIndex = store.index('date_ajout_virement');
+      const request = dateIndex.getAll(IDBKeyRange.only(date_virement_du_jour_string));
   
       request.onsuccess = function(event) {
         const virements = event.target.result.filter(vi => vi.banques_id === banques_id);
@@ -133,7 +134,7 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
    * @param {number} montant -montant du virement interne
    * @param {string} date -date du virement interne
    */
-  function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date){
+  function addVirementToDB(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date, date_ajout_virement){
     // Vérification du solde avant le virement
     const transaction = db.transaction(['comptes'], 'readonly');
     const objectStore_compte = transaction.objectStore('comptes');
@@ -146,7 +147,7 @@ function virementToHistorique(banque_id, banque_name, compte_debit, compte_credi
         operationToCompte(banque_id, -montant, nom_debit_compte); // Débiter
         operationToCompte(banque_id, montant, nom_credit_compte); // Créditer
         
-        virementToHistorique(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date);
+        virementToHistorique(banque_id, banque_name, nom_debit_compte, nom_credit_compte, montant, date, date_ajout_virement);
   
         // operationToHistorique(banque_id, banque_name, 'VIREMENTS', `Virement interne de ${nom_debit_compte} vers ${nom_credit_compte}`, -montant, date);
   
@@ -273,11 +274,15 @@ function virement() {
   var montant = document.getElementById('virement_valeur').value;
 
 
-  var date = new Date();
-  var day = ('0' + date.getDate()).slice(-2);
-  var month = ('0' + (date.getMonth() + 1)).slice(-2);
-  var year = date.getFullYear();
-  var dateString = `${day}/${month}/${year}`;
+  const date_ajout_virement_const = new Date();
+  var day = ('0' + date_ajout_virement_const.getDate()).slice(-2);
+  var month = ('0' + (date_ajout_virement_const.getMonth() + 1)).slice(-2);
+  var year = date_ajout_virement_const.getFullYear();
+  var date_ajout_virement = `${day}/${month}/${year}`;
+
+  var date = document.getElementById('virement_date').value;
+  var dateParts = date.split("-");
+  var dateString = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
 
   if (!banque_id){
     showAlert('<i class="fa-solid fa-xmark"></i> Veuillez choisir une banque.');
@@ -291,8 +296,11 @@ function virement() {
   else if (!credit){
     showAlert('<i class="fa-solid fa-xmark"></i> Veuillez choisir un compte créditeur');
   }
+  else if(!date){
+    showAlert('<i class="fa-solid fa-xmark"></i> Veuillez choisir une date de virement');
+  }
   else if(credit != debit){
-    addVirementToDB(parseInt(banque_id), banque_name, debit, credit, parseFloat(parseFloat(montant).toFixed(2)), dateString);
+    addVirementToDB(parseInt(banque_id), banque_name, debit, credit, parseFloat(parseFloat(montant).toFixed(2)), dateString, date_ajout_virement);
   }else{
     showAlert('<i class="fa-solid fa-xmark"></i> Le compte débiteur et le compte créditeur doivent être différents')
   }

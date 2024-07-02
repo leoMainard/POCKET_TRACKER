@@ -572,7 +572,7 @@ function updateSolde(banque_id){
   }
   
 /**
- * Récupère les données pour le graphique de l'évolution du total des avois
+ * Récupère les données pour le graphique de l'évolution du total des avoirs
  * 
  * @param {number} banque_id -id de la banque
  * @param callback
@@ -591,9 +591,10 @@ function updateSolde(banque_id){
       request.onsuccess = function(event) {
         const operations = event.target.result;
         let currentBalance = 0; // Debut avec une balance de 0
+        let dates = [];
   
         // On tri les opérations par date
-        operations.sort((a, b) => new Date(a.date) - new Date(b.date));
+        operations.sort((a, b) => new Date(a.date.split('/').reverse().join('-')) - new Date(b.date.split('/').reverse().join('-')));
   
         operations.forEach(op => {
           const opDate = op.date;
@@ -603,8 +604,15 @@ function updateSolde(banque_id){
           currentBalance += op.montant;
           soldeEvolution[opDate] = currentBalance;
         });
+
+        // Organiser les soldes selon les dates
+        let sortedDates = Object.keys(soldeEvolution).sort((a, b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-')));
+        let sortedSoldeEvolution = {};
+        sortedDates.forEach(date => {
+          sortedSoldeEvolution[date] = soldeEvolution[date];
+        });
   
-        callback(null, soldeEvolution);
+        callback(null, sortedSoldeEvolution);
       };
   
       request.onerror = function(event) {
@@ -640,17 +648,17 @@ function updateSolde(banque_id){
   
         // Convertir l'objet soldeEvolution en tableau et trier par date
         Object.entries(soldeEvolution)
-          .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+          .sort((a, b) => new Date(a[0].split('/').reverse().join('-')) - new Date(b[0].split('/').reverse().join('-')))
           .forEach(([date, montant]) => {
             const [d, m, y] = date.split('/').map(Number);
+            const formattedDate = `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
             if (selectionAnnee && y === parseInt(annee)) {
-              let formattedMonth = `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
-              if (!categories.includes(formattedMonth)) {
-                categories.push(formattedMonth);
+              if (!categories.includes(formattedDate)) {
+                categories.push(formattedDate);
                 seriesData.push(parseFloat(montant.toFixed(2)));
               }
             } else if (!selectionAnnee && y === parseInt(annee) && m === parseInt(mois)) {
-              categories.push(`${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`);
+              categories.push(formattedDate);
               seriesData.push(parseFloat(montant.toFixed(2)));
             }
           });

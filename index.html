@@ -119,7 +119,10 @@
                     <i class="fas fa-arrows-alt-v"></i>
                 </div>
 
-                <input type="text" id="operation_detail" placeholder="Détail de l'opération (exemple : 'Courses de Noël')" class="form-control" />
+                <div class="d-flex detail_date_operation">
+                    <input type="text" id="operation_detail" placeholder="Détail de l'opération (exemple : 'Courses de Noël')" class="form-control" />
+                    <input type="date" id="operation_date" class="form-control" />
+                </div>
 
                 <!-- Bouton pour ajouter un opération -->
                 <div class="mt-3 d-flex align-items-center" id="operation_boutons">
@@ -151,7 +154,7 @@
 
                 <hr>
                 
-                <h5 class="mb-3">Historique des opérations du jour</h5>
+                <h5 class="mb-3">Actions effectuées aujourd'hui</h5>
                 <div id="historique_container_operation">
                         <!-- contient l'historique des operations du jour -->
                 </div>
@@ -192,12 +195,14 @@
                         <i class="fas fa-arrows-alt-v"></i>
                     </div>
                 </div>
+
                 <div class="mt-3 d-flex align-items-center" id="virement_boutons">
                     <input type="number" id="virement_valeur" placeholder="Montant" class="form-control" />
+                    <input type="date" id="virement_date" class="form-control" />
                     <button onclick="virement()" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-check"></i></button>
                 </div>
 
-                <h5 class="mb-3">Historique des virements du jour</h5>
+                <h5 class="mb-3">Actions effectuées aujourd'hui</h5>
                 <div id="historique_container_virement">
                     <!-- contient l'historique des virements du jour -->
                 </div>

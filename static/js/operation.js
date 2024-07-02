@@ -10,11 +10,11 @@
  * @param {string} detail -detail de l'opération
  * @param {number} montant -montant de l'opération
  */
-function addOperationToDB(banque_id, banque_name, category, detail, montant, date){
+function addOperationToDB(banque_id, banque_name, category, detail, montant, date, date_ajout_operation){
     operationToCompte(banque_id, montant);
   
     // Ajout de l'opération dans l'historique
-    operationToHistorique(banque_id, banque_name, category, detail, montant, date);
+    operationToHistorique(banque_id, banque_name, category, detail, montant, date, date_ajout_operation);
   
     const transaction = db.transaction(['operations'], 'readonly');
     const store = transaction.objectStore('operations');
@@ -104,7 +104,7 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
    * @param {number} montant -montant de l'opération
    * @param {string} date -date de l'opération
    */
-  function operationToHistorique(banque_id, banque_name, category, detail, montant, date){
+  function operationToHistorique(banque_id, banque_name, category, detail, montant, date, date_ajout_operation){
     const transaction = db.transaction(['operations'], 'readwrite');
     const store = transaction.objectStore('operations');
     
@@ -114,7 +114,8 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
       detail: detail,
       montant: montant,
       banque_name : banque_name,
-      date: date
+      date: date,
+      date_ajout_operation : date_ajout_operation
     };
   
     const request = store.add(operationData);
@@ -134,20 +135,21 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
   function updateOperationListHistorique(banques_id){
     document.getElementById('historique_container_operation').innerHTML = '';
   
-    const date = new Date();
-    var day = ('0' + date.getDate()).slice(-2);
-    var month = ('0' + (date.getMonth() + 1)).slice(-2);
-    var year = date.getFullYear();
-    var dateString = `${day}/${month}/${year}`;
+    const date_operation_du_jour = new Date();
+    var day = ('0' + date_operation_du_jour.getDate()).slice(-2);
+    var month = ('0' + (date_operation_du_jour.getMonth() + 1)).slice(-2);
+    var year = date_operation_du_jour.getFullYear();
+    var date_operation_du_jour_string = `${day}/${month}/${year}`;
   
     const transaction = db.transaction(['operations'], 'readonly');
     const store = transaction.objectStore('operations');
-    const dateIndex = store.index('date');
-    const request = dateIndex.getAll(IDBKeyRange.only(dateString));
+    const dateIndex = store.index('date_ajout_operation');
+    const request = dateIndex.getAll(IDBKeyRange.only(date_operation_du_jour_string));
   
     request.onsuccess = function(event) {
-      const operations = event.target.result.filter(op => op.banques_id === banques_id);    
-  
+      const operations = event.target.result.filter(op => op.banques_id === banques_id);   
+      
+      console.log(date_operation_du_jour);
       // Boucler sur chaque opération récupérée
       operations.forEach(operation => {
         // Récupération et traitement des informations de l'opération
@@ -308,11 +310,15 @@ function operation() {
   var moins = document.getElementById('btn-check-minus').checked;
   var plus = document.getElementById('btn-check-plus').checked;
 
-  const date = new Date();
-  var day = ('0' + date.getDate()).slice(-2);
-  var month = ('0' + (date.getMonth() + 1)).slice(-2);
-  var year = date.getFullYear();
-  var dateString = `${day}/${month}/${year}`;
+  const date_ajout_operation_const = new Date();
+  var day = ('0' + date_ajout_operation_const.getDate()).slice(-2);
+  var month = ('0' + (date_ajout_operation_const.getMonth() + 1)).slice(-2);
+  var year = date_ajout_operation_const.getFullYear();
+  var date_ajout_operation = `${day}/${month}/${year}`;
+
+  var date = document.getElementById('operation_date').value;
+  var dateParts = date.split("-");
+  var dateString = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
 
   if (!banque_id){
     showAlert('<i class="fa-solid fa-xmark"></i> Veuillez choisir une banque.');
@@ -322,6 +328,9 @@ function operation() {
   }
   else if (!montant){
     showAlert('<i class="fa-solid fa-xmark"></i> Veuillez inscrire un montant.');
+  }
+  else if(!date){
+    showAlert('<i class="fa-solid fa-xmark"></i> Veuillez choisir une date de virement');
   }
   else if (!moins && !plus){
     showAlert("<i class='fa-solid fa-xmark'></i> Veuillez indiquer s'il s'agit d'une opération + ou - .");
@@ -338,7 +347,7 @@ function operation() {
 
     console.log(banque_name);
 
-    addOperationToDB(parseInt(banque_id), banque_name, category, detail, montant, dateString);
+    addOperationToDB(parseInt(banque_id), banque_name, category, detail, montant, dateString, date_ajout_operation);
   }
 
   
