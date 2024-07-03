@@ -130,6 +130,36 @@ function addBankToDB(bankName) {
     };
   }
 
+  /**
+ * Supprime tous les budgets associés à l'id d'une banque
+ * 
+ * @param {Number} bankId - id de la banque
+ */
+  function deleteAssociatedBudgets(bankId) {
+    const transaction = db.transaction(['budget'], 'readwrite');
+    const store = transaction.objectStore('budget');
+  
+    // Créer une requête pour trouver tous les comptes avec le bankId spécifié
+    const index = store.index('banques_id');
+    const request = index.openCursor(IDBKeyRange.only(bankId));
+  
+    request.onsuccess = function(event) {
+      const cursor = event.target.result;
+      if (cursor) {
+        // Supprimer chaque budget trouvé
+        store.delete(cursor.primaryKey);
+        cursor.continue(); // Continuer à parcourir les comptes suivants
+      } else {
+        // Tous les comptes associés ont été traités
+        console.log('Tous les budgets associés à la banque ont été supprimés');
+      }
+    };
+  
+    request.onerror = function(event) {
+      console.error('Erreur lors de la suppression des budgets associés', event);
+    };
+  }
+
 
 /**
  * Vérifie que tous les éléments du module d'ajout de banque sont correctes avant d'ajouter la banque 
