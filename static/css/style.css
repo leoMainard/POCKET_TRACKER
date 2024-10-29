@@ -242,8 +242,21 @@ body button:after {
     margin-top : 20px;
 }
 
-
 #operation_date{
+    margin-top : 20px;
+    width: 40%;
+    margin-left: 10px;
+}
+
+#operation_valeur-m{
+    width : 100px;
+}
+
+#operation_detail-m{
+    margin-top : 20px;
+}
+
+#operation_date-m{
     margin-top : 20px;
     width: 40%;
     margin-left: 10px;
@@ -323,6 +336,9 @@ body button:after {
 #btn-check-minus-m:hover + .btn-danger {
     background-color: red; /* nouvelle couleur de fond lorsque coché */
     color: white; /* ajustez si nécessaire */
+}
+.operationModificationId{
+    display: none;
 }
 
 .historique_id_operation{

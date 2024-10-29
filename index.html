@@ -168,22 +168,20 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('operationModalModification')"><i class="fas fa-times-square fermer_modal"></i></span>
                 <h5>Modifier une opération</h5>
+                <p class="operationModificationId mb-0" id="operationModificationId"></p>
                 <!-- Liste déroulante pour sélectionner une banque -->
                 <div class="flex-grow-1">
-                    <select id="bankList_operation" class="form-control">
-                        <option value="">Sélectionnez une banque</option>
-                    </select>
-                    <i class="fas fa-arrows-alt-v"></i>
+                    <input type="text" id="bankList_operation-m" class="form-control" disabled/>
                 </div>
 
                 <div class="d-flex detail_date_operation">
-                    <input type="text" id="operation_detail" placeholder="Détail de l'opération (exemple : 'Courses de Noël')" class="form-control" />
-                    <input type="date" id="operation_date" class="form-control" />
+                    <input type="text" id="operation_detail-m" placeholder="Détail de l'opération (exemple : 'Courses de Noël')" class="form-control" />
+                    <input type="date" id="operation_date-m" class="form-control" />
                 </div>
 
                 <!-- Bouton pour ajouter un opération -->
                 <div class="mt-3 d-flex align-items-center" id="operation_boutons">
-                    <input type="number" id="operation_valeur" placeholder="Montant" class="form-control" />
+                    <input type="number" id="operation_valeur-m" placeholder="Montant" class="form-control" />
                     
                     <input type="checkbox" class="btn-check" id="btn-check-plus-m" autocomplete="off" onchange="toggleCheckbox(this, 'btn-check-minus-m')" checked>
                     <label class="btn btn-success" for="btn-check-plus-m"><i class="fas fa-plus"></i></label>
@@ -193,7 +191,7 @@
                     <label class="btn btn-danger" for="btn-check-minus-m"><i class="fas fa-minus"></i></label>
 
                     <div class="flex-grow-1" id="categorie_list">
-                        <select id="category" class="form-control">
+                        <select id="category-m" class="form-control">
                             <option value="">Sélectionnez une catégorie</option>
                             <option value="COURSES">Alimentation & Restau.</option>
                             <option value="SALAIRE">Salaire</option>
@@ -208,8 +206,8 @@
                     </div>
                 </div>
                 <div class="mt-3 d-flex align-items-center justify-content-end" id="operationModificationSaveDelete">
-                    <button onclick="operation()" id = "btn_plus" class="btn btn-primary ms-2">Sauvegarder <i class="fas fa-check"></i></i></button>
-                    <button onclick="operation()" class="btn btn-danger ms-2">Supprimer <i class="fas fa-trash"></i></i></button>
+                    <button onclick="saveModificationOperation()" id = "btn_plus" class="btn btn-primary ms-2">Sauvegarder <i class="fas fa-check"></i></i></button>
+                    <button onclick="deleteOperationHistorique()" class="btn btn-danger ms-2">Supprimer <i class="fas fa-trash"></i></i></button>
                 </div>
             </div>
         </div>

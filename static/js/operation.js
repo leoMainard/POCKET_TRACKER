@@ -40,7 +40,7 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
         <p class="historique_detail_operation mb-0">${detail}</p>
         <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
         <p class="historique_montant_operation mb-0">${montant}€</p>
-         
+        <button onclick="openModal('operationModalModification', ${operation_id})" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-gear"></i></i></button>
       `;
   
       // Ajouter la nouvelle div au conteneur
@@ -368,23 +368,73 @@ function loadOperationModification(idModification) {
       console.log(result);
       
       // Affectation des valeurs aux éléments HTML
-      document.getElementById('bankList_operation').value = result.banque_name;
-      document.getElementById('operation_detail').value = result.detail;
+      document.getElementById('operationModificationId').value = idModification;
+      document.getElementById('bankList_operation-m').value = result.banque_name;
+      document.getElementById('operation_detail-m').value = result.detail;
       
       // Conversion de la date au format yyyy-MM-dd
       const dateParts = result.date.split('/');
       const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-      document.getElementById('operation_date').value = formattedDate;
+      document.getElementById('operation_date-m').value = formattedDate;
 
-      document.getElementById('operation_valeur').value = result.montant;
-      document.getElementById('category').value = result.category;
+      document.getElementById('operation_valeur-m').value = result.montant;
+      document.getElementById('category-m').value = result.category;
     } else {
       console.log("Aucune opération trouvée avec cet ID :", idModification);
+      showAlert('<i class="fa-solid fa-xmark"></i> Aucune opération trouvée ...');
     }
   };
 
   request.onerror = function(event) {
     console.error("Erreur lors de la récupération de l'opération :", event.target.error);
+    showAlert('<i class="fa-solid fa-xmark"></i> Erreur lors de la recherche de l\'opération ...');
   };
 }
 
+function saveModificationOperation(){
+
+}
+
+/**
+   * Supprime une opération de l'historique et ré-ajoute le montant de cette opération au compte courant
+   * recharge l'historique des opérations et le contenu du tableau de bord
+   */
+function deleteOperationHistorique(){
+  var operationId = document.getElementById('operationModificationId').value;
+  const transaction = db.transaction(['operations'], 'readwrite');
+  const store = transaction.objectStore('operations');
+  const request = store.get(parseInt(operationId));
+
+  request.onsuccess = function(event) {
+    const result = event.target.result;
+    if (result) {
+      console.log(result);
+      
+      var montant_inverse = (result.montant) * -1;
+      console.log(montant_inverse);
+
+      // operationToCompte mais dans le sens inverse
+      operationToCompte(result.banques_id, montant_inverse);
+
+      // Suppression de l'historique
+      suppressionOperationHistorique(parseInt(operationId));
+
+      updateOperationListHistorique(result.banques_id);
+
+      loadContent();
+
+      showSuccess('<i class="fa-solid fa-check"></i> Suppression terminée.');
+      closeModal('operationModalModification');
+    } else {
+      console.log("Aucune opération trouvée avec cet ID :", idModification);
+      showAlert('<i class="fa-solid fa-xmark"></i> La suppression de l\'opération a échouée ...');
+    }
+  };
+
+  request.onerror = function(event) {
+    console.error("Erreur lors de la récupération de l'opération :", event.target.error);
+    showAlert('<i class="fa-solid fa-xmark"></i> Erreur lors de la suppression de l\'opération ...');
+  };
+
+  
+}
