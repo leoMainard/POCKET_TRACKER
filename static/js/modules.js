@@ -4,7 +4,7 @@
  * 
  * @param {string} modalId -id html du module à ouvrir
  */
-function openModal(modalId) {
+function openModal(modalId, idModification=null) {
     document.getElementById(modalId).style.display = 'block';
   
     // Identifier et réinitialiser les listes déroulantes dans le modale
@@ -29,6 +29,14 @@ function openModal(modalId) {
       document.getElementById('virement').disabled = true;
       document.getElementById('banque').disabled = true;
       document.getElementById('historique_container_operation').innerHTML = '';
+    }else if(modalId === 'operationModalModification'){
+      document.getElementById('virement').disabled = true;
+      document.getElementById('operation').disabled = true;
+      document.getElementById('banque').disabled = true;
+      if(idModification != null){
+        loadOperationModification(idModification);
+      }
+      
     };
   
   }

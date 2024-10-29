@@ -977,6 +977,7 @@ function updateSolde(banque_id){
         let dateString = operation.date; 
         let banque_name = operation.banque_name;
         let detail = operation.detail;
+        let operation_id = operation.operation_id;
   
         let colorClass = categoryColorMap[category] || "bg-divers"; // Utiliser une classe par défaut si la catégorie n'est pas trouvée
   
@@ -994,11 +995,13 @@ function updateSolde(banque_id){
         newDiv.className = 'contentHistoriquesValues d-flex align-items-center justify-content-between mb-2 p-2 border rounded';
         // Ajouter le contenu HTML à la nouvelle div
         newDiv.innerHTML = `
+        <p class="historique_id_operation mb-0">${operation_id}</p>
         <p class="historique_date_operation mb-0">${dateString}</p>
         <p class="historique_banque_operation mb-0">${banque_name}</p>
         <p class="historique_detail_operation mb-0">${detail}</p>
         <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
         <p class="historique_montant_operation_content mb-0 ${couleurMontant} ${textBoldClass}">${signe}${montant.toLocaleString('fr-FR')}€</p>
+        <button onclick="openModal('operationModalModification', ${operation_id})" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-gear"></i></i></button>
         `;
   
         var container = document.getElementById('contentHistoriques');

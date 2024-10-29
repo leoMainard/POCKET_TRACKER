@@ -40,7 +40,7 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
         <p class="historique_detail_operation mb-0">${detail}</p>
         <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
         <p class="historique_montant_operation mb-0">${montant}€</p>
-        <button onclick="deleteOperationHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+         
       `;
   
       // Ajouter la nouvelle div au conteneur
@@ -170,21 +170,23 @@ function addOperationToDB(banque_id, banque_name, category, detail, montant, dat
         // Affichage d'une opération de suppresion de compte avec un bouton de suppression désactivé
         if(detail.trim().includes("Suppression du compte")){
           newDiv.innerHTML = `
+          <p class="historique_id_operation mb-0">${operation_id}</p>
           <p class="historique_date_operation mb-0">${date}</p>
           <p class="historique_banque_operation mb-0">${banque_name}</p>
           <p class="historique_detail_operation mb-0">${detail}</p>
           <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
           <p class="historique_montant_operation mb-0">${montant}€</p>
-          <button onclick="deleteOperationHistorique(this)" class="btn btn-danger" disabled><i class="fas fa-trash"></i></button>
+          <button onclick="openModal('operationModalModification', ${operation_id})" id = "btn_plus" disabled class="btn btn-primary ms-2"><i class="fas fa-gear"></i></i></button>
         `;
         }else{
           newDiv.innerHTML = `
+          <p class="historique_id_operation mb-0">${operation_id}</p>
           <p class="historique_date_operation mb-0">${date}</p>
           <p class="historique_banque_operation mb-0">${banque_name}</p>
           <p class="historique_detail_operation mb-0">${detail}</p>
           <p class="historique_category_operation badge ${colorClass[0]} text-white mb-0">${category} ${colorClass[1]}</p>
           <p class="historique_montant_operation mb-0">${montant}€</p>
-          <button onclick="deleteOperationHistorique(this)" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+          <button onclick="openModal('operationModalModification', ${operation_id})" id = "btn_plus" class="btn btn-primary ms-2"><i class="fas fa-gear"></i></i></button>
         `;
         }
         
@@ -352,3 +354,37 @@ function operation() {
 
   
 }
+
+function loadOperationModification(idModification) {
+  const transaction = db.transaction(['operations'], 'readwrite');
+  const store = transaction.objectStore('operations');
+
+  // Utilisez get pour récupérer directement par le keyPath 'operation_id'
+  const request = store.get(idModification);
+
+  request.onsuccess = function(event) {
+    const result = event.target.result;
+    if (result) {
+      console.log(result);
+      
+      // Affectation des valeurs aux éléments HTML
+      document.getElementById('bankList_operation').value = result.banque_name;
+      document.getElementById('operation_detail').value = result.detail;
+      
+      // Conversion de la date au format yyyy-MM-dd
+      const dateParts = result.date.split('/');
+      const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+      document.getElementById('operation_date').value = formattedDate;
+
+      document.getElementById('operation_valeur').value = result.montant;
+      document.getElementById('category').value = result.category;
+    } else {
+      console.log("Aucune opération trouvée avec cet ID :", idModification);
+    }
+  };
+
+  request.onerror = function(event) {
+    console.error("Erreur lors de la récupération de l'opération :", event.target.error);
+  };
+}
+

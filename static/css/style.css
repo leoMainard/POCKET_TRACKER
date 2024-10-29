@@ -269,6 +269,25 @@ body button:after {
     color: white; /* ajustez si nécessaire */
 }
 
+#btn-check-plus-m + .btn-success {
+    background-color: white; /* ou toute autre couleur par défaut */
+    color: green;
+    border : solid 1px green;
+    margin-left:10px;
+    margin-right:10px;
+}
+
+/* Changez la couleur de fond et la couleur de texte du label lorsque le checkbox est coché */
+#btn-check-plus-m:checked + .btn-success {
+    background-color: green; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
+#btn-check-plus-m:hover + .btn-success {
+    background-color: green; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
 
 
 /* Couleur de fond et couleur de texte par défaut du label */
@@ -289,6 +308,26 @@ body button:after {
     color: white; /* ajustez si nécessaire */
 }
 
+#btn-check-minus-m + .btn-danger {
+    background-color: white; /* ou toute autre couleur par défaut */
+    color: red;
+    border : solid 1px red;
+}
+
+/* Changez la couleur de fond et la couleur de texte du label lorsque le checkbox est coché */
+#btn-check-minus-m:checked + .btn-danger {
+    background-color: red; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
+#btn-check-minus-m:hover + .btn-danger {
+    background-color: red; /* nouvelle couleur de fond lorsque coché */
+    color: white; /* ajustez si nécessaire */
+}
+
+.historique_id_operation{
+    display:none;
+}
 
 .historique_date_operation{
     width: 15%;
@@ -311,6 +350,10 @@ body button:after {
 .historique_montant_operation{
     width: 15%;
     padding-left: 10px;
+}
+
+#operationModificationSaveDelete{
+    position: right
 }
 
 
