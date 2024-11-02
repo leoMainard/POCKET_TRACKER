@@ -364,20 +364,27 @@ function loadOperationModification(idModification) {
 
   request.onsuccess = function(event) {
     const result = event.target.result;
-    if (result) {
-      console.log(result);
-      
+    if (result) {      
       // Affectation des valeurs aux éléments HTML
       document.getElementById('operationModificationId').value = idModification;
       document.getElementById('bankList_operation-m').value = result.banque_name;
       document.getElementById('operation_detail-m').value = result.detail;
       
+      if (result.montant < 0){
+        document.getElementById('btn-check-minus-m').checked = true;
+        document.getElementById('btn-check-plus-m').checked = false;
+        document.getElementById('operation_valeur-m').value = result.montant * -1;
+      }
+      else{
+        document.getElementById('btn-check-minus-m').checked = false;
+        document.getElementById('btn-check-plus-m').checked = true;
+        document.getElementById('operation_valeur-m').value = result.montant;
+      }
+
       // Conversion de la date au format yyyy-MM-dd
       const dateParts = result.date.split('/');
       const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
       document.getElementById('operation_date-m').value = formattedDate;
-
-      document.getElementById('operation_valeur-m').value = result.montant;
       document.getElementById('category-m').value = result.category;
     } else {
       console.log("Aucune opération trouvée avec cet ID :", idModification);
@@ -392,6 +399,66 @@ function loadOperationModification(idModification) {
 }
 
 function saveModificationOperation(){
+  function calculateDifference(x, y) {
+    return y - x;
+  }
+
+  var operationId = document.getElementById('operationModificationId').value;
+  const transaction = db.transaction(['operations'], 'readwrite');
+  const store = transaction.objectStore('operations');
+  const request = store.get(parseInt(operationId));
+
+  // changer la valeur dans le compte
+  var montant_temp = parseFloat(document.getElementById('operation_valeur-m').value);
+  if (document.getElementById('btn-check-minus-m').checked === true){
+    montant_temp = montant_temp * -1;
+  }
+
+  // Conversion de la date au format yyyy-MM-dd
+  const dateParts = document.getElementById('operation_date-m').value.split('-');
+  const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+  updatedData = {
+    montant : montant_temp,
+    detail : document.getElementById('operation_detail-m').value,
+    date : formattedDate,
+    category : document.getElementById('category-m').value
+  }
+
+  request.onsuccess = function(event) {
+    const operation = event.target.result;
+
+    console.log(operation)
+    if (operation) {
+        var montant_actuel = operation.montant;
+        // Met à jour les champs avec les nouvelles données
+        for (const key in updatedData) {
+            if (updatedData.hasOwnProperty(key) && operation.hasOwnProperty(key)) {
+                operation[key] = updatedData[key];
+            }
+        }
+        // Enregistre les modifications
+        var montant_difference = calculateDifference(montant_actuel, montant_temp);
+        console.log(montant_actuel, montant_temp, montant_difference);
+        operationToCompte(operation.banques_id, montant_difference);
+        const updateRequest = store.put(operation);
+
+        updateRequest.onsuccess = function() {
+          showSuccess('<i class="fa-solid fa-check"></i> Opération mise à jour avec succès.');
+          loadContent();
+          closeModal('operationModalModification')
+        };
+        updateRequest.onerror = function(event) {
+          showAlert('<i class="fa-solid fa-xmark"></i> Erreur lors de la mise à jour de l\'opération');
+        };
+    } else {
+        showAlert('<i class="fa-solid fa-xmark"></i> Opération non trouvée.');
+    }
+  };
+
+  request.onerror = function(event) {
+      showAlert('<i class="fa-solid fa-xmark"></i> Opération non trouvée.');
+  };
 
 }
 
