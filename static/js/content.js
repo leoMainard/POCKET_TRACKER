@@ -343,7 +343,9 @@ function updateSolde(banque_id){
             let op = cursor.value;
             if (budgetResult[op.category]) {
               operationsCount[op.category]++;
-              budgetResult[op.category].depense += op.montant;
+              if (op.montant < 0){
+                budgetResult[op.category].depense += op.montant;
+              }
             }
           }
           cursor.continue(); // Poursuivre avec le prochain élément
