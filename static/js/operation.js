@@ -445,6 +445,7 @@ function saveModificationOperation(){
 
         updateRequest.onsuccess = function() {
           showSuccess('<i class="fa-solid fa-check"></i> Opération mise à jour avec succès.');
+          updateOperationListHistorique(parseInt(operation.banques_id));
           loadContent();
           closeModal('operationModalModification')
         };
